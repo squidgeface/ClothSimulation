@@ -16,13 +16,14 @@ public:
     void LinkParticles(CParticle* _other);
 
 protected:
-    float Mass = 1.0f;
+    float Mass = 5.0f;
     vec3 Accel = vec3();
-    float Damping = 0.8f;
+    float Damping = 5.0f;
     vec3 Velocity = vec3();
     vec3 Gravity = vec3(0.0f, Mass*-9.8f, 0.0f);
+    vec3 Wind = vec3();
     bool isAnchor = false;
-    float Stiffness = 0.9f;
+    float Stiffness = 1.5f;
     float RestDist = 5.0f;
     vector<CParticle*> OtherParts;
     bool isLinked = false;

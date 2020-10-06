@@ -48,7 +48,7 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 	}
 
 	//Sets the clear color when calling glclear()
-	glClearColor(1.0, 0.0, 0.0, 1.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 
 	//Load shader variables
 	m_giStaticProgram = ShaderLoader::CreateProgram("Resources/Shaders/vertexshader.txt", "Resources/Shaders/fragshader.txt");
@@ -81,9 +81,11 @@ void CGameManager::InitialiseMenu()
 	{
 		for (size_t x = 0; x < sqrt(gridSize); x++)
 		{
+			float _x = (sqrt(gridSize)) + (x * 5);
+			float _y = 0.0f + y * 3;
 			CParticle* m_pSphere = new CParticle();
-			m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(-(sqrt(gridSize)/2 * 15) + (x * 15), 0.0f + y * 3, 0.0f));
-			m_pSphere->InitialiseTextures("Resources/Textures/top.jpg", 1);
+			m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
+			m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
 			m_pSpheres.push_back(m_pSphere);
 		}
 	}
@@ -114,22 +116,34 @@ void CGameManager::InitialiseMenu()
 		}
 	}
 	
-	int anchors = sqrt(gridSize);
-	for (size_t i = 0; i < anchors; i++)
+	int anchors = 2;
+	/*for (size_t i = 0; i < anchors; i++)
 	{
 		CParticle* m_pSphere = new CParticle();
-		m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::PYRAMID, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15) + float(i * 10), 10.0f, 0.0f));
-		m_pSphere->InitialiseTextures("Resources/Textures/top.jpg", 1);
+		m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15) + float(i * 10), 10.0f, 0.0f));
+		m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
 		m_pSphere->SetAsAnchor();
 		m_pAnchorSpheres.push_back(m_pSphere);
-		m_pSpheres[i]->LinkParticles(m_pAnchorSpheres[i]);
-	}
+	}*/
+	CParticle* m_pSphere = new CParticle();
+	m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(m_pSpheres[0]->GetObjPosition().x, 10.0f, 0.0f));
+	m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
+	m_pSphere->SetAsAnchor();
+	m_pAnchorSpheres.push_back(m_pSphere);
+	m_pSphere = new CParticle();
+	m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(m_pSpheres[sqrt(gridSize)-1]->GetObjPosition().x, 10.0f, 0.0f));
+	m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
+	m_pSphere->SetAsAnchor();
+	m_pAnchorSpheres.push_back(m_pSphere);
 
-	m_pProjCamera->LookAtObject(vec3(m_pAnchorSpheres[4]->GetObjPosition().x,m_pAnchorSpheres[4]->GetObjPosition().y,m_pAnchorSpheres[4]->GetObjPosition().z));
+	m_pSpheres[0]->LinkParticles(m_pAnchorSpheres[0]);
+	m_pSpheres[sqrt(gridSize)-1]->LinkParticles(m_pAnchorSpheres[1]);
+
+	m_pProjCamera->LookAtObject(m_pAnchorSpheres[0]->GetObjPosition());
 
 	m_pBall = new CParticle(10.0f);
 	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, 10.0f, 0.0f));
-	m_pBall->InitialiseTextures("Resources/Textures/top.jpg", 1);
+	m_pBall->InitialiseTextures("Resources/Textures/green.bmp", 1);
 	m_pBall->SetAsAnchor();
 
 	m_pFloor = new CPrefab();
@@ -163,7 +177,7 @@ void CGameManager::Render()
 			m_pAnchorSpheres[i]->RenderShapes(m_giBlinnProgram);
 		}
 		
-		m_pBall->RenderShapes(m_giBlinnProgram);
+		//m_pBall->RenderShapes(m_giBlinnProgram);
 	/*	for (size_t y = 0; y < sqrt(m_pSpheres.size()); y++)
 		{
 			for (size_t x = 0; x < sqrt(m_pSpheres.size()); x++)
@@ -231,7 +245,7 @@ void CGameManager::Update()
 
 			if (m_pBall->Distance(m_pBall->GetObjPosition(), m_pSpheres[i]->GetObjPosition()) < m_pBall->GetObjSize().x / 2)
 			{
-				m_pSpheres[i]->LinkParticles(m_pBall);
+				//m_pSpheres[i]->LinkParticles(m_pBall);
 			}
 		}
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
@@ -273,19 +287,19 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			{
 				m_pAnchorSpheres[0]->SetObjPosition(vec3(m_pAnchorSpheres[0]->GetObjPosition().x - 1.0f, m_pAnchorSpheres[0]->GetObjPosition().y, m_pAnchorSpheres[0]->GetObjPosition().z));
 				m_pAnchorSpheres[1]->SetObjPosition(vec3(m_pAnchorSpheres[1]->GetObjPosition().x - 0.75f, m_pAnchorSpheres[1]->GetObjPosition().y, m_pAnchorSpheres[1]->GetObjPosition().z));
-				m_pAnchorSpheres[2]->SetObjPosition(vec3(m_pAnchorSpheres[2]->GetObjPosition().x - 0.5f, m_pAnchorSpheres[2]->GetObjPosition().y, m_pAnchorSpheres[2]->GetObjPosition().z));
+				/*m_pAnchorSpheres[2]->SetObjPosition(vec3(m_pAnchorSpheres[2]->GetObjPosition().x - 0.5f, m_pAnchorSpheres[2]->GetObjPosition().y, m_pAnchorSpheres[2]->GetObjPosition().z));
 				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().x + 1.0f, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().z));
 				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().x + 0.75f, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().z));
-				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().x + 0.5f, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().z));
+				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().x + 0.5f, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().z));*/
 			}
 			else if (KeyState['s'] == InputState::INPUT_DOWN)
 			{
 				m_pAnchorSpheres[0]->SetObjPosition(vec3(m_pAnchorSpheres[0]->GetObjPosition().x + 1.0f, m_pAnchorSpheres[0]->GetObjPosition().y, m_pAnchorSpheres[0]->GetObjPosition().z));
 				m_pAnchorSpheres[1]->SetObjPosition(vec3(m_pAnchorSpheres[1]->GetObjPosition().x + 0.75f, m_pAnchorSpheres[1]->GetObjPosition().y, m_pAnchorSpheres[1]->GetObjPosition().z));
-				m_pAnchorSpheres[2]->SetObjPosition(vec3(m_pAnchorSpheres[2]->GetObjPosition().x + 0.5f, m_pAnchorSpheres[2]->GetObjPosition().y, m_pAnchorSpheres[2]->GetObjPosition().z));
+				/*m_pAnchorSpheres[2]->SetObjPosition(vec3(m_pAnchorSpheres[2]->GetObjPosition().x + 0.5f, m_pAnchorSpheres[2]->GetObjPosition().y, m_pAnchorSpheres[2]->GetObjPosition().z));
 				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().x - 1.0f, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().z));
 				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().x - 0.75f, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().z));
-				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().x - 0.5f, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().z));
+				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().x - 0.5f, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().z));*/
 
 			}
 
@@ -293,22 +307,22 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			{
 				m_pAnchorSpheres[0]->SetObjPosition(vec3(m_pAnchorSpheres[0]->GetObjPosition().x, m_pAnchorSpheres[0]->GetObjPosition().y, m_pAnchorSpheres[0]->GetObjPosition().z - 1.0f));
 				m_pAnchorSpheres[1]->SetObjPosition(vec3(m_pAnchorSpheres[1]->GetObjPosition().x, m_pAnchorSpheres[1]->GetObjPosition().y, m_pAnchorSpheres[1]->GetObjPosition().z - 1.0f));
-				m_pAnchorSpheres[2]->SetObjPosition(vec3(m_pAnchorSpheres[2]->GetObjPosition().x, m_pAnchorSpheres[2]->GetObjPosition().y, m_pAnchorSpheres[2]->GetObjPosition().z - 1.0f));
+				/*m_pAnchorSpheres[2]->SetObjPosition(vec3(m_pAnchorSpheres[2]->GetObjPosition().x, m_pAnchorSpheres[2]->GetObjPosition().y, m_pAnchorSpheres[2]->GetObjPosition().z - 1.0f));
 				m_pAnchorSpheres[3]->SetObjPosition(vec3(m_pAnchorSpheres[3]->GetObjPosition().x, m_pAnchorSpheres[3]->GetObjPosition().y, m_pAnchorSpheres[3]->GetObjPosition().z - 1.0f));
 				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().z - 1.0f));
 				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().z - 1.0f));
-				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().z - 1.0f));
+				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().z - 1.0f));*/
 			}
 			else if (KeyState['d'] == InputState::INPUT_DOWN)
 			{
 				m_pAnchorSpheres[0]->SetObjPosition(vec3(m_pAnchorSpheres[0]->GetObjPosition().x, m_pAnchorSpheres[0]->GetObjPosition().y, m_pAnchorSpheres[0]->GetObjPosition().z + 1.0f));
 				m_pAnchorSpheres[1]->SetObjPosition(vec3(m_pAnchorSpheres[1]->GetObjPosition().x, m_pAnchorSpheres[1]->GetObjPosition().y, m_pAnchorSpheres[1]->GetObjPosition().z + 1.0f));
-				m_pAnchorSpheres[2]->SetObjPosition(vec3(m_pAnchorSpheres[2]->GetObjPosition().x, m_pAnchorSpheres[2]->GetObjPosition().y, m_pAnchorSpheres[2]->GetObjPosition().z + 1.0f));
+				/*m_pAnchorSpheres[2]->SetObjPosition(vec3(m_pAnchorSpheres[2]->GetObjPosition().x, m_pAnchorSpheres[2]->GetObjPosition().y, m_pAnchorSpheres[2]->GetObjPosition().z + 1.0f));
 				m_pAnchorSpheres[3]->SetObjPosition(vec3(m_pAnchorSpheres[3]->GetObjPosition().x, m_pAnchorSpheres[3]->GetObjPosition().y, m_pAnchorSpheres[3]->GetObjPosition().z + 1.0f));
 
 				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().z + 1.0f));
 				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().z + 1.0f));
-				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().z + 1.0f));
+				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().z + 1.0f));*/
 			}
 			/*else if (KeyState['a'] == InputState::INPUT_UP && KeyState['d'] == InputState::INPUT_UP)
 			{

@@ -30,7 +30,7 @@ public:
 	~CPrefab();
 
 	//Game Functions
-	virtual void Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, string path, float frameCount = 0.0f, vec3 scale = vec3(0.0, 0.0, 0.0), vec3 rotate = vec3(0.0, 0.0, 0.0), vec3 translate = vec3(0.0, 0.0, 0.0));
+	virtual void Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, string path, float frameCount = 0.0f, const vec3& scale = vec3(0.0, 0.0, 0.0), const vec3& rotate = vec3(0.0, 0.0, 0.0), const vec3& translate = vec3(0.0, 0.0, 0.0));
 	void InitialiseTextures(const char* data, int slot);
 	virtual void RenderShapes(GLuint program, int slot = 1);
 	virtual void UpdateShapes(CCubemap* cubeMap = NULL, CPrefab* _Object = NULL);

@@ -24,7 +24,10 @@ void CParticle::Update()
 				OtherParts[i]->SetObjPosition(OtherParts[i]->GetObjPosition() - Delta * (Im1 / (Im1 + Im2)) * Stiffness * difference * m_pTime->GetDelta());
 			}
 		}
-		
+		float seedx = (rand() % 1000) - 500;
+		float seedz = (rand() % 1000) - 500;
+		Wind = vec3(seedx, 0.0f, seedz);
+		ApplyForce(Wind);
 	}
 	else
 	{

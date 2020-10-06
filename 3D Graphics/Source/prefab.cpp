@@ -68,7 +68,7 @@ CPrefab::~CPrefab()
 	m_pObjMesh = 0;
 }
 
-void CPrefab::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, string path, float frameCount, vec3 _scale, vec3 _rotate, vec3 _translate)
+void CPrefab::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, string path, float frameCount, const vec3& _scale,const vec3& _rotate,const vec3& _translate)
 {
 
 	m_pInput = input;
@@ -103,11 +103,9 @@ void CPrefab::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType 
 	m_v3RotationAxisX = vec3(1.0f, 0.0f, 0.0f);
 	m_v3RotationAxisY = vec3(0.0f, 1.0f, 0.0f);
 	m_v3RotationAxisZ = vec3(0.0f, 0.0f, 1.0f);
-	m_fRotationAngle = _rotate.x;
+	m_fRotationAngle = 0.0f;
 	m_m4RotationX = rotate(glm::mat4(), radians(m_fRotationAngle), m_v3RotationAxisX);
-	m_fRotationAngle = _rotate.y;
 	m_m4RotationZ = rotate(glm::mat4(), radians(m_fRotationAngle), m_v3RotationAxisY);
-	m_fRotationAngle = _rotate.z;
 	m_m4RotationY = rotate(glm::mat4(), radians(m_fRotationAngle), m_v3RotationAxisZ);
 
 	//Scale
