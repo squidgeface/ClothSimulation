@@ -6,28 +6,44 @@ void CParticle::Update()
 	if (!isAnchor)
 	{
 		ApplyForce(Gravity);
-		Accel -= Velocity * (Damping / Mass);
+		Accel -= Velocity * Damping / Mass;
 		Velocity += Accel * m_pTime->GetDelta();
+		if (Velocity.y <= Gravity.y)
+		{
+			Velocity.y = Gravity.y;
+		}
+
 		SetObjPosition(GetObjPosition() + Velocity * m_pTime->GetDelta());
-		Accel = vec3();
+		
+		
 		//other particle links
 		for (size_t i = 0; i < OtherParts.size(); i++)
 		{
-			vec3 Delta = OtherParts[i]->GetObjPosition() - GetObjPosition();
-			float deltaLength = Distance(GetObjPosition(), OtherParts[i]->GetObjPosition());
-			float difference = (deltaLength - RestDist) / deltaLength / m_pTime->GetDelta();
-			float Im1 = 1 / Mass;
-			float Im2 = 1 / Mass;
-			SetObjPosition(GetObjPosition() + Delta * (Im1 / (Im1 + Im2)) * Stiffness * difference * m_pTime->GetDelta());
-			if (!OtherParts[i]->GetAnchor())
+			if (OtherParts[i] != this)
 			{
-				OtherParts[i]->SetObjPosition(OtherParts[i]->GetObjPosition() - Delta * (Im1 / (Im1 + Im2)) * Stiffness * difference * m_pTime->GetDelta());
+				vec3 Delta = OtherParts[i]->GetObjPosition() - GetObjPosition();
+				float deltaLength = Distance(OtherParts[i]->GetObjPosition(), GetObjPosition());
+				float difference = (deltaLength - RestDist) / deltaLength;
+				float Im1 = 1 / Mass;
+				float Im2 = 1 / OtherParts[i]->GetMass();
+				vec3 force = Delta * (Im1 / (Im1 + Im2)) * Stiffness * difference;
+				vec3 force2 = Delta * (Im2 / (Im1 + Im2)) * Stiffness * difference;
+				SetObjPosition(GetObjPosition() + force);
+
+				if (!OtherParts[i]->GetAnchor())
+				{
+					OtherParts[i]->SetObjPosition(OtherParts[i]->GetObjPosition() - force2);
+				}
 			}
 		}
-		float seedx = (rand() % 1000) - 500;
-		float seedz = (rand() % 1000) - 500;
+		float seedx = float(rand() % 100) - 20.0f;
+		float seedz = float(rand() % 100) - 20.0f;
 		Wind = vec3(seedx, 0.0f, seedz);
-		ApplyForce(Wind);
+		if (isWind)
+		{
+			ApplyForce(Wind * Mass);
+		}
+		Accel = vec3();
 	}
 	else
 	{
@@ -54,4 +70,14 @@ void CParticle::LinkParticles(CParticle* _other)
 {
 	OtherParts.push_back(_other);
 	isLinked = true;
+}
+
+void CParticle::SetWind()
+{
+	isWind = !isWind;
+}
+
+float CParticle::GetMass()
+{
+	return Mass;
 }
