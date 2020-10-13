@@ -1,3 +1,11 @@
+// (c) 2020 Media Design School
+//
+// File Name   : particle.h
+// Description : particle declaration file
+// Author      : alexander jenkins, Raven Clancey-Peetz
+// Mail        : alexander.jenkins@mds.ac.nz, Raven-Clancey-Peetz@mediadesign.school.nz
+//
+
 #pragma once
 #include "prefab.h"
 
@@ -14,7 +22,7 @@ public:
     void SetAsAnchor();
     bool GetAnchor();
     void LinkParticles(CParticle* _other);
-
+	void CheckObstacle(CPrefab* _obj);
     void SetWind();
 
     float GetMass();

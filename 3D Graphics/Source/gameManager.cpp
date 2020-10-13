@@ -1,13 +1,13 @@
-// (c) 2020 Alexander Jenkins
+// (c) 2020 Media Design School
 //
 // File Name   : gameManager.cpp
 // Description : gameManager implementation file
-// Author      : alexander jenkins
-// Mail        : alexander.jen8470@mediadesign.school.nz
+// Author      : alexander jenkins, Raven Clancey-Peetz
+// Mail        : alexander.jenkins@mds.ac.nz, Raven-Clancey-Peetz@mediadesign.school.nz
 //
 
-#include "gameManager.h"
 
+#include "gameManager.h"
 #include "prefab.h"
 #include "input.h"
 #include "time.h"
@@ -16,6 +16,7 @@
 #include "button.h"
 #include "particle.h"
 
+//constructor
 CGameManager::CGameManager()
 {
 	m_pOrthoCamera = new CCamera();
@@ -23,10 +24,17 @@ CGameManager::CGameManager()
 	m_pTime = new CTime();
 	m_pInput = new CInput();
 }
-
+//destructor
 CGameManager::~CGameManager()
 {
-	
+	delete m_pOrthoCamera;
+	delete m_pProjCamera;
+	delete m_pTime;
+	delete m_pInput;
+	m_pOrthoCamera = 0;
+	m_pProjCamera = 0;
+	m_pTime = 0;
+	m_pInput = 0;
 }
 
 //Initialise Glut window
@@ -146,7 +154,7 @@ void CGameManager::InitialiseMenu()
 	m_pProjCamera->LookAtObject(m_pAnchorSpheres[anchors/2]->GetObjPosition());
 
 	m_pBall = new CParticle(10.0f);
-	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, 10.0f, 0.0f));
+	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -10.0f, 0.0f));
 	m_pBall->InitialiseTextures("Resources/Textures/green.bmp", 1);
 	m_pBall->SetAsAnchor();
 
@@ -217,7 +225,7 @@ void CGameManager::Render()
 			}
 		}
 		
-	
+		m_pBall->RenderShapes(m_giBlinnProgram);
 		//m_pFloor->RenderShapes(m_giBlinnProgram);
 
 		break;
@@ -248,11 +256,7 @@ void CGameManager::Update()
 		{
 			m_pSpheres[i]->UpdateShapes();
 			m_pSpheres[i]->Update();
-
-			if (m_pBall->Distance(m_pBall->GetObjPosition(), m_pSpheres[i]->GetObjPosition()) < m_pBall->GetObjSize().x / 2)
-			{
-				//m_pSpheres[i]->LinkParticles(m_pBall);
-			}
+			m_pSpheres[i]->CheckObstacle(m_pBall);
 		}
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 		{
