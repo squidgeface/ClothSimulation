@@ -12,7 +12,7 @@
 CCamera::CCamera()
 	: m_pTime(0)
 	, m_fTimeElapsed(0)
-	, m_v3CamPos(vec3(0.0f, 0.0f, 100.0f))
+	, m_v3CamPos(vec3(0.0f, 50.0f, 100.0f))
 	, m_v3CamLookDir(vec3(0.0f, 0.0f, -1.0f))
 	, m_v3CamUpDir(vec3(0.0f, 1.0f, 0.0f))
 	, m_m4View(lookAt(m_v3CamPos, m_v3CamPos + m_v3CamLookDir, m_v3CamUpDir))
@@ -65,7 +65,7 @@ void CCamera::SetOrtho()
 
 void CCamera::LookAtObject(vec3 _objPositions)
 {
-	m_v3CamPos = vec3(0.0f, 50.0f, 100.0f);
+	m_v3CamPos = vec3(_objPositions.x, _objPositions.y + 50, _objPositions.z + 200);
 	m_v3CamLookDir = _objPositions;
 	m_m4View = lookAt(m_v3CamPos, m_v3CamLookDir, m_v3CamUpDir);
 }

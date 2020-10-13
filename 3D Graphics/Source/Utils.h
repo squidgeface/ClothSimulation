@@ -31,6 +31,7 @@
 #include <math.h>
 #include <fstream>
 #include <sstream>
+#include <random>
 
 //Local includes
 #include "ShaderLoader.h"

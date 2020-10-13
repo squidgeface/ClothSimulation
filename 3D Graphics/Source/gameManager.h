@@ -52,23 +52,12 @@ public:
 
 protected:
 	//Variables
-	//sound FX
-		//sound FX
-	Sound* m_pTrackBackground;
-
 
 	//shader programs
-	GLuint m_giStaticProgram = 0, m_giTextProgram = 0;
+	GLuint m_giTextProgram = 0;
 	GLuint m_giPhongProgram = 0;
-	GLuint m_giBlinnProgram = 0;
-	GLuint m_giRimProgram = 0;
-	GLuint m_giCubeMapProgram = 0;
-	GLuint m_giReflectCubeMapProgram = 0;
-
-
 
 	//Game objects
-
 	vector<CParticle*> m_pSpheres;
 	vector<CParticle*> m_pAnchorSpheres;
 	CPrefab* m_pBall = 0;
@@ -86,8 +75,6 @@ protected:
 	//bools and switches
 	bool m_bPaused = false;
 	//enum
-	GameState m_eGameState;
-
-	//particle values
+	GameState m_eGameState = GameState::MENU;
 
 };

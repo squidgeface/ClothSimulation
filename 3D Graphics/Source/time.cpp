@@ -53,7 +53,7 @@ void CTime::UpdateTime()
 //get delta time
 float CTime::GetDelta()
 {
-	return static_cast<float>(m_fDeltaTime);
+	return static_cast<float>(m_fDeltaTime*4.0f);
 }
 //get time elapsed
 float CTime::GetTime()

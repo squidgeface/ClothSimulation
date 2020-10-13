@@ -307,7 +307,7 @@ void CMesh::CreateSphere()
 	//sphere
 	float radius = 1.0f;
 
-	const int sections = 5;
+	const int sections = 20;
 	const int vertexAttrib = 8;
 	const int indexPerQuad = 6;
 

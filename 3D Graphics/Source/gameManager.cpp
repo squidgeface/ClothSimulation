@@ -59,14 +59,8 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 
 	//Load shader variables
-	m_giStaticProgram = ShaderLoader::CreateProgram("Resources/Shaders/vertexshader.txt", "Resources/Shaders/fragshader.txt");
 	m_giPhongProgram = ShaderLoader::CreateProgram("Resources/Shaders/3Dvertexshader.txt", "Resources/Shaders/phongFshader.txt");
-	m_giBlinnProgram = ShaderLoader::CreateProgram("Resources/Shaders/3Dvertexshader.txt", "Resources/Shaders/blinnFshader.txt");
-	m_giRimProgram = ShaderLoader::CreateProgram("Resources/Shaders/3Dvertexshader.txt", "Resources/Shaders/rimFshader.txt");
-	m_giCubeMapProgram = ShaderLoader::CreateProgram("Resources/Shaders/CMvertexshader.txt", "Resources/Shaders/CMFshader.txt");
-	m_giReflectCubeMapProgram = ShaderLoader::CreateProgram("Resources/Shaders/CMRvertexshader.txt", "Resources/Shaders/CMRFshader.txt");
 
-	
 	//set culling on
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
@@ -74,6 +68,9 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 
 	//Initialise time
 	m_pTime->InitiateTime();
+
+	//Seed random
+	srand(time(NULL));
 
 	//Set Up Camera from class
 	m_pOrthoCamera->SetOrtho();
@@ -84,7 +81,7 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 void CGameManager::InitialiseMenu()
 {
 	//create a 12x12 particle grid
-	int gridSize = 144;
+	int gridSize = 100;
 	//Load shapes
 	for (size_t y = 0; y < sqrt(gridSize); y++)
 	{
@@ -128,7 +125,7 @@ void CGameManager::InitialiseMenu()
 		}
 	}
 	//set 5 anchors
-	int anchors = 6;
+	int anchors = 10;
 	for (size_t i = 0; i < anchors; i++)
 	{
 		CParticle* m_pSphere = new CParticle();
@@ -137,62 +134,49 @@ void CGameManager::InitialiseMenu()
 		m_pSphere->SetAsAnchor();
 		m_pAnchorSpheres.push_back(m_pSphere);
 	}
-	
+	//Link top row of cloth with anchors with a gap in the center
 	for (int i = 0; i < anchors; i++)
 	{
-		/*int end = i * round(sqrt(gridSize)/anchors);
-		if (i == anchors-1)
-		{
-			end -= 1;
-		}
-		m_pSpheres[end]->LinkParticles(m_pAnchorSpheres[i]);*/
-		int end = i * 2;
-		if (i >= anchors /2)
-		{
-			end += 1;
-		}
-		m_pSpheres[end]->LinkParticles(m_pAnchorSpheres[i]);
+		m_pSpheres[i]->LinkParticles(m_pAnchorSpheres[i]);
 	}
 	
+	//set camera looking at anchor sphere
+	m_pProjCamera->LookAtObject(m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition());
 
-	m_pProjCamera->LookAtObject(m_pAnchorSpheres[anchors/2]->GetObjPosition());
-
+	//create a ball obstacle
 	m_pBall = new CPrefab;
 	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -20.0f, 0.0f));
 	m_pBall->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
 
-	m_pFloor = new CPrefab();
+	
 	//load floor
+	m_pFloor = new CPrefab();
 	m_pFloor->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(200.0f, 1.0f, 200.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -50.0f, 0.0f));
 	//load textures 
 		//game textures
 
-	
-	
 }
-
-
 
 //render function
 void CGameManager::Render()
 {
-	//Clear buffer
+	//Clear buffers
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	int counter = 0;
 	float SCALE = 100.0f;
-	float upBoost = 1.0f;
+	float upBoost = 0.5f;
 	//switch for game state
 	switch (m_eGameState)
 	{
 	case GameState::MENU:
 		for (size_t i = 0; i < m_pSpheres.size(); i++)
 		{
-			m_pSpheres[i]->RenderShapes(m_giBlinnProgram);
+			m_pSpheres[i]->RenderShapes(m_giPhongProgram);
 		}
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 		{
-			m_pAnchorSpheres[i]->RenderShapes(m_giBlinnProgram);
+			m_pAnchorSpheres[i]->RenderShapes(m_giPhongProgram);
 		}
 		
 		//m_pBall->RenderShapes(m_giBlinnProgram);
@@ -229,7 +213,8 @@ void CGameManager::Render()
 			}
 		}
 		
-		m_pBall->RenderShapes(m_giBlinnProgram);
+		//render floor and obstacle
+		//m_pBall->RenderShapes(m_giBlinnProgram);
 		//m_pFloor->RenderShapes(m_giBlinnProgram);
 
 		break;
@@ -260,7 +245,8 @@ void CGameManager::Update()
 		{
 			m_pSpheres[i]->UpdateShapes();
 			m_pSpheres[i]->Update();
-			m_pSpheres[i]->CheckObstacle(m_pBall);
+			//check for obstacle collision
+			//m_pSpheres[i]->CheckObstacle(m_pBall);
 		}
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 		{
@@ -268,10 +254,9 @@ void CGameManager::Update()
 			m_pSpheres[i]->Update();
 		}
 
-		m_pBall->UpdateShapes();
+		//m_pBall->UpdateShapes();
 
-		//m_pProjCamera->CameraRotate(m_pTime);
-		m_pFloor->UpdateShapes();
+		//m_pFloor->UpdateShapes();
 		break;	
 	default:
 		break;

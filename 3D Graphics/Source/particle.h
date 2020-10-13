@@ -24,18 +24,17 @@ public:
     void LinkParticles(CParticle* _other);
 	void CheckObstacle(CPrefab* _obj);
     void SetWind();
-
     float GetMass();
 
 protected:
-    float Mass = 3.0f;
+    float Mass = 2.0f;
     vec3 Accel = vec3();
-    float Damping = 0.3f;
+    float Damping = 0.5f;
     vec3 Velocity = vec3();
     vec3 Gravity = vec3(0.0f, Mass*-9.8f, 0.0f);
     vec3 Wind = vec3();
-    float Stiffness = 0.8f;
-    float RestDist = 5.0f;
+    float Stiffness = 0.9f;
+    float RestDist = 2.0f;
     vector<CParticle*> OtherParts;
     bool isLinked = false;
     bool isWind = false;

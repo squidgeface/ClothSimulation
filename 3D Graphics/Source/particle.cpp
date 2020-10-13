@@ -14,14 +14,10 @@ void CParticle::Update()
 	//Check if particle is one of the static points
 	if (!isAnchor)
 	{
-
-		//apply forces
-		ApplyForce(Gravity);
 		//nice gentle breeze
-		float seedx = float(rand() % 100) - 40.0f;
-		float seedz = float(rand() % 100) - 40.0f;
+		float seedx = float(rand() % 80) - 40.0f;
+		float seedz = float(rand() % 80) - 40.0f;
 		
-
 		//Seed with with values
 		Wind = vec3(-seedx, 0.0f, -seedz);
 		//Togle wind on and off qith 'Q'
@@ -29,19 +25,31 @@ void CParticle::Update()
 		{
 			ApplyForce(Wind * Mass);
 		}
+		//Eulers method
+		//apply forces
+		//ApplyForce(Gravity);
+		////Use those forces to move object 
+		//Accel -= Velocity * Damping / Mass;
+		//Velocity += Accel * m_pTime->GetDelta();
+		////limit velocity to graviy force
+		//if (Velocity.y <= Gravity.y)
+		//{
+		//	Velocity.y = Gravity.y;
+		//}
+		////add velocity to current position
+		//SetObjPosition(GetObjPosition() + Velocity * m_pTime->GetDelta());
 
-		
-		//Use those forces to move object 
-		Accel -= Velocity * Damping / Mass;
-		Velocity += Accel * m_pTime->GetDelta();
-		//limit velocity to graviy force
-		if (Velocity.y <= Gravity.y)
+		//varlet integration
+		vec3 last_acceleration = Accel;
+		SetObjPosition(GetObjPosition() + Velocity * m_pTime->GetDelta() + (0.5f * last_acceleration * pow(m_pTime->GetDelta(),2)));
+		//apply forces
+		ApplyForce(Gravity);
+		vec3 avg_acceleration = (last_acceleration + Accel) / 2.0f;
+		Velocity += avg_acceleration * m_pTime->GetDelta();
+		/*if (Velocity.y <= Gravity.y)
 		{
 			Velocity.y = Gravity.y;
-		}
-		//add velocity to current position
-		SetObjPosition(GetObjPosition() + Velocity * m_pTime->GetDelta());
-		
+		}*/
 		
 		//other particle links
 		//for all the particles that have been linked
@@ -56,7 +64,7 @@ void CParticle::Update()
 				float difference = (deltaLength - RestDist) / deltaLength;
 				float Im1 = 1 / Mass;
 				float Im2 = 1 / OtherParts[i]->GetMass();
-
+				//calculate forces
 				vec3 force = Delta * (Im1 / (Im1 + Im2)) * Stiffness * difference;
 				vec3 force2 = Delta * (Im2 / (Im1 + Im2)) * Stiffness * difference;
 				//set forces for this object
@@ -71,6 +79,7 @@ void CParticle::Update()
 		}
 	//reset acceleration
 		Accel = vec3();
+		
 	}
 	else
 	{
