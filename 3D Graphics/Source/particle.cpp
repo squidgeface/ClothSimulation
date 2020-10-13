@@ -46,10 +46,10 @@ void CParticle::Update()
 		ApplyForce(Gravity);
 		vec3 avg_acceleration = (last_acceleration + Accel) / 2.0f;
 		Velocity += avg_acceleration * m_pTime->GetDelta();
-		/*if (Velocity.y <= Gravity.y)
+		if (Velocity.y <= Gravity.y)
 		{
 			Velocity.y = Gravity.y;
-		}*/
+		}
 		
 		//other particle links
 		//for all the particles that have been linked
