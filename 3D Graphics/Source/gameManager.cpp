@@ -140,9 +140,7 @@ void CGameManager::InitialiseMenu()
 		m_pSpheres[i]->LinkParticles(m_pAnchorSpheres[i]);
 	}
 	
-	//set camera looking at anchor sphere
-	m_pProjCamera->LookAtObject(m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition());
-
+	
 	//create a ball obstacle
 	m_pBall = new CPrefab;
 	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -20.0f, 0.0f));
@@ -163,13 +161,8 @@ void CGameManager::Render()
 {
 	//Clear buffers
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	int counter = 0;
-	float SCALE = 100.0f;
-	float upBoost = 0.5f;
-	//switch for game state
-	switch (m_eGameState)
-	{
-	case GameState::MENU:
+	
+
 		for (size_t i = 0; i < m_pSpheres.size(); i++)
 		{
 			m_pSpheres[i]->RenderShapes(m_giPhongProgram);
@@ -180,48 +173,14 @@ void CGameManager::Render()
 		}
 		
 		//m_pBall->RenderShapes(m_giBlinnProgram);
-		for (size_t y = 0; y < sqrt(m_pSpheres.size()); y++)
-		{
-			for (size_t x = 0; x < sqrt(m_pSpheres.size()); x++)
-			{
-				if (x != 0)
-				{
-					glBegin(GL_LINES);
-					glVertex3f(m_pSpheres[counter]->GetObjPosition().x/ SCALE, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-					glVertex3f(m_pSpheres[counter - 1]->GetObjPosition().x / SCALE, m_pSpheres[counter - 1]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - 1]->GetObjPosition().z / SCALE);
-					glEnd();
-					
-					if (y != 0)
-					{
-						glBegin(GL_LINES);
-						glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-						glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
-						glEnd();
-					}
-				}
-				else
-				{
-					if (y != 0)
-					{
-						glBegin(GL_LINES);
-						glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-						glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
-						glEnd();
-					}
-				}
-				counter++;
-			}
-		}
+		RenderLines();
+
 		
 		//render floor and obstacle
 		//m_pBall->RenderShapes(m_giBlinnProgram);
 		//m_pFloor->RenderShapes(m_giBlinnProgram);
 
-		break;
-
-	default:
-		break;
-	}
+	
 
 
 	glutSwapBuffers();
@@ -235,11 +194,7 @@ void CGameManager::Update()
 	
 //Get user input into proces input function
 	ProcessInput(m_pInput->GetKeyState(), m_pInput->GetMouseState());
-
-//switch for game state
-	switch (m_eGameState)
-	{
-	case GameState::MENU:
+	
 	//menu component updates
 		for (size_t i = 0; i < m_pSpheres.size(); i++)
 		{
@@ -257,10 +212,8 @@ void CGameManager::Update()
 		//m_pBall->UpdateShapes();
 
 		//m_pFloor->UpdateShapes();
-		break;	
-	default:
-		break;
-	}
+		//set camera looking at anchor sphere
+		m_pProjCamera->LookAtObject(m_pAnchorSpheres[(m_pAnchorSpheres.size() / 2) - 1]->GetObjPosition());
 
 	
 
@@ -334,7 +287,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 					
 					m_fcounter++;
 				}
-				cout << "Setting Wind: " << to_string(true) << endl;
+				cout << "Setting Wind: " << endl;
 			}
 			
 		}
@@ -422,4 +375,44 @@ void CGameManager::MouseClick(int button, int state, int x, int y)
 void CGameManager::MouseMove(int x, int y)
 {
 	m_pInput->MouseMove(x, y);
+}
+
+void CGameManager::RenderLines()
+{
+	int counter = 0;
+	float SCALE = 90.0f;
+	float upBoost = 0.5f;
+
+	for (size_t y = 0; y < sqrt(m_pSpheres.size()); y++)
+	{
+		for (size_t x = 0; x < sqrt(m_pSpheres.size()); x++)
+		{
+			if (x != 0)
+			{
+				glBegin(GL_LINES);
+				glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
+				glVertex3f(m_pSpheres[counter - 1]->GetObjPosition().x / SCALE, m_pSpheres[counter - 1]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - 1]->GetObjPosition().z / SCALE);
+				glEnd();
+
+				if (y != 0)
+				{
+					glBegin(GL_LINES);
+					glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
+					glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
+					glEnd();
+				}
+			}
+			else
+			{
+				if (y != 0)
+				{
+					glBegin(GL_LINES);
+					glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
+					glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
+					glEnd();
+				}
+			}
+			counter++;
+		}
+	}
 }
