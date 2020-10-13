@@ -71,7 +71,7 @@ protected:
 
 	vector<CParticle*> m_pSpheres;
 	vector<CParticle*> m_pAnchorSpheres;
-	CParticle* m_pBall = 0;
+	CPrefab* m_pBall = 0;
 	CPrefab* m_pFloor = 0;
 
 

@@ -83,14 +83,16 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 //Initialise Menu items
 void CGameManager::InitialiseMenu()
 {
+	//create a 12x12 particle grid
 	int gridSize = 144;
 	//Load shapes
 	for (size_t y = 0; y < sqrt(gridSize); y++)
 	{
 		for (size_t x = 0; x < sqrt(gridSize); x++)
 		{
+			//offset each x and y to form a grid shape
 			float _x = (sqrt(gridSize)) + (x * 5);
-			float _y = 0.0f - y * 3;
+			float _y = 0.0f - y;
 			CParticle* m_pSphere = new CParticle();
 			m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
 			m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
@@ -104,10 +106,11 @@ void CGameManager::InitialiseMenu()
 	{
 		for (size_t x = 0; x < sqrt(m_pSpheres.size()); x++)
 		{
+			//if not the first column
 			if (x != 0)
 			{
 				m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - 1]);
-
+				//if not the first row
 				if (y != 0)
 				{
 					m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - sqrt(m_pSpheres.size())]);
@@ -115,6 +118,7 @@ void CGameManager::InitialiseMenu()
 			}
 			else
 			{
+				//if not the first row
 				if (y != 0)
 				{
 					m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - sqrt(m_pSpheres.size())]);
@@ -123,7 +127,7 @@ void CGameManager::InitialiseMenu()
 			counter++;
 		}
 	}
-	
+	//set 5 anchors
 	int anchors = 6;
 	for (size_t i = 0; i < anchors; i++)
 	{
@@ -153,10 +157,10 @@ void CGameManager::InitialiseMenu()
 
 	m_pProjCamera->LookAtObject(m_pAnchorSpheres[anchors/2]->GetObjPosition());
 
-	m_pBall = new CParticle(10.0f);
-	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -10.0f, 0.0f));
+	m_pBall = new CPrefab;
+	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -20.0f, 0.0f));
 	m_pBall->InitialiseTextures("Resources/Textures/green.bmp", 1);
-	m_pBall->SetAsAnchor();
+
 
 	m_pFloor = new CPrefab();
 	//load floor
@@ -265,7 +269,6 @@ void CGameManager::Update()
 		}
 
 		m_pBall->UpdateShapes();
-		m_pBall->Update();
 
 		//m_pProjCamera->CameraRotate(m_pTime);
 		m_pFloor->UpdateShapes();
