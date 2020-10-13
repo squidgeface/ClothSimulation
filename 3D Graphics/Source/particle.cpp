@@ -44,6 +44,7 @@ void CParticle::Update()
 		SetObjPosition(GetObjPosition() + Velocity * m_pTime->GetDelta() + (0.5f * last_acceleration * pow(m_pTime->GetDelta(),2)));
 		//apply forces
 		ApplyForce(Gravity);
+		Accel -= Velocity * Damping / Mass;
 		vec3 avg_acceleration = (last_acceleration + Accel) / 2.0f;
 		Velocity += avg_acceleration * m_pTime->GetDelta();
 		if (Velocity.y <= Gravity.y)
