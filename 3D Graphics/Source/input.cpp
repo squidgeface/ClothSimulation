@@ -19,6 +19,10 @@ CInput::CInput()
 	KeyState['s'] = InputState::INPUT_UP;
 	KeyState['a'] = InputState::INPUT_UP;
 	KeyState['d'] = InputState::INPUT_UP;
+	KeyState['q'] = InputState::INPUT_UP;
+	KeyState['r'] = InputState::INPUT_UP;
+	KeyState['x'] = InputState::INPUT_UP;
+
 	MouseState[0] = InputState::INPUT_UP;
 }
 

@@ -23,6 +23,8 @@ public:
     bool GetAnchor();
     void LinkParticles(CParticle* _other);
 	void CheckObstacle(CPrefab* _obj);
+    void CheckFloor(CPrefab* _obj);
+    void UnLinkParticles();
     void SetWind();
     float GetMass();
 
@@ -34,7 +36,7 @@ protected:
     vec3 Gravity = vec3(0.0f, Mass*-9.8f, 0.0f);
     vec3 Wind = vec3();
     float Stiffness = 0.9f;
-    float RestDist = 2.0f;
+    float RestDist = 10.0f;
     vector<CParticle*> OtherParts;
     bool isLinked = false;
     bool isWind = false;

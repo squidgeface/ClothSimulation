@@ -39,6 +39,8 @@ public:
 	void InitialiseWindow(int argc, char **argv);
 	void InitialiseMenu();
 
+	void Clear();
+
 	void KeyboardDown(unsigned char key, int x, int y);
 	void KeyboardUp(unsigned char key, int x, int y);
 	void MouseClick(int button, int state, int x, int y);
@@ -75,6 +77,7 @@ protected:
 	float m_fcounter = 0.0f;
 	//bools and switches
 	bool m_bPaused = false;
+	int anchors = 0;
 	//enum
 	GameState m_eGameState = GameState::MENU;
 

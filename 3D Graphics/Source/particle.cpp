@@ -12,8 +12,7 @@
 void CParticle::Update()
 {
 	//Check if particle is one of the static points
-	if (!isAnchor)
-	{
+	
 		//nice gentle breeze
 		float seedx = float(rand() % 80) - 40.0f;
 		float seedz = float(rand() % 80) - 40.0f;
@@ -68,21 +67,25 @@ void CParticle::Update()
 				//calculate forces
 				vec3 force = Delta * (Im1 / (Im1 + Im2)) * Stiffness * difference;
 				vec3 force2 = Delta * (Im2 / (Im1 + Im2)) * Stiffness * difference;
-				//set forces for this object
-				SetObjPosition(GetObjPosition() + force);
-				//if the other object is not an anchor object
-				if (!OtherParts[i]->GetAnchor())
+				
+				//if this object is not an anchor object
+				if (!isAnchor)
 				{
+					//set forces for this object
+					SetObjPosition(GetObjPosition() + force);
+				}
+			
+				
 				//Apply forces to other object
 					OtherParts[i]->SetObjPosition(OtherParts[i]->GetObjPosition() - force2);
-				}
+				
 			}
 		}
 	//reset acceleration
 		Accel = vec3();
 		
-	}
-	else
+	
+	if (isAnchor)
 	{
 		//set static position
 		SetObjPosition(vec3(GetObjPosition().x,0.0f,GetObjPosition().z));
@@ -125,7 +128,25 @@ void CParticle::CheckObstacle(CPrefab* _obj)
 	if (distance(_obj->GetObjPosition(), GetObjPosition()) <= _obj->GetObjSize().x/2)
 	{
 		vec3 force = GetObjPosition() - _obj->GetObjPosition();
-		force = normalize(force) * -(_obj->GetObjSize().x / 2.0f);
+		force = normalize(force) * 100.0f;
 		SetObjPosition(GetObjPosition() + force);
 	}
+}
+//Check for obstacles
+void CParticle::CheckFloor(CPrefab* _obj)
+{
+	if (GetObjPosition().y <= _obj->GetObjPosition().y + _obj->GetObjSize().y / 2 
+		&& GetObjPosition().x < _obj->GetObjPosition().x + _obj->GetObjSize().x / 2 
+		&& GetObjPosition().x > _obj->GetObjPosition().x - _obj->GetObjSize().x / 2
+		&& GetObjPosition().z < _obj->GetObjPosition().z + _obj->GetObjSize().z / 2
+		&& GetObjPosition().z > _obj->GetObjPosition().z - _obj->GetObjSize().z / 2)
+	{
+		
+		SetObjPosition(vec3(GetObjPosition().x, _obj->GetObjPosition().y + _obj->GetObjSize().y/2, GetObjPosition().z));
+	}
+}
+
+void CParticle::UnLinkParticles()
+{
+	OtherParts.clear();
 }

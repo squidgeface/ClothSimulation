@@ -125,7 +125,7 @@ void CGameManager::InitialiseMenu()
 		}
 	}
 	//set 5 anchors
-	int anchors = 10;
+	anchors = 10;
 	for (size_t i = 0; i < anchors; i++)
 	{
 		CParticle* m_pSphere = new CParticle();
@@ -137,7 +137,7 @@ void CGameManager::InitialiseMenu()
 	//Link top row of cloth with anchors with a gap in the center
 	for (int i = 0; i < anchors; i++)
 	{
-		m_pSpheres[i]->LinkParticles(m_pAnchorSpheres[i]);
+		m_pAnchorSpheres[i]->LinkParticles(m_pSpheres[i]);
 	}
 	
 	
@@ -147,15 +147,23 @@ void CGameManager::InitialiseMenu()
 	m_pBall->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
 
-	
 	//load floor
 	m_pFloor = new CPrefab();
-	m_pFloor->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(200.0f, 1.0f, 200.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -50.0f, 0.0f));
-	//load textures 
-		//game textures
+	m_pFloor->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(500.0f, 1.0f, 500.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -200.0f, 0.0f));
+	m_pFloor->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
 }
-
+//clear menu
+void CGameManager::Clear()
+{
+	m_pSpheres.clear();
+	m_pAnchorSpheres.clear();
+	delete m_pBall;
+	m_pBall = 0;
+	delete m_pFloor;
+	m_pFloor = 0;
+	InitialiseMenu();
+}
 //render function
 void CGameManager::Render()
 {
@@ -177,8 +185,8 @@ void CGameManager::Render()
 
 		
 		//render floor and obstacle
-		//m_pBall->RenderShapes(m_giBlinnProgram);
-		//m_pFloor->RenderShapes(m_giBlinnProgram);
+		//m_pBall->RenderShapes(m_giPhongProgram);
+		m_pFloor->RenderShapes(m_giPhongProgram);
 
 	
 
@@ -195,24 +203,28 @@ void CGameManager::Update()
 //Get user input into proces input function
 	ProcessInput(m_pInput->GetKeyState(), m_pInput->GetMouseState());
 	
-	//menu component updates
+	//Update Particle points
 		for (size_t i = 0; i < m_pSpheres.size(); i++)
 		{
 			m_pSpheres[i]->UpdateShapes();
 			m_pSpheres[i]->Update();
 			//check for obstacle collision
 			//m_pSpheres[i]->CheckObstacle(m_pBall);
+			//check floor collision
+			m_pSpheres[i]->CheckFloor(m_pFloor);
 		}
+	//update anchor points
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 		{
 			m_pAnchorSpheres[i]->UpdateShapes();
-			m_pSpheres[i]->Update();
+			m_pAnchorSpheres[i]->Update();
 		}
 
 		//m_pBall->UpdateShapes();
 
-		//m_pFloor->UpdateShapes();
-		//set camera looking at anchor sphere
+		m_pFloor->UpdateShapes();
+
+		//set camera looking at anchors
 		m_pProjCamera->LookAtObject(m_pAnchorSpheres[(m_pAnchorSpheres.size() / 2) - 1]->GetObjPosition());
 
 	
@@ -226,15 +238,12 @@ void CGameManager::Update()
 //input functions
 void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 {
-								/// *** MAIN MENU INPUT *** ///
-	switch (m_eGameState)
-	{
-	case GameState::MENU:
+								/// *** INPUT *** ///
 
 		//if mouse click counter is 0 (one click at a time)
 		if (m_fcounter == 0.0f)
 		{
-			if (KeyState['w'] == InputState::INPUT_DOWN)
+			if (KeyState['a'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 2; i <= (m_pAnchorSpheres.size() / 2) + 1; i++)
 				{
@@ -243,7 +252,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 					m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->SetObjPosition(vec3(m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->GetObjPosition().x + move, m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->GetObjPosition().y, m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->GetObjPosition().z));
 				}
 			}
-			else if (KeyState['s'] == InputState::INPUT_DOWN)
+			else if (KeyState['d'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 2; i <= (m_pAnchorSpheres.size() / 2) + 1; i++)
 				{
@@ -253,32 +262,22 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				}
 			}
 
-			if (KeyState['a'] == InputState::INPUT_DOWN)
+			if (KeyState['s'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 				{
 					m_pAnchorSpheres[i]->SetObjPosition(vec3(m_pAnchorSpheres[i]->GetObjPosition().x, m_pAnchorSpheres[i]->GetObjPosition().y, m_pAnchorSpheres[i]->GetObjPosition().z - 1.0f));
 				}
 			}
-			else if (KeyState['d'] == InputState::INPUT_DOWN)
+			else if (KeyState['w'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 				{
 					m_pAnchorSpheres[i]->SetObjPosition(vec3(m_pAnchorSpheres[i]->GetObjPosition().x, m_pAnchorSpheres[i]->GetObjPosition().y, m_pAnchorSpheres[i]->GetObjPosition().z + 1.0f));
 				}
-				
-
 			}
-			/*else if (KeyState['a'] == InputState::INPUT_UP && KeyState['d'] == InputState::INPUT_UP)
-			{
-				m_pAnchorSpheres[0]->SetObjPosition(vec3(m_pAnchorSpheres[0]->GetObjPosition().x, m_pAnchorSpheres[0]->GetObjPosition().y, m_pAnchorSpheres[0]->GetObjPosition().z));
-				m_pAnchorSpheres[1]->SetObjPosition(vec3(m_pAnchorSpheres[1]->GetObjPosition().x, m_pAnchorSpheres[1]->GetObjPosition().y, m_pAnchorSpheres[1]->GetObjPosition().z));
-				m_pAnchorSpheres[2]->SetObjPosition(vec3(m_pAnchorSpheres[2]->GetObjPosition().x, m_pAnchorSpheres[2]->GetObjPosition().y, m_pAnchorSpheres[2]->GetObjPosition().z));
-
-				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 1]->GetObjPosition().z));
-				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 2]->GetObjPosition().z));
-				m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->SetObjPosition(vec3(m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().x, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().y, m_pAnchorSpheres[sqrt(m_pSpheres.size()) - 3]->GetObjPosition().z ));
-			}*/
+			
+			//Initialise wind
 			if (KeyState['q'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 0; i < m_pSpheres.size(); i++)
@@ -289,69 +288,41 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				}
 				cout << "Setting Wind: " << endl;
 			}
+
+			//Initialise wind
+			if (KeyState['r'] == InputState::INPUT_DOWN)
+			{
+				
+				Clear();
+				m_fcounter++;
+
+				cout << "Resetting Scene" << endl;
+			}
+
+			//Remove anchors
+			if (KeyState['x'] == InputState::INPUT_DOWN)
+			{
+
+				for (int i = 0; i < anchors; i++)
+				{
+					m_pAnchorSpheres[i]->UnLinkParticles();
+				}
+				m_fcounter++;
+
+				cout << "Dropping Cloth" << endl;
+			}
 			
 		}
-		else if (KeyState['q'] == InputState::INPUT_UP && KeyState['w'] == InputState::INPUT_UP && KeyState['s'] == InputState::INPUT_UP)
+		else if (KeyState['q'] == InputState::INPUT_UP && KeyState['r'] == InputState::INPUT_UP && KeyState['x'] == InputState::INPUT_UP)
 		{
 		//reset counter on mouse up
 			m_fcounter = 0.0f;
 		}
-		break;
+		
 
 													// **** GAME INPUT **** //
 
-	case GameState::GAME:
-
-		//Menu
-
-
-		//Bring up menu on escape key
-		if (m_fcounter == 0.0f)
-		{	//escape key pressed
-			if (KeyState[27] == InputState::INPUT_DOWN)
-			{
-				
-			}
-		}
-		else if (m_bPaused == true)
-		{
-			m_fcounter = 0.0f;
-		}
-
-		if (!m_bPaused)
-		{
-			if (MouseState[0] == InputState::INPUT_UP)
-			{
-
-
-				m_fcounter += (m_pTime->GetDelta() * 100);
-				//simulate delay on fire
-
-
-			}
-			else if (MouseState[0] == InputState::INPUT_UP)
-			{
-				m_fcounter = 0.0f;
-			}
-		}
-		else 
-		{
-		
-			if (m_fcounter == 0.0f)
-			{
-				
-				
-				
-				
-			}
-		}
-
-		break;
-
 	
-	default:
-		break;
-	}
 
 }
 
@@ -380,8 +351,9 @@ void CGameManager::MouseMove(int x, int y)
 void CGameManager::RenderLines()
 {
 	int counter = 0;
-	float SCALE = 90.0f;
+	float SCALE = 300.0f;
 	float upBoost = 0.5f;
+	float rightBoost = -0.5f;
 
 	for (size_t y = 0; y < sqrt(m_pSpheres.size()); y++)
 	{
@@ -390,15 +362,15 @@ void CGameManager::RenderLines()
 			if (x != 0)
 			{
 				glBegin(GL_LINES);
-				glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-				glVertex3f(m_pSpheres[counter - 1]->GetObjPosition().x / SCALE, m_pSpheres[counter - 1]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - 1]->GetObjPosition().z / SCALE);
+				glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
+				glVertex3f(m_pSpheres[counter - 1]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter - 1]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - 1]->GetObjPosition().z / SCALE);
 				glEnd();
 
 				if (y != 0)
 				{
 					glBegin(GL_LINES);
-					glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-					glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
+					glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
+					glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
 					glEnd();
 				}
 			}
@@ -407,8 +379,8 @@ void CGameManager::RenderLines()
 				if (y != 0)
 				{
 					glBegin(GL_LINES);
-					glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-					glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
+					glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
+					glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
 					glEnd();
 				}
 			}
