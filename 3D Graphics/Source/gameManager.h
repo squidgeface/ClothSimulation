@@ -46,11 +46,15 @@ public:
 	void MouseClick(int button, int state, int x, int y);
 	void MouseMove(int x, int y);
 	void RenderLines();
+	vec3 GetRayFromMouse();
+	bool CheckMouseSphereIntersect(CPrefab* _object);
 	void Render();
 	void Update();
 
 
 	void ProcessInput(InputState* KeyState, InputState* MouseState);
+
+	void RipCloth();
 
 
 protected:
@@ -62,6 +66,7 @@ protected:
 
 	//Game objects
 	vector<CParticle*> m_pSpheres;
+	vector<CParticle*> m_Cloth;
 	vector<CParticle*> m_pAnchorSpheres;
 	CPrefab* m_pBall = 0;
 	CPrefab* m_pFloor = 0;
@@ -78,6 +83,10 @@ protected:
 	//bools and switches
 	bool m_bPaused = false;
 	int anchors = 0;
+	vec3 m_v3RayDirection = vec3();
+	float previousX = 0;
+	float previousY = 0;
+	bool isClicking = false;
 	//enum
 	GameState m_eGameState = GameState::MENU;
 

@@ -8,6 +8,7 @@
 
 #include "particle.h"
 #include "time.h"
+#include "camera.h"
 //Particle update
 void CParticle::Update()
 {
@@ -38,18 +39,21 @@ void CParticle::Update()
 		////add velocity to current position
 		//SetObjPosition(GetObjPosition() + Velocity * m_pTime->GetDelta());
 
-		//varlet integration
+		////varlet integration
 		vec3 last_acceleration = Accel;
-		SetObjPosition(GetObjPosition() + Velocity * m_pTime->GetDelta() + (0.5f * last_acceleration * pow(m_pTime->GetDelta(),2)));
+		SetObjPosition(GetObjPosition() + Velocity * m_pTime->GetDelta() + (0.5f * last_acceleration * pow(m_pTime->GetDelta(), 2)));
 		//apply forces
 		ApplyForce(Gravity);
 		Accel -= Velocity * Damping / Mass;
 		vec3 avg_acceleration = (last_acceleration + Accel) / 2.0f;
 		Velocity += avg_acceleration * m_pTime->GetDelta();
+		
 		if (Velocity.y <= Gravity.y)
 		{
 			Velocity.y = Gravity.y;
 		}
+
+
 		
 		//other particle links
 		//for all the particles that have been linked
@@ -58,7 +62,7 @@ void CParticle::Update()
 			//if the particle in the vector is not this one
 			if (OtherParts[i] != this)
 			{
-			//math for calculating forces
+			////math for calculating forces
 				vec3 Delta = OtherParts[i]->GetObjPosition() - GetObjPosition();
 				float deltaLength = Distance(OtherParts[i]->GetObjPosition(), GetObjPosition());
 				float difference = (deltaLength - RestDist) / deltaLength;
@@ -75,14 +79,21 @@ void CParticle::Update()
 					SetObjPosition(GetObjPosition() + force);
 				}
 			
-				
-				//Apply forces to other object
+				if (!OtherParts[i]->GetAnchor())
+				{
+					//Apply forces to other object
 					OtherParts[i]->SetObjPosition(OtherParts[i]->GetObjPosition() - force2);
-				
+				}
+		
+				if (deltaLength > maxDistance)
+				{
+					OtherParts.erase(OtherParts.begin() + i);
+				}
 			}
 		}
 	//reset acceleration
 		Accel = vec3();
+		//Velocity = vec3();
 		
 	
 	if (isAnchor)
@@ -149,4 +160,30 @@ void CParticle::CheckFloor(CPrefab* _obj)
 void CParticle::UnLinkParticles()
 {
 	OtherParts.clear();
+}
+
+void CParticle::Draw()
+{
+	float SCALEx = 275.0 - GetObjPosition().z;
+	float SCALEy = 170.0 - GetObjPosition().z;
+	
+	float booster = 400.0f;
+	float upBoost = 0.6f + GetObjPosition().z/ booster;
+	
+
+	for (size_t i = 0; i < OtherParts.size(); i++)
+	{
+		if (!isAnchor && !OtherParts[i]->GetAnchor())
+		{
+			float SCALE2x = 275.0 - OtherParts[i]->GetObjPosition().z;
+			float SCALE2y = 170.0 - OtherParts[i]->GetObjPosition().z;
+			float upBoost2 = 0.6f + OtherParts[i]->GetObjPosition().z / booster;
+			glBegin(GL_LINE_STRIP);
+			glColor3f(0.0f, 0.0f, 0.0f);
+			glVertex2f(GetObjPosition().x / (SCALEx), (GetObjPosition().y / (SCALEy)) + upBoost);
+			glVertex2f(OtherParts[i]->GetObjPosition().x / (SCALE2x), (OtherParts[i]->GetObjPosition().y / (SCALE2y)) + upBoost2);
+			glEnd();
+		}
+
+	}
 }

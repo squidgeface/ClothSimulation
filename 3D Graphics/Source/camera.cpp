@@ -65,7 +65,7 @@ void CCamera::SetOrtho()
 
 void CCamera::LookAtObject(vec3 _objPositions)
 {
-	m_v3CamPos = vec3(0.0f, _objPositions.y - 100, -300.0f);
+	m_v3CamPos = vec3(0.0f, _objPositions.y - 100, 300.0f);
 	m_v3CamLookDir = vec3(0.0f, _objPositions.y - 100, 0.0f);
 	m_m4View = lookAt(m_v3CamPos, m_v3CamLookDir, m_v3CamUpDir);
 }

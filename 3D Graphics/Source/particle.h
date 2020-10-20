@@ -25,21 +25,24 @@ public:
 	void CheckObstacle(CPrefab* _obj);
     void CheckFloor(CPrefab* _obj);
     void UnLinkParticles();
+    void Draw();
     void SetWind();
     float GetMass();
 
 protected:
-    float Mass = 2.0f;
+    float Mass = 1.0f;
     vec3 Accel = vec3();
     float Damping = 0.5f;
     vec3 Velocity = vec3();
-    vec3 Gravity = vec3(0.0f, Mass*-9.8f, 0.0f);
+    vec3 Gravity = vec3(0.0f, Mass* -9.8f, 0.0f);
     vec3 Wind = vec3();
-    float Stiffness = 0.9f;
+    float Stiffness = 0.3f;
     float RestDist = 10.0f;
     vector<CParticle*> OtherParts;
     bool isLinked = false;
     bool isWind = false;
     bool isAnchor = false;
+    float maxDistance = Mass * 50.0f;
+    
 };
 
