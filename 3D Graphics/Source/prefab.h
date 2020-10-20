@@ -17,9 +17,7 @@ class CCamera;
 class CTime;
 class CInput;
 class CCubemap;
-class CShadowMap;
-class CNoise;
-class CAniModel;
+
 
 class CPrefab
 {
@@ -35,8 +33,6 @@ public:
 	virtual void RenderShapes(GLuint program, int slot = 1);
 	virtual void UpdateShapes(CCubemap* cubeMap = NULL, CPrefab* _Object = NULL, CCamera* = NULL);
 
-	void SetTerrain(CNoise* _noise);
-
 	//math functions
 	float Magnitude(vec3 _source);
 	float Distance(vec3 _source, vec3 _target);
@@ -51,7 +47,6 @@ public:
 	vec3 GetObjSize();
 	vec3 GetObjPosition();
 
-	void FollowTerrain(CPrefab* _obj);
 
 	vec3 GetLightPos();
 
@@ -60,10 +55,6 @@ public:
 	void DisableShadows();
 
 	void RenderShadows(GLuint program);
-
-	void SetAniProgram(GLuint _program);
-
-	CNoise* GetNoise();
 
 
 
@@ -76,9 +67,6 @@ protected:
 	CTime* m_pTime = 0;
 	CInput* m_pInput = 0;
 	CCubemap* m_pCubeMap = 0;
-	CAniModel* m_pAniModel = 0;
-	CShadowMap* m_pShadowMap = 0;
-	CNoise* m_pNoise = 0;
 	//Matrix manipulation variables
 	vec3 m_v3ObjPosition, m_v3RotationAxisX, m_v3RotationAxisY, m_v3RotationAxisZ, m_v3ObjScale;
 	mat4 m_m4TranslationMatrix, m_m4RotationX, m_m4RotationZ, m_m4RotationY, m_m4ScaleMatrix, m_m4Model, MVP;

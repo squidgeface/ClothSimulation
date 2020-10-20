@@ -10,34 +10,34 @@
 
 #include "Utils.h"
 
+class CTerrain;
+
+
 class CMesh
 {
 public:
-	CMesh();
+	CMesh() {};
 	~CMesh();
 
 	void CreateQuad();
 	void CreateCube();
 	void CreateSphere();
-	void SetFrames(float frameCount);
 	void Draw();
-
-	//unused functions
-	void CreateAniQuad(float frames);
-	void CreatePyramid();
-	void CreateAniCube();
-	void UpdateAniCube(float _frames);
+	void RenderGeometry();
+	void RenderTesselated();
+	void CreateGrometry();
 
 protected:
 
-	GLuint m_pTexture;
-	GLuint VBO;
-	GLuint VAO;
-	GLuint EBO;
+	GLuint m_pTexture = 0;
+	GLuint VBO= 0;
+	GLuint VAO = 0;
+	GLuint EBO = 0;
 
-	GLuint IndiceCount;
-	int m_iDrawType;
-	float m_fFrames;
+	GLuint IndiceCount = 0;
+	int m_iDrawType = 0;
+	float m_fFrames = 1.0f;
+	CTerrain* m_pTerrain =0;
 	
 	//Vertices for a Quad
 	GLfloat quadVertices[32]{
@@ -56,32 +56,6 @@ protected:
 		0, 2, 3,	//second triangle
 	};
 
-	//Vertices for a Hex
-	GLfloat hexVertices[56]{
-
-	
-		//position 				//colour 			//Texture coords	
-		-0.525f, -0.25f, 0.0f,	1.0f, 1.0f, 0.0f,	-0.5f, 0.5f,	//middle left
-		-0.4f, -0.50f, 0.0f,	0.0f, 1.0f, 0.0f,	0.0f, 1.0f,		//bottom left
-		-0.15f, -0.50f, 0.0f,	1.0f, 0.0f, 0.0f,	1.0f, 1.0f,		//bottom right
-		-0.025f, -0.25f, 0.0f,	1.0f, 1.0f, 0.0f,	1.5f, 0.5f,		//middle right
-		-0.15f, 0.0f, 0.0f,		0.0f, 0.0f, 1.0f,	1.0f, 0.0f,		//top right
-		-0.4f, 0.0f, 0.0f,		0.0f, 0.0f, 1.0f,	0.0f, 0.0f,		//top left
-		-0.25f, -0.25f, 0.0f,	0.0f, 0.0f, 0.0f,	0.5f, 0.5f,		//centre
-
-	};
-
-	//Indices for the hexagons
-	GLuint hexIndicies[18]{
-		
-		1, 6, 0,
-		2, 6, 1,
-		3, 6, 2,
-		4, 6, 3,
-		5, 6, 4,
-		0, 6, 5,
-		
-	};
 
 	//Vertices for the Pyramid
 	GLfloat pyramidVertices[104]{

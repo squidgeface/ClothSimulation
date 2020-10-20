@@ -60,6 +60,7 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 
 	//Load shader variables
 	m_giPhongProgram = ShaderLoader::CreateProgram("Resources/Shaders/3Dvertexshader.txt", "Resources/Shaders/phongFshader.txt");
+	m_giPhongProgram = ShaderLoader::CreateProgram("Resources/Shaders/3Dvertexshader.txt", "Resources/Shaders/phongFshader.txt");
 
 	//set culling on
 	glCullFace(GL_BACK);
@@ -97,20 +98,6 @@ void CGameManager::InitialiseMenu()
 		}
 	}
 
-	for (size_t y = 0; y < sqrt(gridSize); y++)
-	{
-		for (size_t x = 0; x < sqrt(gridSize); x++)
-		{
-			//offset each x and y to form a grid shape
-			float _x = -((sqrt(gridSize) / 2) * 15) + float(x * 10); //(sqrt(gridSize)) + (x * 5);
-			float _y = 0.0f - y;
-			CParticle* m_pSphere = new CParticle();
-			m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(_x, _y, 0.0f));
-			m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
-			m_Cloth.push_back(m_pSphere);
-		}
-	}
-
 	int counter = 0;
 	//Link Particles
 	for (size_t y = 0; y < sqrt(m_pSpheres.size()); y++)
@@ -142,36 +129,6 @@ void CGameManager::InitialiseMenu()
 			counter++;
 		}
 	}
-	counter = 0;
-	for (size_t y = 0; y < sqrt(m_Cloth.size()); y++)
-	{
-		for (size_t x = 0; x < sqrt(m_Cloth.size()); x++)
-		{
-			//if not the first column
-			if (x != 0)
-			{
-				m_Cloth[counter]->LinkParticles(m_Cloth[counter - 1]);
-				m_Cloth[counter - 1]->LinkParticles(m_Cloth[counter]);
-				//if not the first row
-				if (y != 0)
-				{
-					m_Cloth[counter]->LinkParticles(m_Cloth[counter - sqrt(m_Cloth.size())]);
-					m_Cloth[counter - sqrt(m_Cloth.size())]->LinkParticles(m_Cloth[counter]);
-					//m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - (sqrt(m_pSpheres.size()) + 1)]);
-				}
-			}
-			else
-			{
-				//if not the first row
-				if (y != 0)
-				{
-					m_Cloth[counter]->LinkParticles(m_Cloth[counter - sqrt(m_Cloth.size())]);
-					m_Cloth[counter - sqrt(m_Cloth.size())]->LinkParticles(m_Cloth[counter]);
-				}
-			}
-			counter++;
-		}
-	}
 	//set 5 anchors
 	anchors = 10;
 	for (size_t i = 0; i < anchors; i++)
@@ -187,12 +144,6 @@ void CGameManager::InitialiseMenu()
 	{
 		m_pAnchorSpheres[i]->LinkParticles(m_pSpheres[i]);
 		m_pSpheres[i]->LinkParticles(m_pAnchorSpheres[i]);
-	}
-	//Link top row of cloth with anchors with a gap in the center
-	for (int i = 0; i < anchors; i++)
-	{
-		m_pAnchorSpheres[i]->LinkParticles(m_Cloth[i]);
-		m_Cloth[i]->LinkParticles(m_Cloth[i]);
 	}
 	
 	
@@ -212,7 +163,6 @@ void CGameManager::InitialiseMenu()
 void CGameManager::Clear()
 {
 	m_pSpheres.clear();
-	m_Cloth.clear();
 	m_pAnchorSpheres.clear();
 	delete m_pBall;
 	m_pBall = 0;
@@ -231,11 +181,6 @@ void CGameManager::Render()
 		{
 			m_pSpheres[i]->RenderShapes(m_giPhongProgram);
 			m_pSpheres[i]->Draw();
-		}
-		for (size_t i = 0; i < m_Cloth.size(); i++)
-		{
-			m_Cloth[i]->RenderShapes(m_giPhongProgram);
-			m_Cloth[i]->Draw();
 		}
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 		{
@@ -274,15 +219,6 @@ void CGameManager::Update()
 			//m_pSpheres[i]->CheckObstacle(m_pBall);
 			//check floor collision
 			m_pSpheres[i]->CheckFloor(m_pFloor);
-		}
-		for (size_t i = 0; i < m_Cloth.size(); i++)
-		{
-			m_Cloth[i]->UpdateShapes();
-			m_Cloth[i]->Update();
-			//check for obstacle collision
-			//m_pSpheres[i]->CheckObstacle(m_pBall);
-			//check floor collision
-			m_Cloth[i]->CheckFloor(m_pFloor);
 		}
 	//update anchor points
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
@@ -354,7 +290,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				for (size_t i = 0; i < m_pSpheres.size(); i++)
 				{
 					m_pSpheres[i]->SetWind();
-					m_Cloth[i]->SetWind();
+					
 					m_fcounter++;
 				}
 				cout << "Setting Wind: " << endl;
@@ -421,8 +357,6 @@ void CGameManager::RipCloth()
 		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
 		{
 			m_pSpheres[i]->ApplyForce(vec3(-force.x * 50.0f * m_pSpheres[i]->GetMass(), -force.y * 500.0f * m_pSpheres[i]->GetMass(), 0.0f));
-			m_Cloth[i]->ApplyForce(vec3(-force.x * 50.0f * m_Cloth[i]->GetMass(), -force.y * 500.0f * m_Cloth[i]->GetMass(), 0.0f));
-
 		}
 	}
 	previousX = m_pInput->GetMouseX();

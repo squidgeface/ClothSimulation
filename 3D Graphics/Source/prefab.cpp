@@ -15,9 +15,7 @@
 #include "cubemap.h"
 #include "Model.h"
 #include "ShaderLoader.h"
-#include "terrain.h"
-#include "noise.h"
-#include "ssAnimatedModel.h"
+
 
 CPrefab::CPrefab()
 	: m_bRotations(false)
@@ -44,8 +42,6 @@ CPrefab::~CPrefab()
 	m_pCubeMap = 0;
 	delete m_pTexture;
 	m_pTexture = 0;
-	delete m_pAniModel;
-	m_pAniModel = 0;
 }
 
 void CPrefab::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, string path, float frameCount, vec3 _scale, vec3 _rotate, vec3 _translate)
@@ -67,21 +63,14 @@ void CPrefab::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType 
 		m_pMesh->CreateSphere();
 		break;
 	case MeshType::MODEL:
-		m_pAniModel = new CAniModel("Resources/Model/theDude.dae", "theDude.png", camera);
-		m_pAniModel->setCurrentAnimation(0, 30);
+
 		break;
 	case MeshType::GEOMETRY:
+
+
 		m_pMesh->CreateGrometry();
 		break;
-	case MeshType::TERRAIN:
-		m_pNoise = new CNoise();
-		//Generate bmp from noise for heightmap
-		m_pNoise->GenerateBMP();
-		m_pMesh->CreateTessQuad();
-		break;
-	case MeshType::TESSELATED:
-		m_pMesh->CreateTessQuad();
-		break;
+
 	default:
 		break;
 	}
@@ -237,11 +226,13 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 		{
 			RenderShadows(program);
 		}
-		m_pAniModel->render(m_pTime->GetDelta(), m_pNoise);
+		//m_pAniModel->render(m_pTime->GetDelta(), m_pNoise);
 		break;
 	}
 	case MeshType::GEOMETRY:
 	{
+
+		//add justine goe code
 		m_pTexture->Activate(program, 1);
 		m_pMesh->RenderGeometry();
 
@@ -270,9 +261,7 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 			RenderShadows(program);
 		}
 
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_pNoise->GetTexture());
-		glUniform1i(glGetUniformLocation(program, "HeightMap"),2);
+
 		
 		
 
@@ -328,10 +317,6 @@ void CPrefab::UpdateShapes(CCubemap* _cubeMap, CPrefab* _Object, CCamera* _Camer
 
 }
 
-void CPrefab::SetTerrain(CNoise* _noise)
-{
-	m_pNoise = _noise;
-}
 
 
 //set the object x,y position
@@ -394,19 +379,7 @@ void CPrefab::SetBlend(BlendType _blend)
 	blendType = _blend;
 }
 
-void CPrefab::FollowTerrain(CPrefab* _obj)
-{
-	if (m_eMeshType == MeshType::TERRAIN)
-	{
-		//if the object is on the terrain - get y position from the terrain
-		if ((_obj->GetObjPosition().x < 4096 && _obj->GetObjPosition().x > -4096) && (_obj->GetObjPosition().z < 4096 && _obj->GetObjPosition().z > -4096))
-		{
-			//scale x and y from object by 32 (4096/32 = 128 = terrain size/2)
-			float Scale = 16.f;
-			_obj->SetObjPosition(vec3(_obj->GetObjPosition().x, m_pNoise->getHeight(_obj->GetObjPosition().x / Scale, _obj->GetObjPosition().z / Scale) + 5.0f, _obj->GetObjPosition().z));
-		}
-	}
-}
+
 
 vec3 CPrefab::GetLightPos()
 {
@@ -435,14 +408,4 @@ void CPrefab::RenderShadows(GLuint program)
 	glBindTexture(GL_TEXTURE_2D, shadowTexture);
 	glUniform1i(glGetUniformLocation(program, "shadowMap"), 1);
 	
-}
-
-void CPrefab::SetAniProgram(GLuint _program)
-{
-	m_pAniModel->SetProgram(_program);
-}
-
-CNoise* CPrefab::GetNoise()
-{
-	return m_pNoise;
 }
