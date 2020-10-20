@@ -160,5 +160,14 @@
     <Text Include="Resources\Shaders\vertexshader.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="Resources\Shaders\GeometryFS.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Shaders\GeometryVS.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Shaders\GeoGrassGS.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

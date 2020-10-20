@@ -14,6 +14,7 @@
 #include "glm.hpp"
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
+#include <gtx/intersect.hpp>
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
@@ -23,6 +24,8 @@
 
 //Library includes
 #include <iostream>
+#include <Windows.h>
+#include <CSTDIO>
 #include <cmath>
 #include <vector>
 #include <string>
@@ -32,11 +35,15 @@
 #include <fstream>
 #include <sstream>
 #include <random>
+#include <chrono>
+
+
 
 //Local includes
 #include "ShaderLoader.h"
 
-constexpr auto PI = 3.14159265359;
+#define PI 3.14159265359
+namespace fs = std::experimental::filesystem;
 
 //namespace includes
 using namespace std;
@@ -54,20 +61,23 @@ enum class InputState
 //prefab mesh type
 enum class MeshType
 {
-	ANIQUAD,
+	TERRAIN,
 	QUAD,
 	PYRAMID,
+	GEOMETRY,
 	CUBE,
 	EMPTY,
 	SPHERE,
 	MODEL,
+	TESSELATED,
 };
-//enemy animation state
-enum class aniState {
-	NONE,
-	SPAWN,
-	ATTACK,
-	DEATH,
+
+enum class BlendType
+{
+	ADD,
+	SUB,
+	MULTI,
+	TRANS,
 };
 
 //namespace define
@@ -77,4 +87,10 @@ namespace Utils
 	const int ScreenHeight = 768;
 	const float HalfScreenW = ScreenWidth / 2;
 	const float HalfScreenH = ScreenHeight / 2;
+}
+
+static float RandomFloat()
+{
+	float r = (float)rand() / (float)RAND_MAX;
+	return r;
 }

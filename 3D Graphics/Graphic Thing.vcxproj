@@ -201,6 +201,9 @@
     <Text Include="Resources\Shaders\CMvertexshader.txt" />
     <Text Include="Resources\Shaders\fragshader.txt" />
     <Text Include="Resources\Shaders\fragshader2.txt" />
+    <Text Include="Resources\Shaders\GeoGrassGS.txt" />
+    <Text Include="Resources\Shaders\GeometryFS.txt" />
+    <Text Include="Resources\Shaders\GeometryVS.txt" />
     <Text Include="Resources\Shaders\ModelFshader.txt" />
     <Text Include="Resources\Shaders\ModelVShader.txt" />
     <Text Include="Resources\Shaders\phongFshader.txt" />

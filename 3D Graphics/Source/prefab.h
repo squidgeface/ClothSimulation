@@ -17,8 +17,9 @@ class CCamera;
 class CTime;
 class CInput;
 class CCubemap;
-class CModel;
-
+class CShadowMap;
+class CNoise;
+class CAniModel;
 
 class CPrefab
 {
@@ -26,58 +27,67 @@ class CPrefab
 public:
 
 	CPrefab();
-	CPrefab(int mx, int my);
 	~CPrefab();
 
 	//Game Functions
-	virtual void Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, string path, float frameCount = 0.0f, const vec3& scale = vec3(0.0, 0.0, 0.0), const vec3& rotate = vec3(0.0, 0.0, 0.0), const vec3& translate = vec3(0.0, 0.0, 0.0));
+	virtual void Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, string path, float frameCount = 0.0f, vec3 scale = vec3(0.0, 0.0, 0.0), vec3 rotate = vec3(0.0, 0.0, 0.0), vec3 translate = vec3(0.0, 0.0, 0.0));
 	void InitialiseTextures(const char* data, int slot);
 	virtual void RenderShapes(GLuint program, int slot = 1);
-	virtual void UpdateShapes(CCubemap* cubeMap = NULL, CPrefab* _Object = NULL);
+	virtual void UpdateShapes(CCubemap* cubeMap = NULL, CPrefab* _Object = NULL, CCamera* = NULL);
+
+	void SetTerrain(CNoise* _noise);
 
 	//math functions
-	float Magnitude(vec2 _source);
+	float Magnitude(vec3 _source);
 	float Distance(vec3 _source, vec3 _target);
 
-	//Object manipulation functions
-	void Shrink(float xScale, float yScale, float zScale);
-	void RotateToObject(CPrefab* _object);
-
 	//set functions
-	void SetLightPosition(vec3 _lightPos);
-	void SetLightColour(vec3 _lightCol);
-	void SetModel(CModel* _model);
-	void SetRotating();
-
+	void SetRotation(vec3 _rotation);
+	float GetRoataionY();
+	void SetBlend(BlendType _blend);
 	void SetObjPosition(vec3 _position);
-	void SetObjectVector();
-
 
 	//get functions
 	vec3 GetObjSize();
 	vec3 GetObjPosition();
 
-	
+	void FollowTerrain(CPrefab* _obj);
+
+	vec3 GetLightPos();
+
+	void EnableShadows(const GLuint& _texture);
+
+	void DisableShadows();
+
+	void RenderShadows(GLuint program);
+
+	void SetAniProgram(GLuint _program);
+
+	CNoise* GetNoise();
+
+
 
 protected:
 
 	//class pointers
-	CMesh* m_pMesh;
-	CTexture* m_pTexture;
-	CCamera* m_pCamera;
-	CTime* m_pTime;
-	CInput* m_pInput;
-	CCubemap* m_pCubeMap;
-	CModel* m_pObjMesh;
+	CMesh* m_pMesh = 0;
+	CTexture* m_pTexture = 0;
+	CCamera* m_pCamera = 0;
+	CTime* m_pTime = 0;
+	CInput* m_pInput = 0;
+	CCubemap* m_pCubeMap = 0;
+	CAniModel* m_pAniModel = 0;
+	CShadowMap* m_pShadowMap = 0;
+	CNoise* m_pNoise = 0;
 	//Matrix manipulation variables
 	vec3 m_v3ObjPosition, m_v3RotationAxisX, m_v3RotationAxisY, m_v3RotationAxisZ, m_v3ObjScale;
 	mat4 m_m4TranslationMatrix, m_m4RotationX, m_m4RotationZ, m_m4RotationY, m_m4ScaleMatrix, m_m4Model, MVP;
-	float m_fRotationAngle, m_fTexPos;
-	bool m_bRotations;
-	const int m_iMx, m_iMy;
-	int m_iX, m_iY;
+	float m_fRotationAngle = 0, m_fTexPos = 0;
+	bool m_bRotations, m_bStencil, m_bShadows = false;
 	MeshType m_eMeshType;
 	vec3 m_v3LightPosition;
 	vec3 m_v3LightColour;
+	BlendType blendType = BlendType::ADD;
+	GLuint shadowTexture = 0;
 	
 };
