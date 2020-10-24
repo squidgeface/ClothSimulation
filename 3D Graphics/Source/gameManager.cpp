@@ -242,6 +242,7 @@ void CGameManager::Render()
 				
 					if (y != sqrt(m_pSpheres.size()) - 1 && x != sqrt(m_pSpheres.size()) - 1)
 					{
+						
 						m_pSpheres[counter]->DrawGeo(m_pSpheres[counter+1]->GetObjPosition(), m_pSpheres[counter + sqrt(m_pSpheres.size())]->GetObjPosition(), m_pSpheres[counter + sqrt(m_pSpheres.size())+1]->GetObjPosition());
 					}
 				

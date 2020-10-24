@@ -151,12 +151,12 @@ float CParticle::GetMass()
 void CParticle::CheckObstacle(CPrefab* _obj)
 {
 	float dist = distance(_obj->GetObjPosition(), GetObjPosition());
-	if (distance(_obj->GetObjPosition(), GetObjPosition()) <= _obj->GetObjSize().x)
+	if (distance(_obj->GetObjPosition(), GetObjPosition()) <= _obj->GetObjSize().x + 3)
 	{
 		vec3 force = GetObjPosition() - _obj->GetObjPosition();
 		force = normalize(force) ;
 		SetObjPosition(GetObjPosition() + force);
-		ApplyForce(force * 100.0f * (31 - dist));
+		ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 4 - dist));
 	}
 }
 //Check for obstacles
@@ -209,16 +209,53 @@ void CParticle::Draw()
 void CParticle::DrawGeo(vec3 _right, vec3 _botLeft, vec3 _botRight)
 {
 	glUseProgram(clothProgram);
-	//left
-	glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(GetObjPosition()));
-	//right
-	glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_right));
-	//botLeft
-	glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
-	//botRight
-	glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(_botRight));
+	bool bRight = false;
+	bool bBotRight = false;
+	bool bBotLeft = false;
 
 
+		
+	for (int i = 0; i < OtherParts.size(); i++) {
+
+		if (OtherParts[i]->GetObjPosition() == _right)
+		{
+			bRight = true;
+		}
+
+		if (OtherParts[i]->GetObjPosition() == _botLeft)
+		{
+			bBotLeft = true;
+		}
+
+		if (OtherParts[i]->GetObjPosition() == _botRight)
+		{
+			bBotRight = true;
+		}
+
+	}
+		//left
+		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(GetObjPosition()));
+
+
+		//right
+		
+			glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_right));
+	
+		
+		
+		//botLeft
+		
+		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
+		
+		
+		//bot right
+			glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(_botRight));
+
+		
+
+
+
+	
 
 	geo->RenderShapes(clothProgram);
 }
