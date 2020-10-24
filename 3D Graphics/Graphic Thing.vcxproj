@@ -171,6 +171,7 @@
     <ClCompile Include="Source\particle.cpp" />
     <ClCompile Include="Source\prefab.cpp" />
     <ClCompile Include="Source\ShaderLoader.cpp" />
+    <ClCompile Include="Source\slider.cpp" />
     <ClCompile Include="Source\TextLabel.cpp" />
     <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\time.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Source\particle.h" />
     <ClInclude Include="Source\prefab.h" />
     <ClInclude Include="Source\ShaderLoader.h" />
+    <ClInclude Include="Source\slider.h" />
     <ClInclude Include="Source\TextLabel.h" />
     <ClInclude Include="Source\Texture.h" />
     <ClInclude Include="Source\time.h" />

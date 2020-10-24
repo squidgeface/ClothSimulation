@@ -20,6 +20,7 @@ class CCamera;
 class CTextLabel;
 class CButton;
 class CParticle;
+class CSlider;
 
 //enum class
 enum class GameState
@@ -37,6 +38,7 @@ public:
 	~CGameManager();
 	//functions
 	void InitialiseWindow(int argc, char **argv);
+	void SetUpCloth();
 	void InitialiseMenu();
 
 	void Clear();
@@ -55,13 +57,16 @@ public:
 	void ProcessInput(InputState* KeyState, InputState* MouseState);
 
 	void RipCloth();
+	void SetClothSize(int _size);
 
+	void SetAnchorSize(int _size);
 
 protected:
 	//Variables
 
 	//shader programs
 	GLuint m_giTextProgram = 0;
+	GLuint m_giStaticProgram = 0;
 	GLuint m_giPhongProgram = 0;
 
 	//Game objects
@@ -70,7 +75,8 @@ protected:
 	vector<CParticle*> m_pAnchorSpheres;
 	CPrefab* m_pBall = 0;
 	CPrefab* m_pFloor = 0;
-
+	CSlider* sizeSlider = 0;
+	CSlider* anchorSlider = 0;
 
 	//Game management objects
 	CInput* m_pInput = 0;
@@ -82,11 +88,12 @@ protected:
 	float m_fcounter = 0.0f;
 	//bools and switches
 	bool m_bPaused = false;
-	int anchors = 0;
 	vec3 m_v3RayDirection = vec3();
 	float previousX = 0;
 	float previousY = 0;
 	bool isClicking = false;
+	int gridSize = 100;
+	int anchors = 10;
 	//enum
 	GameState m_eGameState = GameState::MENU;
 

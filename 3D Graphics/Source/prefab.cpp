@@ -128,23 +128,16 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 		break;
 	}
 
-	glCullFace(GL_BACK);
-	glEnable(GL_CULL_FACE);
+
 	if ( m_eMeshType == MeshType::CUBE || m_eMeshType == MeshType::SPHERE || m_eMeshType == MeshType::MODEL)
 	{
+		glCullFace(GL_BACK);
+		glEnable(GL_CULL_FACE);
 		//set CCW winding
 		glFrontFace(GL_CCW);
 	}
 
-	if (m_eMeshType == MeshType::TERRAIN || m_eMeshType == MeshType::TESSELATED)
-	{
-		//set CW winding
-		glFrontFace(GL_CCW);
-	}
-
 	glUseProgram(program);
-
-	RenderShadows(program);
 
 	//objects local properties and matrix transformation rendering
 	GLuint comboLoc = glGetUniformLocation(program, "MVP");
@@ -217,18 +210,6 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 
 		break;
 	}
-	case MeshType::MODEL:
-	{
-		//render model mesh
-		
-		m_pTexture->Activate(program, 1);
-		if (m_bShadows)
-		{
-			RenderShadows(program);
-		}
-		//m_pAniModel->render(m_pTime->GetDelta(), m_pNoise);
-		break;
-	}
 	case MeshType::GEOMETRY:
 	{
 
@@ -236,49 +217,6 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 		m_pTexture->Activate(program, 1);
 		m_pMesh->RenderGeometry();
 
-		break;
-	}
-	case MeshType::TERRAIN:
-	{
-		
-
-		float inner = 0;
-		float outer = 0;
-		inner = (256 / Distance(m_pCamera->GetCamPos(), GetObjPosition())) * 100;
-		outer = (256 / Distance(m_pCamera->GetCamPos(), GetObjPosition())) * 100;
-		if (inner <= 256.0f)
-		{
-			inner = 256.0f;
-			outer = 256.0f;
-		}
-		glUniform1f(glGetUniformLocation(program, "inner"), inner);
-		glUniform1f(glGetUniformLocation(program, "outer"), outer);
-
-		m_pTexture->Activate(program, 1);
-
-		if (m_bShadows)
-		{
-			RenderShadows(program);
-		}
-
-
-		
-		
-
-		m_pMesh->RenderTesselated();
-		break;
-	}
-	case MeshType::TESSELATED:
-	{
-		float inner = 0;
-		float outer = 0;
-		inner = (5/Distance(m_pCamera->GetCamPos(), GetObjPosition())) * 100;
-		outer = (3/Distance(m_pCamera->GetCamPos(), GetObjPosition())) * 100;
-
-		glUniform1f(glGetUniformLocation(program, "inner"), inner);
-		glUniform1f(glGetUniformLocation(program, "outer"), outer);
-		m_pTexture->Activate(program, 1);
-		m_pMesh->RenderTesselated();
 		break;
 	}
 	default:

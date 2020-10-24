@@ -15,6 +15,7 @@
 #include "TextLabel.h"
 #include "button.h"
 #include "particle.h"
+#include "slider.h"
 
 //constructor
 CGameManager::CGameManager()
@@ -59,7 +60,7 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 
 	//Load shader variables
-	m_giPhongProgram = ShaderLoader::CreateProgram("Resources/Shaders/3Dvertexshader.txt", "Resources/Shaders/phongFshader.txt");
+	m_giStaticProgram = ShaderLoader::CreateProgram("Resources/Shaders/vertexshader.txt", "Resources/Shaders/fragshader.txt");
 	m_giPhongProgram = ShaderLoader::CreateProgram("Resources/Shaders/3Dvertexshader.txt", "Resources/Shaders/phongFshader.txt");
 
 	//set culling on
@@ -78,11 +79,8 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 	m_pProjCamera->SetProjection();
 }
 
-//Initialise Menu items
-void CGameManager::InitialiseMenu()
+void CGameManager::SetUpCloth()
 {
-	//create a 12x12 particle grid
-	int gridSize = 100;
 	//Load shapes
 	for (size_t y = 0; y < sqrt(gridSize); y++)
 	{
@@ -129,8 +127,7 @@ void CGameManager::InitialiseMenu()
 			counter++;
 		}
 	}
-	//set 5 anchors
-	anchors = 10;
+	//set anchors
 	for (size_t i = 0; i < anchors; i++)
 	{
 		CParticle* m_pSphere = new CParticle();
@@ -140,13 +137,47 @@ void CGameManager::InitialiseMenu()
 		m_pAnchorSpheres.push_back(m_pSphere);
 	}
 	//Link top row of cloth with anchors with a gap in the center
-	for (int i = 0; i < anchors; i++)
+
+	int d = anchors % 2;
+	if (d != 0)
 	{
-		m_pAnchorSpheres[i]->LinkParticles(m_pSpheres[i]);
-		m_pSpheres[i]->LinkParticles(m_pAnchorSpheres[i]);
+		for (int i = 0; i < (anchors / 2); i++)
+		{
+			m_pAnchorSpheres[i]->LinkParticles(m_pSpheres[i]);
+			m_pSpheres[i]->LinkParticles(m_pAnchorSpheres[i]);
+		}
+		int count = 1;
+		for (int i = anchors - 1; i > anchors / 2; i--)
+		{
+			m_pAnchorSpheres[i]->LinkParticles(m_pSpheres[sqrtf(m_pSpheres.size()) - count]);
+			m_pSpheres[sqrtf(m_pSpheres.size()) - count]->LinkParticles(m_pAnchorSpheres[i]);
+			count++;
+		}
+		m_pAnchorSpheres[anchors / 2]->LinkParticles(m_pSpheres[sqrtf(m_pSpheres.size()) / 2]);
 	}
-	
-	
+	else
+	{
+		for (int i = 0; i < (anchors / 2); i++)
+		{
+			m_pAnchorSpheres[i]->LinkParticles(m_pSpheres[i]);
+			m_pSpheres[i]->LinkParticles(m_pAnchorSpheres[i]);
+		}
+		int count = 1;
+		for (int i = anchors - 1; i > anchors / 2 - 1; i--)
+		{
+			m_pAnchorSpheres[i]->LinkParticles(m_pSpheres[sqrtf(m_pSpheres.size()) - count]);
+			m_pSpheres[sqrtf(m_pSpheres.size()) - count]->LinkParticles(m_pAnchorSpheres[i]);
+			count++;
+		}
+		
+	}
+}
+
+//Initialise Menu items
+void CGameManager::InitialiseMenu()
+{
+	SetUpCloth();
+
 	//create a ball obstacle
 	m_pBall = new CPrefab;
 	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -20.0f, 0.0f));
@@ -158,17 +189,20 @@ void CGameManager::InitialiseMenu()
 	m_pFloor->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(500.0f, 1.0f, 500.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -200.0f, 0.0f));
 	m_pFloor->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
+	//create slider for Cloth size
+	sizeSlider = new CSlider();
+	sizeSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/sizeSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(200.0f, 50.0f, 0.0f));
+	//create slider for Anchors
+	anchorSlider = new CSlider();
+	anchorSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/anchorSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(200.0f, 100.0f, 0.0f));
+
 }
 //clear menu
 void CGameManager::Clear()
 {
 	m_pSpheres.clear();
 	m_pAnchorSpheres.clear();
-	delete m_pBall;
-	m_pBall = 0;
-	delete m_pFloor;
-	m_pFloor = 0;
-	InitialiseMenu();
+	SetUpCloth();
 }
 //render function
 void CGameManager::Render()
@@ -176,6 +210,7 @@ void CGameManager::Render()
 	//Clear buffers
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	
+	m_pFloor->RenderShapes(m_giPhongProgram);
 
 		for (size_t i = 0; i < m_pSpheres.size(); i++)
 		{
@@ -193,9 +228,10 @@ void CGameManager::Render()
 		
 		//render floor and obstacle
 		//m_pBall->RenderShapes(m_giPhongProgram);
-		m_pFloor->RenderShapes(m_giPhongProgram);
-
 	
+
+		sizeSlider->Render(m_giStaticProgram);
+		anchorSlider->Render(m_giStaticProgram);
 
 
 	glutSwapBuffers();
@@ -234,7 +270,10 @@ void CGameManager::Update()
 		//set camera looking at anchors
 		m_pProjCamera->LookAtObject(m_pAnchorSpheres[(m_pAnchorSpheres.size() / 2) - 1]->GetObjPosition());
 
-	
+		sizeSlider->Update();
+		anchorSlider->Update();
+		SetClothSize(sizeSlider->GetClothSize());
+		SetAnchorSize(anchorSlider->GetAnchorSize());
 
 	//update game information
 	glutPostRedisplay();
@@ -356,14 +395,22 @@ void CGameManager::RipCloth()
 	{
 		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
 		{
-			m_pSpheres[i]->ApplyForce(vec3(-force.x * 50.0f * m_pSpheres[i]->GetMass(), -force.y * 500.0f * m_pSpheres[i]->GetMass(), 0.0f));
+			m_pSpheres[i]->ApplyForce(vec3(force.x * 50.0f * m_pSpheres[i]->GetMass(), -force.y * 100.0f * m_pSpheres[i]->GetMass(), 0.0f));
 		}
 	}
 	previousX = m_pInput->GetMouseX();
 	previousY = m_pInput->GetMouseY();
 }
 
+void CGameManager::SetClothSize(int _size)
+{
+	gridSize = _size;
+}
 
+void CGameManager::SetAnchorSize(int _size)
+{
+	anchors = _size;
+}
 
 //keyboard input functions
 void CGameManager::KeyboardDown(unsigned char key, int x, int y)
