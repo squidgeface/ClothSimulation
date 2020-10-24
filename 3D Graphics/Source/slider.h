@@ -19,7 +19,7 @@ public:
 
 	bool CheckHover();
 
-	void Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, const char* path, float frameCount, vec3 _scale, vec3 _rotate, vec3 _translate);
+	void Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, const char* path, float frameCount, vec3 _scale, vec3 _rotate, vec3 _translate, bool isAnchor);
 
 	void Render(GLuint program);
 
@@ -30,6 +30,7 @@ public:
 	int GetAnchorSize();
 
 	void SetClothSize();
+	void SetClothSizeNumber(int num);
 	void SetAnchorSize();
 		
 
@@ -39,5 +40,6 @@ private:
 	CInput* Input = 0;
 	int size = 100;
 	int anchors = 10;
+	bool m_bisAnchor = false;
 };
 

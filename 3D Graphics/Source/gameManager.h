@@ -57,6 +57,7 @@ public:
 	void ProcessInput(InputState* KeyState, InputState* MouseState);
 
 	void RipCloth();
+	void RipClothClick();
 	void SetClothSize(int _size);
 
 	void SetAnchorSize(int _size);
@@ -87,6 +88,7 @@ protected:
 	//counters and rates
 	float m_fcounter = 0.0f;
 	//bools and switches
+	bool m_bRipToggle = false;
 	bool m_bPaused = false;
 	vec3 m_v3RayDirection = vec3();
 	float previousX = 0;

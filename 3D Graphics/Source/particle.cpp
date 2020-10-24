@@ -15,8 +15,8 @@ void CParticle::Update()
 	//Check if particle is one of the static points
 	
 		//nice gentle breeze
-		float seedx = float(rand() % 80) - 40.0f;
-		float seedz = float(rand() % 80) - 40.0f;
+		float seedx = float(rand() % 80) - 37.0f;
+		float seedz = float(rand() % 80) - 37.0f;
 		
 		//Seed with with values
 		Wind = vec3(-seedx, 0.0f, -seedz);

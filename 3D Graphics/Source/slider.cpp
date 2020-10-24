@@ -22,19 +22,21 @@ bool CSlider::CheckHover()
     }
 }
 
-void CSlider::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, const char* path, float frameCount, vec3 _scale, vec3 _rotate, vec3 _translate)
+void CSlider::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, const char* path, float frameCount, vec3 _scale, vec3 _rotate, vec3 _translate, bool isAnchor)
 {
     Background->Initialise(camera, timer, input, type, "", frameCount, _scale, _rotate, _translate);
-    Arrow->Initialise(camera, timer, input, type, "", frameCount, vec3(_scale.x/10.0f,(_scale.y/2.0f),_scale.z), _rotate, vec3(_translate.x,_translate.y+10.0f,_translate.z));
+    Arrow->Initialise(camera, timer, input, type, "", frameCount, vec3(_scale.x/10.0f,(_scale.y/2.0f),_scale.z), _rotate, vec3(_translate.x + 90.0f,_translate.y+10.0f,_translate.z));
     Background->InitialiseTextures(path, 1);
     Arrow->InitialiseTextures("Resources/Textures/arrow.png", 1);
     Input = input;
+    m_bisAnchor = isAnchor;
 }
 
 void CSlider::Render(GLuint program)
 {
-    Background->RenderShapes(program);
     Arrow->RenderShapes(program);
+    Background->RenderShapes(program);
+  
 }
 
 void CSlider::Update()
@@ -42,8 +44,15 @@ void CSlider::Update()
     Background->UpdateShapes();
     Arrow->UpdateShapes();
     Slide();
-    SetClothSize();
-    SetAnchorSize();
+
+    if (m_bisAnchor) {
+        SetAnchorSize();
+    }
+    else {
+        SetClothSize();
+    }
+   
+  
 }
 
 void CSlider::Slide()
@@ -106,6 +115,12 @@ void CSlider::SetClothSize()
     size = distance;
 }
 
+void CSlider::SetClothSizeNumber(int num)
+{
+    
+    size = num;
+}
+
 void CSlider::SetAnchorSize()
 {
     int distance = Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x / 2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z)) / 2;
@@ -142,9 +157,9 @@ void CSlider::SetAnchorSize()
         distance = 10;
     }
 
-    if (distance > sqrtf(size))
+    if (distance > sqrtf(size) )
     {
-        distance = sqrtf(size);
+        distance = sqrtf(size) ;
     }
     anchors = distance;
 }

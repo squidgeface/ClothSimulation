@@ -82,6 +82,7 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 
 void CGameManager::SetUpCloth()
 {
+
 	//Load shapes
 	for (size_t y = 0; y < sqrt(gridSize); y++)
 	{
@@ -89,7 +90,7 @@ void CGameManager::SetUpCloth()
 		{
 			//offset each x and y to form a grid shape
 			float _x = -((sqrt(gridSize) / 2) * 15) + float(x * 10); //(sqrt(gridSize)) + (x * 5);
-			float _y = 0.0f - y;
+			float _y =  -20 + (-5.0f * y);
 			CParticle* m_pSphere = new CParticle();
 			m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
 			m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
@@ -113,7 +114,12 @@ void CGameManager::SetUpCloth()
 				{
 					m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - sqrt(m_pSpheres.size())]);
 					m_pSpheres[counter - sqrt(m_pSpheres.size())]->LinkParticles(m_pSpheres[counter]);
-					//m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - (sqrt(m_pSpheres.size()) + 1)]);
+					m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - (sqrt(m_pSpheres.size()) + 1)]);
+				}
+
+				if (y != sqrt(m_pSpheres.size() ) - 1)
+				{
+					m_pSpheres[counter]->LinkParticles(m_pSpheres[counter + (sqrt(m_pSpheres.size()) - 1)]);
 				}
 			}
 			else
@@ -166,6 +172,7 @@ void CGameManager::SetUpCloth()
 		int count = 1;
 		for (int i = anchors - 1; i > anchors / 2 - 1; i--)
 		{
+		
 			m_pAnchorSpheres[i]->LinkParticles(m_pSpheres[sqrtf(m_pSpheres.size()) - count]);
 			m_pSpheres[sqrtf(m_pSpheres.size()) - count]->LinkParticles(m_pAnchorSpheres[i]);
 			count++;
@@ -192,10 +199,10 @@ void CGameManager::InitialiseMenu()
 
 	//create slider for Cloth size
 	sizeSlider = new CSlider();
-	sizeSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/sizeSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(200.0f, 50.0f, 0.0f));
+	sizeSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/sizeSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(200.0f, 50.0f, 0.0f), false);
 	//create slider for Anchors
 	anchorSlider = new CSlider();
-	anchorSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/anchorSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(200.0f, 100.0f, 0.0f));
+	anchorSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/anchorSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(200.0f, 100.0f, 0.0f), true);
 
 }
 //clear menu
@@ -203,6 +210,9 @@ void CGameManager::Clear()
 {
 	m_pSpheres.clear();
 	m_pAnchorSpheres.clear();
+
+	SetClothSize(sizeSlider->GetClothSize());
+	SetAnchorSize(anchorSlider->GetAnchorSize());
 	SetUpCloth();
 }
 //render function
@@ -263,7 +273,15 @@ void CGameManager::Update()
 			m_pAnchorSpheres[i]->UpdateShapes();
 			m_pAnchorSpheres[i]->Update();
 		}
-		RipCloth();
+
+		if (m_bRipToggle)
+		{
+			RipCloth();
+		}
+		else {
+			RipClothClick();
+		}
+		
 		m_pBall->UpdateShapes();
 
 		m_pFloor->UpdateShapes();
@@ -273,8 +291,9 @@ void CGameManager::Update()
 
 		sizeSlider->Update();
 		anchorSlider->Update();
-		SetClothSize(sizeSlider->GetClothSize());
-		SetAnchorSize(anchorSlider->GetAnchorSize());
+
+		anchorSlider->SetClothSizeNumber(sizeSlider->GetClothSize());
+		
 
 	//update game information
 	glutPostRedisplay();
@@ -353,10 +372,22 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				for (int i = 0; i < anchors; i++)
 				{
 					m_pAnchorSpheres[i]->UnLinkParticles();
+
 				}
+
+				for (size_t i = 0; i < sqrt(m_pSpheres.size()); i++)
+				{
+					m_pSpheres[i]->UnLinkParticles();
+				}
+				
 				m_fcounter++;
 
 				cout << "Dropping Cloth" << endl;
+			}
+			if (KeyState['f'] == InputState::INPUT_DOWN)
+			{
+				m_bRipToggle = !m_bRipToggle;
+				m_fcounter++;
 			}
 
 			if (MouseState[0] == InputState::INPUT_DOWN)
@@ -369,7 +400,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			}
 			
 		}
-		else if (KeyState['q'] == InputState::INPUT_UP && KeyState['r'] == InputState::INPUT_UP && KeyState['x'] == InputState::INPUT_UP)
+		else if (KeyState['q'] == InputState::INPUT_UP && KeyState['r'] == InputState::INPUT_UP && KeyState['x'] == InputState::INPUT_UP && KeyState['f'] == InputState::INPUT_UP)
 		{
 		//reset counter on mouse up
 			m_fcounter = 0.0f;
@@ -403,6 +434,22 @@ void CGameManager::RipCloth()
 	previousY = m_pInput->GetMouseY();
 }
 
+void CGameManager::RipClothClick()
+{
+	vec3 mousePos = GetRayFromMouse();
+	
+	float m_imouseX = 2.0f * m_pInput->GetMouseX();// / Utils::ScreenWidth;
+	float m_imouseY = 0.0f - (2.0f * m_pInput->GetMouseY());// / Utils::ScreenHeight);
+
+	for (size_t i = 0; i < m_pSpheres.size(); i++)
+	{
+		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
+		{
+			m_pSpheres[i]->UnLinkParticles();
+		}
+	}
+
+}
 void CGameManager::SetClothSize(int _size)
 {
 	gridSize = _size;
