@@ -61,15 +61,12 @@ enum class InputState
 //prefab mesh type
 enum class MeshType
 {
-	TERRAIN,
 	QUAD,
-	PYRAMID,
+	TRI,
 	GEOMETRY,
 	CUBE,
 	EMPTY,
 	SPHERE,
-	MODEL,
-	TESSELATED,
 };
 
 enum class BlendType

@@ -20,6 +20,7 @@ public:
 	~CMesh();
 
 	void CreateQuad();
+	void CreatePyramid();
 	void CreateCube();
 	void CreateSphere();
 	void Draw();
@@ -56,8 +57,7 @@ protected:
 		0, 2, 3,	//second triangle
 	};
 
-
-	//Vertices for the Pyramid
+//Vertices for the Pyramid
 	GLfloat pyramidVertices[104]{
 
 		//position 				//normals			//Texture coords	

@@ -63,8 +63,23 @@ void CSlider::Slide()
             Arrow->GetObjPosition().x - Arrow->GetObjSize().x > Background->GetObjPosition().x - Background->GetObjSize().x)
         {
             Arrow->SetObjPosition(vec3(Input->GetMouseX(), Arrow->GetObjPosition().y, Arrow->GetObjPosition().z));
+            mouseDown = 1;
         }
     }
+    if (mouseDown == 1 && Input->GetMouseState()[0] == InputState::INPUT_UP)
+    {
+        mouseDown = 2;
+    }
+}
+
+void CSlider::ResetMouse()
+{
+    mouseDown = 0;
+}
+
+int CSlider::GetMouse()
+{
+    return mouseDown;
 }
 
 int CSlider::GetClothSize()
@@ -81,6 +96,38 @@ void CSlider::SetClothSize()
 {
     int distance = Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x/2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z))/2;
     if (distance <= 9)
+    {
+        distance = 3;
+    }
+    else if (distance > 9 && distance <= 16)
+    {
+        distance = 4;
+    }
+    else if (distance > 16 && distance <= 25)
+    {
+        distance = 5;
+    }
+    else if (distance > 25 && distance <= 36)
+    {
+        distance = 6;
+    }
+    else if (distance > 36 && distance <= 49)
+    {
+        distance = 7;
+    }
+    else if (distance > 49 && distance <= 72)
+    {
+        distance = 8;
+    }
+    else if (distance > 72 && distance <= 81)
+    {
+        distance = 9;
+    }
+    else if (distance > 81)
+    {
+        distance = 10;
+    }
+    /*if (distance <= 9)
     {
         distance = 9;
     }
@@ -111,7 +158,7 @@ void CSlider::SetClothSize()
     else if (distance > 81)
     {
         distance = 100;
-    }
+    }*/
     size = distance;
 }
 
@@ -157,9 +204,9 @@ void CSlider::SetAnchorSize()
         distance = 10;
     }
 
-    if (distance > sqrtf(size) )
+    if (distance > size)
     {
-        distance = sqrtf(size) ;
+        distance = size;
     }
     anchors = distance;
 }

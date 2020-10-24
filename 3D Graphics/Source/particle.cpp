@@ -109,7 +109,7 @@ void CParticle::Update()
 		//set static position
 		SetObjPosition(vec3(GetObjPosition().x,0.0f,GetObjPosition().z));
 	}
-	else
+	else if (geo->GetObjPosition() != vec3())
 	{
 		geo->UpdateShapes();
 		geo->SetObjPosition(GetObjPosition());
@@ -180,11 +180,17 @@ void CParticle::UnLinkParticles()
 
 void CParticle::Draw()
 {
-	float SCALEx = 275.0 - GetObjPosition().z;
+	/*float SCALEx = 275.0 - GetObjPosition().z;
 	float SCALEy = 170.0 - GetObjPosition().z;
 	
 	float booster = 400.0f;
-	float upBoost = 0.6f + GetObjPosition().z/ booster;
+	float upBoost = 0.6f + GetObjPosition().z/ booster;*/
+	
+	float SCALEx = 1;
+	float SCALEy = 1;
+	
+	float booster = 0;
+	float upBoost = 0;
 	
 
 	for (size_t i = 0; i < OtherParts.size(); i++)
@@ -213,10 +219,16 @@ void CParticle::DrawGeo(vec3 _left, vec3 _botLeft, vec3 _right)
 	bool bLeft = false;
 	bool bBotLeft = false;
 
-	// left ---- right
-	//	|			|
+	// left   ---- right
+	//	|			|	
 	//	|			|
 	//botLeft ---- this
+
+	//Justin's method
+	// this   ----  right
+	//	|			  |
+	//	|			  |
+	//botLeft ---- botRight
 		
 	for (int i = 0; i < OtherParts.size(); i++) {
 
@@ -250,35 +262,27 @@ void CParticle::DrawGeo(vec3 _left, vec3 _botLeft, vec3 _right)
 		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_right));
 	}
 
-		if (bRight)
-		{
-			//right
-			glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_right));
-		}
-		else
-		{
-			//right
-			glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(GetObjPosition()));
-		}
+	if (bRight)
+	{
+		//right
+		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_right));
+	}
+	else
+	{
+		//right
+		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(GetObjPosition()));
+	}
 		
-		if (bBotLeft)
-		{
-			//botLeft
-			glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
-		}
-		else
-		{
-			//botLeft
-			glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(GetObjPosition()));
-		}
-
-			
-	
-		
-
-
-
-	
+	if (bBotLeft)
+	{
+		//botLeft
+		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
+	}
+	else
+	{
+		//botLeft
+		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(GetObjPosition()));
+	}
 
 	geo->RenderShapes(clothProgram);
 }

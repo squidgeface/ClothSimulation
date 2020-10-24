@@ -26,6 +26,8 @@ public:
 	void Update();
 
 	void Slide();
+	void ResetMouse();
+	int GetMouse();
 	int GetClothSize();
 	int GetAnchorSize();
 
@@ -41,5 +43,6 @@ private:
 	int size = 100;
 	int anchors = 10;
 	bool m_bisAnchor = false;
+	int mouseDown = 0;
 };
 

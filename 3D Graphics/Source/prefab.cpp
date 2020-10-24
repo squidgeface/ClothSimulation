@@ -62,8 +62,8 @@ void CPrefab::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType 
 	case MeshType::SPHERE:
 		m_pMesh->CreateSphere();
 		break;
-	case MeshType::MODEL:
-
+	case MeshType::TRI:
+		m_pMesh->CreatePyramid();
 		break;
 	case MeshType::GEOMETRY:
 
@@ -129,7 +129,7 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 	}
 
 
-	if ( m_eMeshType == MeshType::CUBE || m_eMeshType == MeshType::SPHERE || m_eMeshType == MeshType::MODEL)
+	if ( m_eMeshType == MeshType::CUBE || m_eMeshType == MeshType::SPHERE || m_eMeshType == MeshType::TRI)
 	{
 		glCullFace(GL_BACK);
 		glEnable(GL_CULL_FACE);
@@ -183,16 +183,25 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 
 		break;
 	}
+	case MeshType::TRI:
+	{
+		
+
+		//regular render
+		m_pTexture->Activate(program, 1);
+		
+		m_pMesh->Draw();
+
+		
+		break;
+	}	
 	case MeshType::CUBE:
 	{
 		
 
 		//regular render
 		m_pTexture->Activate(program, 1);
-		if (m_bShadows)
-		{
-			RenderShadows(program);
-		}
+	
 		m_pMesh->Draw();
 
 		
@@ -203,10 +212,7 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 		
 		//regular render
 		m_pTexture->Activate(program, 1);
-		if (m_bShadows)
-		{
-			RenderShadows(program);
-		}
+	
 		//Draw the shapes
 		m_pMesh->Draw();
 
@@ -247,10 +253,6 @@ void CPrefab::UpdateShapes(CCubemap* _cubeMap, CPrefab* _Object, CCamera* _Camer
 	//Model matrix calculation
 	m_m4Model = m_m4TranslationMatrix * m_m4RotationZ * m_m4RotationX * m_m4RotationY *  m_m4ScaleMatrix;
 
-	if (m_eMeshType == MeshType::MODEL)
-	{
-		//m_pAniModel->Update(m_m4Model);
-	}
 
 	//Combo matrix
 	MVP = m_pCamera->GetCamera() * m_pCamera->GetView() * m_m4Model;

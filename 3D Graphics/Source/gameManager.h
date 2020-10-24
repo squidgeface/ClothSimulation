@@ -58,7 +58,9 @@ public:
 
 	void RipCloth();
 	void RipClothClick();
-	void SetClothSize(int _size);
+	void SetClothWidth(int _size);
+
+	void SetClothHeight(int _size);
 
 	void SetAnchorSize(int _size);
 
@@ -75,8 +77,10 @@ protected:
 	vector<CParticle*> m_Cloth;
 	vector<CParticle*> m_pAnchorSpheres;
 	CPrefab* m_pBall = 0;
+	CPrefab* m_pTri = 0;
 	CPrefab* m_pFloor = 0;
-	CSlider* sizeSlider = 0;
+	CSlider* widthSlider = 0;
+	CSlider* heightSlider = 0;
 	CSlider* anchorSlider = 0;
 
 	//Game management objects
@@ -94,7 +98,9 @@ protected:
 	float previousX = 0;
 	float previousY = 0;
 	bool isClicking = false;
-	int gridSize = 100;
+	int shape = 0;
+	int width = 10;
+	int height = 10;
 	int anchors = 10;
 	//enum
 	GameState m_eGameState = GameState::MENU;
