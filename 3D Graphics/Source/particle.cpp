@@ -206,14 +206,17 @@ void CParticle::Draw()
 	
 }
 
-void CParticle::DrawGeo(vec3 _right, vec3 _botLeft, vec3 _botRight)
+void CParticle::DrawGeo(vec3 _left, vec3 _botLeft, vec3 _right)
 {
 	glUseProgram(clothProgram);
 	bool bRight = false;
-	bool bBotRight = false;
+	bool bLeft = false;
 	bool bBotLeft = false;
 
-
+	// left ---- right
+	//	|			|
+	//	|			|
+	//botLeft ---- this
 		
 	for (int i = 0; i < OtherParts.size(); i++) {
 
@@ -227,30 +230,50 @@ void CParticle::DrawGeo(vec3 _right, vec3 _botLeft, vec3 _botRight)
 			bBotLeft = true;
 		}
 
-		if (OtherParts[i]->GetObjPosition() == _botRight)
+		if (OtherParts[i]->GetObjPosition() == _left)
 		{
-			bBotRight = true;
+			bLeft = true;
 		}
 
 	}
+
+	//bot right (this)
+	glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(GetObjPosition()));
+
+	if (bLeft)
+	{
 		//left
-		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(GetObjPosition()));
+		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_left));
+	}
+	else
+	{
+		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_right));
+	}
 
-
-		//right
-		
+		if (bRight)
+		{
+			//right
 			glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_right));
-	
+		}
+		else
+		{
+			//right
+			glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(GetObjPosition()));
+		}
 		
-		
-		//botLeft
-		
-		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
-		
-		
-		//bot right
-			glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(_botRight));
+		if (bBotLeft)
+		{
+			//botLeft
+			glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
+		}
+		else
+		{
+			//botLeft
+			glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(GetObjPosition()));
+		}
 
+			
+	
 		
 
 
