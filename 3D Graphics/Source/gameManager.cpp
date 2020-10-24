@@ -249,19 +249,20 @@ void CGameManager::Render()
 			m_pAnchorSpheres[i]->RenderShapes(m_giPhongProgram);
 		}
 		int counter = 0;
-		//Link Particles
+		//Draw Geometry
 		for (size_t y = 0; y < height; y++)
 		{
 			for (size_t x = 0; x < width; x++)
 			{
-				if (x != 0)
+				if (x != width - 1)
 				{
-					if (y != height - 1 && x != width - 1)
+					if (y != height - 1)
 					{
-
-						m_pSpheres[counter]->DrawGeo(m_pSpheres[counter - 1]->GetObjPosition(), m_pSpheres[counter + width]->GetObjPosition(), m_pSpheres[counter + width - 1]->GetObjPosition());
+						//topLeft						//topRight									//botLeft										//botRight
+						m_pSpheres[counter]->DrawGeo2(m_pSpheres[counter + 1]->GetObjPosition(), m_pSpheres[counter + width]->GetObjPosition(), m_pSpheres[counter + width + 1]->GetObjPosition());
 					}
 				}
+				
 				
 				counter++;
 			}

@@ -212,27 +212,40 @@ void CParticle::Draw()
 	
 }
 
-void CParticle::DrawGeo(vec3 _left, vec3 _botLeft, vec3 _right)
+void CParticle::DrawGeo(vec3 _botLeft, vec3 _Right, vec3 _Left)
 {
 	glUseProgram(clothProgram);
 	bool bRight = false;
 	bool bLeft = false;
 	bool bBotLeft = false;
 
-	// left   ---- right
-	//	|			|	
-	//	|			|
-	//botLeft ---- this
+	//Alternate method
+	// Left  ----  right
+	//	|			  |
+	//	|			  |
+	//botLeft ----  this
+	//topLeft
+	glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_Left));
+	//Right
+	glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_Right));
+	//botRight
+	glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(GetObjPosition()));
+	//botLeft
+	glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
 
-	//Justin's method
-	// this   ----  right
-	//	|			  |
-	//	|			  |
-	//botLeft ---- botRight
-		
+	geo->RenderShapes(clothProgram);
+}
+
+void CParticle::DrawGeo2(vec3 _Right, vec3 _botLeft, vec3 _botRight)
+{
+	glUseProgram(clothProgram);
+	bool bRight = false;
+	bool bBotRight = false;
+	bool bBotLeft = false;
+
 	for (int i = 0; i < OtherParts.size(); i++) {
 
-		if (OtherParts[i]->GetObjPosition() == _right)
+		if (OtherParts[i]->GetObjPosition() == _Right)
 		{
 			bRight = true;
 		}
@@ -242,37 +255,34 @@ void CParticle::DrawGeo(vec3 _left, vec3 _botLeft, vec3 _right)
 			bBotLeft = true;
 		}
 
-		if (OtherParts[i]->GetObjPosition() == _left)
+		/*if (OtherParts[i]->GetObjPosition() == _botRight)
 		{
-			bLeft = true;
-		}
+			bBotRight = true;
+		}*/
 
 	}
 
-	//bot right (this)
-	glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(GetObjPosition()));
-
-	if (bLeft)
-	{
-		//left
-		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_left));
-	}
-	else
-	{
-		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_right));
-	}
-
+	//Justin's method
+	// this   ----  right
+	//	|			  |
+	//	|			  |
+	//botLeft ---- botRight
+	//topLeft
+	glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(GetObjPosition()));
+	
 	if (bRight)
 	{
-		//right
-		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_right));
+		//Right
+		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_Right));
 	}
 	else
 	{
-		//right
 		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(GetObjPosition()));
 	}
-		
+	
+		//botRight
+		glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(_botRight));
+
 	if (bBotLeft)
 	{
 		//botLeft
@@ -280,7 +290,6 @@ void CParticle::DrawGeo(vec3 _left, vec3 _botLeft, vec3 _right)
 	}
 	else
 	{
-		//botLeft
 		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(GetObjPosition()));
 	}
 
