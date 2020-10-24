@@ -136,11 +136,13 @@ float CParticle::GetMass()
 //Check for obstacles
 void CParticle::CheckObstacle(CPrefab* _obj)
 {
-	if (distance(_obj->GetObjPosition(), GetObjPosition()) <= _obj->GetObjSize().x/2)
+	float dist = distance(_obj->GetObjPosition(), GetObjPosition());
+	if (distance(_obj->GetObjPosition(), GetObjPosition()) <= _obj->GetObjSize().x)
 	{
 		vec3 force = GetObjPosition() - _obj->GetObjPosition();
-		force = normalize(force) * 100.0f;
+		force = normalize(force) ;
 		SetObjPosition(GetObjPosition() + force);
+		ApplyForce(force * 100.0f * (31 - dist));
 	}
 }
 //Check for obstacles

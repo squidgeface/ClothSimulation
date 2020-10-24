@@ -67,6 +67,7 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 
 	//Initialise time
 	m_pTime->InitiateTime();
@@ -180,7 +181,7 @@ void CGameManager::InitialiseMenu()
 
 	//create a ball obstacle
 	m_pBall = new CPrefab;
-	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -20.0f, 0.0f));
+	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(30.0f, 30.0f, 30.0f), vec3(), vec3(-((sqrt(gridSize) / 2) * 15)/2, -100.0f, 0.0f));
 	m_pBall->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
 
@@ -222,7 +223,7 @@ void CGameManager::Render()
 			m_pAnchorSpheres[i]->RenderShapes(m_giPhongProgram);
 		}
 		
-		//m_pBall->RenderShapes(m_giBlinnProgram);
+		m_pBall->RenderShapes(m_giPhongProgram);
 		//RenderLines();
 
 		
@@ -252,7 +253,7 @@ void CGameManager::Update()
 			m_pSpheres[i]->UpdateShapes();
 			m_pSpheres[i]->Update();
 			//check for obstacle collision
-			//m_pSpheres[i]->CheckObstacle(m_pBall);
+			m_pSpheres[i]->CheckObstacle(m_pBall);
 			//check floor collision
 			m_pSpheres[i]->CheckFloor(m_pFloor);
 		}
@@ -263,7 +264,7 @@ void CGameManager::Update()
 			m_pAnchorSpheres[i]->Update();
 		}
 		RipCloth();
-		//m_pBall->UpdateShapes();
+		m_pBall->UpdateShapes();
 
 		m_pFloor->UpdateShapes();
 
