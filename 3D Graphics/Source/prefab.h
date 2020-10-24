@@ -69,7 +69,7 @@ protected:
 	CCubemap* m_pCubeMap = 0;
 	//Matrix manipulation variables
 	vec3 m_v3ObjPosition, m_v3RotationAxisX, m_v3RotationAxisY, m_v3RotationAxisZ, m_v3ObjScale;
-	mat4 m_m4TranslationMatrix, m_m4RotationX, m_m4RotationZ, m_m4RotationY, m_m4ScaleMatrix, m_m4Model, MVP;
+	mat4 m_m4TranslationMatrix, m_m4RotationX, m_m4RotationZ, m_m4RotationY, m_m4ScaleMatrix, m_m4Model, MVP, PVM;
 	float m_fRotationAngle = 0, m_fTexPos = 0;
 	bool m_bRotations, m_bStencil, m_bShadows = false;
 	MeshType m_eMeshType;

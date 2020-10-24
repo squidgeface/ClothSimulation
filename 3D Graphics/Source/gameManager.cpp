@@ -94,6 +94,7 @@ void CGameManager::SetUpCloth()
 			CParticle* m_pSphere = new CParticle();
 			m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
 			m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
+			m_pSphere->InitialiseGeo(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
 			m_pSpheres.push_back(m_pSphere);
 		}
 	}
@@ -231,6 +232,21 @@ void CGameManager::Render()
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 		{
 			m_pAnchorSpheres[i]->RenderShapes(m_giPhongProgram);
+		}
+		int counter = 0;
+		//Link Particles
+		for (size_t y = 0; y < sqrt(m_pSpheres.size()); y++)
+		{
+			for (size_t x = 0; x < sqrt(m_pSpheres.size()); x++)
+			{
+				
+					if (y != sqrt(m_pSpheres.size()) - 1 && x != sqrt(m_pSpheres.size()) - 1)
+					{
+						m_pSpheres[counter]->DrawGeo(m_pSpheres[counter+1]->GetObjPosition(), m_pSpheres[counter + sqrt(m_pSpheres.size())]->GetObjPosition(), m_pSpheres[counter + sqrt(m_pSpheres.size())+1]->GetObjPosition());
+					}
+				
+				counter++;
+			}
 		}
 		
 		m_pBall->RenderShapes(m_giPhongProgram);

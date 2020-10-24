@@ -14,8 +14,10 @@ class CParticle :
 {
 
 public:
-    CParticle():CPrefab() {  };
-    CParticle(float _mass):CPrefab(), Mass(_mass){  };
+    CParticle():CPrefab() { geo = new CPrefab(); };
+    CParticle(float _mass) :CPrefab(), Mass(_mass) { geo = new CPrefab(); };
+
+    void InitialiseGeo(CCamera* camera, CTime* timer, CInput* input, MeshType type, string path, float frameCount, vec3 _scale, vec3 _rotate, vec3 _translate);
 
     void Update();
     void ApplyForce(vec3 _force);
@@ -26,6 +28,7 @@ public:
     void CheckFloor(CPrefab* _obj);
     void UnLinkParticles();
     void Draw();
+    void DrawGeo(vec3 _right, vec3 _botLeft, vec3 _botRight);
     void SetWind();
     float GetMass();
 
@@ -43,6 +46,7 @@ protected:
     bool isWind = false;
     bool isAnchor = false;
     float maxDistance = Mass * 50.0f;
-    
+    CPrefab* geo = 0;
+    GLuint clothProgram = 0;
 };
 

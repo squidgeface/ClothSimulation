@@ -142,6 +142,8 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 	//objects local properties and matrix transformation rendering
 	GLuint comboLoc = glGetUniformLocation(program, "MVP");
 	glUniformMatrix4fv(comboLoc, 1, GL_FALSE, value_ptr(MVP));
+	GLuint comboLoc2 = glGetUniformLocation(program, "PVM");
+	glUniformMatrix4fv(comboLoc2, 1, GL_FALSE, value_ptr(PVM));
 
 	GLint modelLoc = glGetUniformLocation(program, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(m_m4Model));
@@ -252,6 +254,7 @@ void CPrefab::UpdateShapes(CCubemap* _cubeMap, CPrefab* _Object, CCamera* _Camer
 
 	//Combo matrix
 	MVP = m_pCamera->GetCamera() * m_pCamera->GetView() * m_m4Model;
+	PVM = m_m4Model * m_pCamera->GetView() * m_pCamera->GetCamera();
 
 }
 

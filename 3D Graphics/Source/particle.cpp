@@ -9,6 +9,14 @@
 #include "particle.h"
 #include "time.h"
 #include "camera.h"
+
+void CParticle::InitialiseGeo(CCamera* camera, CTime* timer, CInput* input, MeshType type, string path, float frameCount, vec3 _scale, vec3 _rotate, vec3 _translate)
+{
+	clothProgram = ShaderLoader::CreateProgram("Resources/Shaders/GeometryVS.txt", "Resources/Shaders/GeometryFS.txt", "Resources/Shaders/GeoGrassGS.txt");
+	geo->Initialise(camera, timer, input, MeshType::GEOMETRY, path,frameCount, _scale, _rotate,_translate);
+	geo->InitialiseTextures("Resources/Textures/green.bmp", 1);
+}
+
 //Particle update
 void CParticle::Update()
 {
@@ -101,6 +109,12 @@ void CParticle::Update()
 		//set static position
 		SetObjPosition(vec3(GetObjPosition().x,0.0f,GetObjPosition().z));
 	}
+	else
+	{
+		geo->UpdateShapes();
+		geo->SetObjPosition(GetObjPosition());
+	}
+
 }
 //Apply force
 void CParticle::ApplyForce(vec3 _force)
@@ -188,4 +202,23 @@ void CParticle::Draw()
 		}
 
 	}
+
+	
+}
+
+void CParticle::DrawGeo(vec3 _right, vec3 _botLeft, vec3 _botRight)
+{
+	glUseProgram(clothProgram);
+	//left
+	glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(GetObjPosition()));
+	//right
+	glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_right));
+	//botLeft
+	glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
+	//botRight
+	glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(_botRight));
+
+
+
+	geo->RenderShapes(clothProgram);
 }

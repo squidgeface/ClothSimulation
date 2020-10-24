@@ -6,25 +6,18 @@ layout (triangle_strip, max_vertices = 5) out;
 
 out vec3 outColor;
 
-    // 
-uniform float TopRightX;
-uniform float TopRightY;
-uniform float TopRightZ;
+
+uniform vec3 Right;
 
     // Parent Pos
-uniform float TopLeftX;
-uniform float TopLeftY;
-uniform float TopLeftZ;
+uniform vec3 Left;
 
     // Right Particle
-uniform float BotRightX;
-uniform float BotRightY;
-uniform float BotRightZ;
+uniform vec3 botRight;
 
     // Bottom Particle
-uniform float BotLeftX;
-uniform float BotLeftY;
-uniform float BotLeftZ;
+uniform vec3 botLeft;
+
 
 in VS_GS_VERTEX{
     in vec4 position;
@@ -35,15 +28,15 @@ in VS_GS_VERTEX{
 void main()
 {
     outColor = gs_in[0].color;
-    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(BotLeftX - TopLeftX, BotLeftY - TopLeftY, BotLeftZ - TopLeftZ, 0.0f); EmitVertex();    // Top Left
+    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(botLeft.x - Left.x, botLeft.y - Left.y, botLeft.z - Left.z, 0.0f); EmitVertex();    // Top Left
 
     gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(0.0f, 0.0f, 0.0f, 0.0f); EmitVertex();    // Bottom Left
 
-    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(BotRightX - TopLeftX, BotRightY - TopLeftY, BotRightZ - TopLeftZ, 0.0f); EmitVertex();    // Bottom Right
+    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(botRight.x - Left.x, botRight.y - Left.y, botRight.z - Left.z, 0.0f); EmitVertex();    // Bottom Right
 
-    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(TopRightX - TopLeftX, TopRightY - TopLeftY, TopRightZ - TopLeftZ, 0.0f); EmitVertex();    // Top Right
+    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(Right.x - Left.x, Right.y - Left.y, Right.z - Left.z, 0.0f); EmitVertex();    // Top Right
 
-    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(BotLeftX - TopLeftX, BotLeftY - TopLeftY, BotLeftZ - TopLeftZ, 0.0f); EmitVertex();    // Top Left
+    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(botLeft.x - Left.x, botLeft.y - Left.y, botLeft.z - Left.z, 0.0f); EmitVertex();    // Top Left
 
     EndPrimitive();
 }
