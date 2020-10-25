@@ -186,32 +186,41 @@ void CParticle::Draw()
 	float booster = 400.0f;
 	float upBoost = 0.6f + GetObjPosition().z/ booster;*/
 	
-	float SCALEx = 1;
+	/*float SCALEx = 1;
 	float SCALEy = 1;
 	
 	float booster = 0;
-	float upBoost = 0;
-	
+	float upBoost = 0;*/
+	vec4 point1 = -m_pCamera->GetVPMatrix() * vec4(GetObjPosition(), 1.0f);
 
 	for (size_t i = 0; i < OtherParts.size(); i++)
 	{
 		if (!isAnchor && !OtherParts[i]->GetAnchor())
 		{
-			float SCALE2x = 275.0 - OtherParts[i]->GetObjPosition().z;
+			/*float SCALE2x = 275.0 - OtherParts[i]->GetObjPosition().z;
 			float SCALE2y = 170.0 - OtherParts[i]->GetObjPosition().z;
-			float upBoost2 = 0.6f + OtherParts[i]->GetObjPosition().z / booster;
-			glBegin(GL_LINE_STRIP);
+			float upBoost2 = 0.6f + OtherParts[i]->GetObjPosition().z / booster;*/
+			/*glBegin(GL_LINE_STRIP);
 			glColor3f(0.0f, 0.0f, 0.0f);
 			glVertex2f(GetObjPosition().x / (SCALEx), (GetObjPosition().y / (SCALEy)) + upBoost);
 			glVertex2f(OtherParts[i]->GetObjPosition().x / (SCALE2x), (OtherParts[i]->GetObjPosition().y / (SCALE2y)) + upBoost2);
+			glEnd();*/
+
+			vec4 point2 = -m_pCamera->GetVPMatrix() * vec4(OtherParts[i]->GetObjPosition(), 1.0f);
+			
+			glBegin(GL_LINES);
+			glColor3f(0.0f, 0.0f, 0.0f);
+			glVertex3f(point1.x / point1.w, point1.y / point1.w, point1.z / point1.w);
+			glVertex3f(point2.x / point2.w, point2.y / point2.w, point2.z / point2.w);
 			glEnd();
 		}
 
 	}
 
+
 	
 }
-
+//unused geometry drawing alternative
 void CParticle::DrawGeo(vec3 _botLeft, vec3 _Right, vec3 _Left)
 {
 	glUseProgram(clothProgram);
@@ -235,14 +244,14 @@ void CParticle::DrawGeo(vec3 _botLeft, vec3 _Right, vec3 _Left)
 
 	geo->RenderShapes(clothProgram);
 }
-
+//geometry drawing
 void CParticle::DrawGeo2(vec3 _Right, vec3 _botLeft, vec3 _botRight)
 {
 	glUseProgram(clothProgram);
 	bool bRight = false;
 	bool bBotRight = false;
 	bool bBotLeft = false;
-
+	//check if the links coming in are in the list of linked particles
 	for (int i = 0; i < OtherParts.size(); i++) {
 
 		if (OtherParts[i]->GetObjPosition() == _Right)
@@ -279,9 +288,9 @@ void CParticle::DrawGeo2(vec3 _Right, vec3 _botLeft, vec3 _botRight)
 	{
 		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(GetObjPosition()));
 	}
-	
-		//botRight
-		glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(_botRight));
+
+	//botRight
+	glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(_botRight));
 
 	if (bBotLeft)
 	{
@@ -292,6 +301,7 @@ void CParticle::DrawGeo2(vec3 _Right, vec3 _botLeft, vec3 _botRight)
 	{
 		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(GetObjPosition()));
 	}
+
 
 	geo->RenderShapes(clothProgram);
 }

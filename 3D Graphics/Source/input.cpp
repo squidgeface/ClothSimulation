@@ -39,6 +39,16 @@ void CInput::KeyboardUp(unsigned char key, int x, int y)
 {
 	KeyState[key] = InputState::INPUT_UP;
 }
+
+//keyboard down and up functions
+void CInput::SpecialDown(int key, int x, int y)
+{
+	KeyState[key] = InputState::INPUT_DOWN;
+}
+void CInput::SpecialUp(int key, int x, int y)
+{
+	KeyState[key] = InputState::INPUT_UP;
+}
 //mouse click and move functions
 void CInput::MouseClick(int button, int state, int x, int y)
 {

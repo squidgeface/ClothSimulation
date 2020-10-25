@@ -21,7 +21,7 @@ CPrefab::CPrefab()
 	: m_bRotations(false)
 	, m_bStencil(false)
 	, m_eMeshType(MeshType::EMPTY)
-	, m_v3LightPosition(vec3(10.0f, 500.0f, 0.0f))
+	, m_v3LightPosition(vec3(10.0f, 20.0f, 0.0f))
 	, m_v3LightColour(vec3(1.0f, 1.0f, 1.0f))
 {
 	m_pMesh = new CMesh();

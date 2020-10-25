@@ -15,6 +15,9 @@ CGameManager* GameManager;
 //Prototype functions
 void KeyboardDown(unsigned char key, int x, int y);
 void KeyboardUp(unsigned char key, int x, int y);
+void CatchKeyDown(int key, int x, int y);
+void CatchKeyUp(int key, int x, int y);
+
 void MouseClick(int button, int state, int x, int y);
 void MouseMove(int x, int y);
 void Render();
@@ -35,6 +38,8 @@ int main(int argc, char **argv)
 	glutIdleFunc(Update);
 	glutKeyboardFunc(KeyboardDown);
 	glutKeyboardUpFunc(KeyboardUp);
+	glutSpecialFunc(CatchKeyDown);
+	glutSpecialUpFunc(CatchKeyUp);
 	glutMotionFunc(MouseMove);
 	glutPassiveMotionFunc(MouseMove);
 	glutMouseFunc(MouseClick);
@@ -72,5 +77,13 @@ void MouseMove(int x, int y)
 	GameManager->MouseMove(x, y);
 }
 
+void CatchKeyDown(int key, int x, int y)
+{
+	GameManager->SpecialDown(key, x, y);
+}
 
+void CatchKeyUp(int key, int x, int y)
+{
+	GameManager->SpecialUp(key, x, y);
+}
 

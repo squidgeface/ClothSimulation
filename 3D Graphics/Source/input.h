@@ -22,6 +22,8 @@ public:
 
 	void KeyboardDown(unsigned char key, int x, int y);
 	void KeyboardUp(unsigned char key, int x, int y);
+	void SpecialDown(int key, int x, int y);
+	void SpecialUp(int key, int x, int y);
 	void MouseClick(int button, int state, int x, int y);
 	void MouseMove(int x, int y);
 	InputState* GetKeyState();

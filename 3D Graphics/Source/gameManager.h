@@ -45,6 +45,8 @@ public:
 
 	void KeyboardDown(unsigned char key, int x, int y);
 	void KeyboardUp(unsigned char key, int x, int y);
+	void SpecialDown(int key, int x, int y);
+	void SpecialUp(int key, int x, int y);
 	void MouseClick(int button, int state, int x, int y);
 	void MouseMove(int x, int y);
 	void RenderLines();
@@ -52,6 +54,8 @@ public:
 	bool CheckMouseSphereIntersect(CPrefab* _object);
 	void Render();
 	void Update();
+
+	void MoveCamera();
 
 
 	void ProcessInput(InputState* KeyState, InputState* MouseState);
@@ -79,9 +83,17 @@ protected:
 	CPrefab* m_pBall = 0;
 	CPrefab* m_pTri = 0;
 	CPrefab* m_pFloor = 0;
-	CSlider* widthSlider = 0;
-	CSlider* heightSlider = 0;
-	CSlider* anchorSlider = 0;
+	CSlider* m_pWidthSlider = 0;
+	CSlider* m_pHeightSlider = 0;
+	CSlider* m_pAnchorSlider = 0;
+	CButton* m_pUpCam = 0;
+	CButton* m_pDownCam = 0;
+	CButton* m_pLeftCam = 0;
+	CButton* m_pRightCam = 0;
+	CButton* m_pInCam = 0;
+	CButton* m_pOutCam = 0;
+	CButton* m_pRLeftCam = 0;
+	CButton* m_pRRightCam = 0;
 
 	//Game management objects
 	CInput* m_pInput = 0;
@@ -97,6 +109,10 @@ protected:
 	vec3 m_v3RayDirection = vec3();
 	float previousX = 0;
 	float previousY = 0;
+	float m_fHorz = 0;
+	float m_fVert = 0;
+	float m_fLat = 0;
+	float m_fSpin = 0;
 	bool isClicking = false;
 	int shape = 0;
 	int width = 10;

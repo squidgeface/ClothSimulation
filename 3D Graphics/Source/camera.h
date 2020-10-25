@@ -31,8 +31,10 @@ public:
 	void LookAtObject(vec3 _objPositions);
 	vec3 GetCamPos();
 	vec3 GetCamLookDir();
-	void CameraRotate(CTime* _time);
+	void CameraRotate(vec3 _object, CTime* _time, float start);
 	void MoveCamera(vec3 _move, CTime* _time);
+
+	void SetPosition(vec3 _position, vec3 _look);
 
 protected:
 	//variables

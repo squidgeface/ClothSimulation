@@ -210,15 +210,44 @@ void CGameManager::InitialiseMenu()
 	m_pFloor->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
 	//create slider for Cloth size
-	widthSlider = new CSlider();
-	widthSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/widthSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 60, 0.0f), false);
+	m_pWidthSlider = new CSlider();
+	m_pWidthSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/widthSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 60, 0.0f), false);
 	//create slider for Cloth size
-	heightSlider = new CSlider();
-	heightSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/heightSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 110, 0.0f), false);
+	m_pHeightSlider = new CSlider();
+	m_pHeightSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/heightSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 110, 0.0f), false);
 	//create slider for Anchors
-	anchorSlider = new CSlider();
-	anchorSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/anchorSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 160, 0.0f), true);
+	m_pAnchorSlider = new CSlider();
+	m_pAnchorSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/anchorSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 160, 0.0f), true);
 
+	m_pProjCamera->SetPosition(vec3(0.0f, -100.0f, 200.0f), vec3(0.0f, -100.0f, 0.0f));
+
+	//Set Up on scren buttons
+	m_pUpCam = new CButton();
+	m_pUpCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 80.0f, -Utils::HalfScreenH + 80, 0.0f));
+	m_pUpCam->InitialiseTextures("Resources/Textures/upCam.png", 1);
+	m_pDownCam = new CButton();
+	m_pDownCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 80.0f, -Utils::HalfScreenH + 120, 0.0f));
+	m_pDownCam->InitialiseTextures("Resources/Textures/downCam.png", 1);
+	m_pLeftCam = new CButton();
+	m_pLeftCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 120.0f, -Utils::HalfScreenH + 120, 0.0f));
+	m_pLeftCam->InitialiseTextures("Resources/Textures/leftCam.png", 1);
+	m_pRightCam = new CButton();
+	m_pRightCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 40.0f, -Utils::HalfScreenH + 120, 0.0f));
+	m_pRightCam->InitialiseTextures("Resources/Textures/rightCam.png", 1);
+	m_pInCam = new CButton();
+	m_pInCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 120.0f, -Utils::HalfScreenH + 80, 0.0f));
+	m_pInCam->InitialiseTextures("Resources/Textures/inCam.png", 1);
+	m_pOutCam = new CButton();
+	m_pOutCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 40.0f, -Utils::HalfScreenH + 80, 0.0f));
+	m_pOutCam->InitialiseTextures("Resources/Textures/outCam.png", 1);
+	m_pRLeftCam = new CButton();
+	m_pRLeftCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 100.0f, -Utils::HalfScreenH + 170, 0.0f));
+	m_pRLeftCam->InitialiseTextures("Resources/Textures/rLeftCam.png", 1);
+	m_pRRightCam = new CButton();
+	m_pRRightCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 60.0f, -Utils::HalfScreenH + 170, 0.0f));
+	m_pRRightCam->InitialiseTextures("Resources/Textures/rRightCam.png", 1);
+	
+		
 }
 //clear menu
 void CGameManager::Clear()
@@ -226,9 +255,9 @@ void CGameManager::Clear()
 	m_pSpheres.clear();
 	m_pAnchorSpheres.clear();
 
-	SetClothWidth(widthSlider->GetClothSize());
-	SetClothHeight(heightSlider->GetClothSize());
-	SetAnchorSize(anchorSlider->GetAnchorSize());
+	SetClothWidth(m_pWidthSlider->GetClothSize());
+	SetClothHeight(m_pHeightSlider->GetClothSize());
+	SetAnchorSize(m_pAnchorSlider->GetAnchorSize());
 	SetUpCloth();
 }
 //render function
@@ -267,7 +296,7 @@ void CGameManager::Render()
 				counter++;
 			}
 		}
-		
+		//draw shapes
 		if (shape == 1)
 		{
 			m_pBall->RenderShapes(m_giPhongProgram);
@@ -276,11 +305,19 @@ void CGameManager::Render()
 		{
 			m_pTri->RenderShapes(m_giPhongProgram);
 		}
-
-		widthSlider->Render(m_giStaticProgram);
-		heightSlider->Render(m_giStaticProgram);
-		anchorSlider->Render(m_giStaticProgram);
-
+		//draw UI
+		m_pWidthSlider->Render(m_giStaticProgram);
+		m_pHeightSlider->Render(m_giStaticProgram);
+		m_pAnchorSlider->Render(m_giStaticProgram);
+		m_pUpCam->RenderShapes(m_giStaticProgram);
+		m_pDownCam->RenderShapes(m_giStaticProgram);
+		m_pLeftCam->RenderShapes(m_giStaticProgram);
+		m_pRightCam->RenderShapes(m_giStaticProgram);	
+		m_pInCam->RenderShapes(m_giStaticProgram);
+		m_pOutCam->RenderShapes(m_giStaticProgram);
+		m_pRLeftCam->RenderShapes(m_giStaticProgram);
+		m_pRRightCam->RenderShapes(m_giStaticProgram);
+			
 
 	glutSwapBuffers();
 	//glFinish();
@@ -339,38 +376,53 @@ void CGameManager::Update()
 
 		m_pFloor->UpdateShapes();
 
-		//set camera looking at anchors
-		m_pProjCamera->LookAtObject(m_pAnchorSpheres[(m_pAnchorSpheres.size() / 2) - 1]->GetObjPosition());
-
-		widthSlider->Update();
-		heightSlider->Update();
-		anchorSlider->Update();
-
-		anchorSlider->SetClothSizeNumber(widthSlider->GetClothSize());
 		
-		if (anchorSlider->GetMouse() == 2)
+		//Update UI
+		m_pWidthSlider->Update();
+		m_pHeightSlider->Update();
+		m_pAnchorSlider->Update();
+		m_pAnchorSlider->SetClothSizeNumber(m_pWidthSlider->GetClothSize());
+		m_pUpCam->UpdateShapes();
+		m_pDownCam->UpdateShapes();
+		m_pLeftCam->UpdateShapes();
+		m_pRightCam->UpdateShapes();
+		m_pInCam->UpdateShapes();
+		m_pOutCam->UpdateShapes();	
+		m_pRLeftCam->UpdateShapes();
+		m_pRRightCam->UpdateShapes();
+		
+			
+		if (m_pAnchorSlider->GetMouse() == 2)
 		{
-			anchorSlider->ResetMouse();
+			m_pAnchorSlider->ResetMouse();
 			Clear();
 		}
 
-		if (widthSlider->GetMouse() == 2)
+		if (m_pWidthSlider->GetMouse() == 2)
 		{
-			widthSlider->ResetMouse();
+			m_pWidthSlider->ResetMouse();
 			Clear();
 		}
 		
-		if (heightSlider->GetMouse() == 2)
+		if (m_pHeightSlider->GetMouse() == 2)
 		{
-			heightSlider->ResetMouse();
+			m_pHeightSlider->ResetMouse();
 			Clear();
 		}
 
+		MoveCamera();
 	//update game information
 	glutPostRedisplay();
 }
 
-
+void CGameManager::MoveCamera()
+{
+	
+	vec3 moveDir = vec3(m_fHorz * 1.0f, m_fVert * 1.0f, m_fLat * 1.0f);
+	vec3 rotPoint = vec3(m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().x,m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().y - 100.0f,m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().z);
+	m_pProjCamera->MoveCamera(moveDir, m_pTime);
+	m_pProjCamera->CameraRotate(rotPoint, m_pTime, m_fSpin);
+}
 
 //input functions
 void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
@@ -482,6 +534,59 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			{
 				isClicking = false;
 			}
+
+			if (m_pLeftCam->CheckHover(m_pInput) && isClicking)
+			{
+				m_fHorz = -1.0f;
+			}
+			else if (m_pRightCam->CheckHover(m_pInput) && isClicking)
+			{
+				m_fHorz = 1.0f;
+			}
+			else
+			{
+				m_fHorz = 0.0f;
+			}
+			
+			if (m_pUpCam->CheckHover(m_pInput) && isClicking)
+			{
+				m_fVert = 1.0f;
+			}
+			else if (m_pDownCam->CheckHover(m_pInput) && isClicking)
+			{
+				m_fVert = -1.0f;
+			}
+			else
+			{
+				m_fVert = 0.0f;
+			}	
+			
+			if (m_pOutCam->CheckHover(m_pInput) && isClicking)
+			{
+				m_fLat = 1.0f;
+			}
+			else if (m_pInCam->CheckHover(m_pInput) && isClicking)
+			{
+				m_fLat = -1.0f;
+			}
+			else
+			{
+				m_fLat = 0.0f;
+			}
+			
+			if (m_pRLeftCam->CheckHover(m_pInput) && isClicking)
+			{
+				m_fSpin = -1.0f;
+			}
+			else if (m_pRRightCam->CheckHover(m_pInput) && isClicking)
+			{
+				m_fSpin = 1.0f;
+			}
+			else
+			{
+				m_fSpin = 0.0f;
+			}
+
 			
 		}
 		else if (KeyState['q'] == InputState::INPUT_UP && KeyState['r'] == InputState::INPUT_UP && KeyState['x'] == InputState::INPUT_UP && KeyState['f'] == InputState::INPUT_UP)
@@ -557,6 +662,14 @@ void CGameManager::KeyboardDown(unsigned char key, int x, int y)
 void CGameManager::KeyboardUp(unsigned char key, int x, int y)
 {
 	m_pInput->KeyboardUp(key, x, y);
+}
+void CGameManager::SpecialDown(int key, int x, int y)
+{
+	m_pInput->SpecialDown(key, x, y);
+}
+void CGameManager::SpecialUp(int key, int x, int y)
+{
+	m_pInput->SpecialUp(key, x, y);
 }
 
 //mouse input functions

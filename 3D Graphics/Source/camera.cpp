@@ -80,20 +80,31 @@ vec3 CCamera::GetCamLookDir()
 	return m_v3CamLookDir;
 }
 
-void CCamera::CameraRotate(CTime* _time)
+void CCamera::CameraRotate(vec3 _object,CTime* _time, float start)
 {
-	m_fTimeElapsed += _time->GetDelta()/2;
-	GLfloat radius = 100.0f;
+	m_fTimeElapsed += _time->GetDelta() * start;
+	GLfloat radius = distance(m_v3CamPos, _object);
 
-	SetCamera(vec3(sin(m_fTimeElapsed) * radius, 0.0f, cos(m_fTimeElapsed) * radius), m_v3CamLookDir, m_v3CamUpDir);
-
-	m_m4View = lookAt(m_v3CamPos, vec3(0.0f, 0.0f, 0.0f), m_v3CamUpDir);
+	if (start != 0)
+	{
+		SetCamera(vec3(sin(m_fTimeElapsed) * radius, _object.y, cos(m_fTimeElapsed) * radius), _object, m_v3CamUpDir);
+	}
+	m_m4View = lookAt(m_v3CamPos, m_v3CamLookDir, m_v3CamUpDir);
 }
 
 void CCamera::MoveCamera(vec3 _move, CTime* _time)
 {
 	m_v3CamLookDir += _move * (_time->GetDelta() * 100);
 	m_v3CamPos += _move * (_time->GetDelta() * 100);
+	SetCamera(m_v3CamPos, m_v3CamLookDir, m_v3CamUpDir);
 	m_m4View = lookAt(m_v3CamPos, m_v3CamLookDir, m_v3CamUpDir);
 }
+
+void CCamera::SetPosition(vec3 _position, vec3 _look)
+{
+	m_v3CamPos = _position;
+	m_v3CamLookDir = _look;
+	m_m4View = lookAt(m_v3CamPos, m_v3CamLookDir, m_v3CamUpDir);
+}
+
 
