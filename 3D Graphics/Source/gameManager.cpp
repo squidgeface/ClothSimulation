@@ -219,7 +219,7 @@ void CGameManager::InitialiseMenu()
 	m_pAnchorSlider = new CSlider();
 	m_pAnchorSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/anchorSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 160, 0.0f), true);
 
-	m_pProjCamera->SetPosition(vec3(0.0f, -100.0f, 200.0f), vec3(0.0f, -100.0f, 0.0f));
+	m_pProjCamera->SetPosition(vec3(0.0f, -100.0f, 200.0f), m_pBall->GetObjPosition());
 
 	//Set Up on scren buttons
 	m_pUpCam = new CButton();
@@ -421,7 +421,7 @@ void CGameManager::MoveCamera()
 	vec3 moveDir = vec3(m_fHorz * 1.0f, m_fVert * 1.0f, m_fLat * 1.0f);
 	vec3 rotPoint = vec3(m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().x,m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().y - 100.0f,m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().z);
 	m_pProjCamera->MoveCamera(moveDir, m_pTime);
-	m_pProjCamera->CameraRotate(rotPoint, m_pTime, m_fSpin);
+	m_pProjCamera->CameraRotate(m_pBall->GetObjPosition(), m_pTime, m_fSpin);
 }
 
 //input functions

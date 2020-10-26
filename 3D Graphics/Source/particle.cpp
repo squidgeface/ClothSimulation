@@ -150,14 +150,18 @@ float CParticle::GetMass()
 //Check for obstacles
 void CParticle::CheckObstacle(CPrefab* _obj)
 {
-	float dist = distance(_obj->GetObjPosition(), GetObjPosition());
-	if (distance(_obj->GetObjPosition(), GetObjPosition()) <= _obj->GetObjSize().x + 3)
-	{
+	//float dist = distance(_obj->GetObjPosition(), GetObjPosition());
+	//if (dist <= _obj->GetObjSize().x)
+	//{
 		vec3 force = GetObjPosition() - _obj->GetObjPosition();
-		force = normalize(force) ;
-		SetObjPosition(GetObjPosition() + force);
-		ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 4 - dist));
-	}
+		float dist = length(force);
+		force = normalize(force);
+		if (dist < _obj->GetObjSize().x + 3)
+		{
+			SetObjPosition(GetObjPosition() + force * (_obj->GetObjSize().x + 3 - dist));
+			ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 3 - dist));
+		}
+	//}
 }
 //Check for obstacles
 void CParticle::CheckFloor(CPrefab* _obj)
@@ -208,7 +212,7 @@ void CParticle::Draw()
 
 			vec4 point2 = -m_pCamera->GetVPMatrix() * vec4(OtherParts[i]->GetObjPosition(), 1.0f);
 			
-			glBegin(GL_LINES);
+			glBegin(GL_LINE_STRIP);
 			glColor3f(0.0f, 0.0f, 0.0f);
 			glVertex3f(point1.x / point1.w, point1.y / point1.w, point1.z / point1.w);
 			glVertex3f(point2.x / point2.w, point2.y / point2.w, point2.z / point2.w);
