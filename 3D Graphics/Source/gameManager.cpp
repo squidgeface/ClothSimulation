@@ -200,7 +200,7 @@ void CGameManager::InitialiseMenu()
 	m_pBall->InitialiseTextures("Resources/Textures/green.bmp", 1);
 	
 	m_pTri = new CPrefab;
-	m_pTri->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::TRI, "", 0, vec3(30.0f, 30.0f, 30.0f), vec3(), vec3(-((width / 2) * 15)/2.0f, -100.0f, 20.0f));
+	m_pTri->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::TRI, "", 0, vec3(100.0f, 100.0f, 100.0f), vec3(), vec3(-((width / 2) * 15)/2.0f, -100.0f, 20.0f));
 	m_pTri->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
 
@@ -343,7 +343,7 @@ void CGameManager::Update()
 			}
 			else if (shape == 2)
 			{
-				m_pSpheres[i]->CheckObstacle(m_pTri);
+				m_pSpheres[i]->CollidePyramid(m_pTri);
 			}
 
 			//check floor collision
