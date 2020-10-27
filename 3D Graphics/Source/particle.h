@@ -25,6 +25,7 @@ public:
     bool GetAnchor();
     void LinkParticles(CParticle* _other);
 	void CheckObstacle(CPrefab* _obj);
+	void CheckCapsule(CPrefab* _obj);
     void CheckFloor(CPrefab* _obj);
     void UnLinkParticles();
     void Draw();

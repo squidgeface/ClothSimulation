@@ -67,6 +67,8 @@ enum class MeshType
 	CUBE,
 	EMPTY,
 	SPHERE,
+	CAPSULE,
+
 };
 
 enum class BlendType

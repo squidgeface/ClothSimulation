@@ -203,6 +203,10 @@ void CGameManager::InitialiseMenu()
 	m_pTri->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::TRI, "", 0, vec3(100.0f, 100.0f, 100.0f), vec3(), vec3(-((width / 2) * 15)/2.0f, -100.0f, 20.0f));
 	m_pTri->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
+	m_pCapsule = new CPrefab;
+	m_pCapsule->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CAPSULE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((width / 2) * 15) / 2.0f, -50.0f, 20.0f));
+	m_pCapsule->InitialiseTextures("Resources/Textures/green.bmp", 1);
+
 
 	//load floor
 	m_pFloor = new CPrefab();
@@ -305,6 +309,10 @@ void CGameManager::Render()
 		{
 			m_pTri->RenderShapes(m_giPhongProgram);
 		}
+		else if (shape == 3)
+		{
+			m_pCapsule->RenderShapes(m_giPhongProgram);
+		}
 		//draw UI
 		m_pWidthSlider->Render(m_giStaticProgram);
 		m_pHeightSlider->Render(m_giStaticProgram);
@@ -345,6 +353,10 @@ void CGameManager::Update()
 			{
 				m_pSpheres[i]->CollidePyramid(m_pTri);
 			}
+			else if (shape == 3)
+			{
+				m_pSpheres[i]->CheckCapsule(m_pCapsule);
+			}
 
 			//check floor collision
 			m_pSpheres[i]->CheckFloor(m_pFloor);
@@ -371,6 +383,10 @@ void CGameManager::Update()
 		else if (shape == 2)
 		{
 			m_pTri->UpdateShapes();
+		}
+		else if (shape == 3)
+		{
+			m_pCapsule->UpdateShapes();
 		}
 	
 
@@ -520,6 +536,10 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			if (KeyState['2'] == InputState::INPUT_DOWN)
 			{
 				shape = 2;
+			}
+			if (KeyState['3'] == InputState::INPUT_DOWN)
+			{
+				shape = 3;
 			}
 			if (KeyState['`'] == InputState::INPUT_DOWN)
 			{

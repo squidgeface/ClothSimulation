@@ -23,6 +23,7 @@ public:
 	void CreatePyramid();
 	void CreateCube();
 	void CreateSphere();
+	void CreateCapsule();
 	void Draw();
 	void RenderGeometry();
 	void RenderTesselated();

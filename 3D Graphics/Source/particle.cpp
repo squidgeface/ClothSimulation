@@ -163,6 +163,26 @@ void CParticle::CheckObstacle(CPrefab* _obj)
 		}
 	//}
 }
+
+void CParticle::CheckCapsule(CPrefab* _obj)
+{
+	//float dist = distance(_obj->GetObjPosition(), GetObjPosition());
+	//if (dist <= _obj->GetObjSize().x)
+	//{
+	float offset = 1.0f;
+	for (int i = 0; i < 30; i++)
+	{
+		vec3 force = GetObjPosition() - _obj->GetObjPosition() + vec3(0, i * offset, 0);
+		float dist = length(force);
+		force = normalize(force);
+		if (dist < _obj->GetObjSize().x + 5)
+		{
+			SetObjPosition(GetObjPosition() + force * (_obj->GetObjSize().x + 5 - dist));
+			ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 5 - dist));
+		}
+	}
+	//}
+}
 //Check for obstacles
 void CParticle::CheckFloor(CPrefab* _obj)
 {

@@ -65,6 +65,9 @@ void CPrefab::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType 
 	case MeshType::TRI:
 		m_pMesh->CreatePyramid();
 		break;
+	case MeshType::CAPSULE:
+		m_pMesh->CreateCapsule();
+		break;
 	case MeshType::GEOMETRY:
 
 
@@ -213,6 +216,17 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 		//regular render
 		m_pTexture->Activate(program, 1);
 	
+		//Draw the shapes
+		m_pMesh->Draw();
+
+		break;
+	}
+	case MeshType::CAPSULE:
+	{
+
+		//regular render
+		m_pTexture->Activate(program, 1);
+
 		//Draw the shapes
 		m_pMesh->Draw();
 

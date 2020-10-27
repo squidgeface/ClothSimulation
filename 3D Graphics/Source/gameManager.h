@@ -82,6 +82,7 @@ protected:
 	vector<CParticle*> m_pAnchorSpheres;
 	CPrefab* m_pBall = 0;
 	CPrefab* m_pTri = 0;
+	CPrefab* m_pCapsule = 0;
 	CPrefab* m_pFloor = 0;
 	CSlider* m_pWidthSlider = 0;
 	CSlider* m_pHeightSlider = 0;
