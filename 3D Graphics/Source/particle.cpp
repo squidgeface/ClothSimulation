@@ -115,6 +115,25 @@ void CParticle::Update()
 		geo->SetObjPosition(GetObjPosition());
 	}
 
+	if (m_bOnFire) {
+		m_fBurnTime += ((rand() % 10)/ 10.000f) * m_pTime->GetDelta();
+	}
+
+	if (m_fBurnTime > 5) {
+		for (size_t i = 0; i < OtherParts.size(); i++)
+		{
+			OtherParts[i]->Burn();
+		}
+	}
+	 if (m_fBurnTime > 8)
+	{
+		UnLinkParticles();
+	}
+
+	 glUseProgram(clothProgram);
+	 GLint colorLoc = glGetUniformLocation(clothProgram, "colour");
+	 glUniform1f(colorLoc, (m_fBurnTime / 8.00f));
+
 }
 //Apply force
 void CParticle::ApplyForce(vec3 _force)
@@ -303,6 +322,7 @@ void CParticle::DrawGeo2(vec3 _Right, vec3 _botLeft, vec3 _botRight)
 	//topLeft
 	glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(GetObjPosition()));
 	
+	
 	if (bRight)
 	{
 		//Right
@@ -431,3 +451,9 @@ void CParticle::CollidePyramid(CPrefab *pyramid)
 	}
 
 }
+void CParticle::Burn()
+{
+	m_bOnFire = true;
+}
+
+

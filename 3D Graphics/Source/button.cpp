@@ -8,6 +8,7 @@
 
 #include "button.h"
 #include "input.h"
+#include "TextLabel.h"
 
 bool CButton::CheckHover(CInput* _object)
 {
@@ -38,11 +39,22 @@ void CButton::RenderShapes(GLuint program)
 	{
         CPrefab::RenderShapes(program, 1);
 	}
+
+    if (m_bText)
+    {
+        m_pText->Render();
+    }
 }
 
 //return if it is a button
 bool CButton::GetShowing()
 {
     return m_bIsBtn;
+}
+
+void CButton::SetText(char* _text)
+{
+    m_pText->SetLabel(_text,"Resources/Fonts/BRLNSR.ttf", vec2(0.0f, 0.0f), vec3(255.0f, 255.0f, 255.0f), 0.5f);
+    m_bText = true;
 }
 

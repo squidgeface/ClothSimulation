@@ -95,6 +95,7 @@ protected:
 	CButton* m_pOutCam = 0;
 	CButton* m_pRLeftCam = 0;
 	CButton* m_pRRightCam = 0;
+	CButton* m_pSetCutting = 0;
 
 	//Game management objects
 	CInput* m_pInput = 0;

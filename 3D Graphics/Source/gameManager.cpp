@@ -105,6 +105,8 @@ void CGameManager::SetUpCloth()
 		}
 	}
 
+	m_pSpheres[45]->Burn();
+
 	int counter = 0;
 	//Link Particles
 	for (size_t y = 0; y < height; y++)
@@ -251,6 +253,9 @@ void CGameManager::InitialiseMenu()
 	m_pRRightCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 60.0f, -Utils::HalfScreenH + 170, 0.0f));
 	m_pRRightCam->InitialiseTextures("Resources/Textures/rRightCam.png", 1);
 	
+	m_pSetCutting = new CButton();
+	m_pSetCutting->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 170, 0.0f));
+	m_pSetCutting->InitialiseTextures("Resources/Textures/rRightCam.png", 1);
 		
 }
 //clear menu
@@ -325,6 +330,7 @@ void CGameManager::Render()
 		m_pOutCam->RenderShapes(m_giStaticProgram);
 		m_pRLeftCam->RenderShapes(m_giStaticProgram);
 		m_pRRightCam->RenderShapes(m_giStaticProgram);
+		m_pSetCutting->RenderShapes(m_giStaticProgram);
 			
 
 	glutSwapBuffers();
@@ -406,6 +412,7 @@ void CGameManager::Update()
 		m_pOutCam->UpdateShapes();	
 		m_pRLeftCam->UpdateShapes();
 		m_pRRightCam->UpdateShapes();
+		m_pSetCutting->UpdateShapes();
 		
 			
 		if (m_pAnchorSlider->GetMouse() == 2)

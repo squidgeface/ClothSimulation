@@ -11,6 +11,7 @@
 #include "prefab.h"
 
 class CInput;
+class CTextLabel;
 
 class CButton : public CPrefab
 {
@@ -20,10 +21,11 @@ public:
 	bool CheckHover(CInput* _object);
 	void SetButton(bool state);
 	void RenderShapes(GLuint program);
-
+	void SetText(char* _text);
 	bool GetShowing();
 
 private:
-	bool m_bIsBtn;
+	bool m_bIsBtn = false, m_bText = false;
+	CTextLabel* m_pText = 0;
 };
 

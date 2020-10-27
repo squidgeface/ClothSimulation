@@ -1,7 +1,7 @@
 #version 450 core
 
 layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 color;
+layout (location = 1) in float color;
 
 
 out VS_GS_VERTEX {
@@ -12,13 +12,14 @@ out VS_GS_VERTEX {
 
 uniform mat4 PVM;
 uniform mat4 MVP;
+uniform float colour;
 
 
 void main()
 {
 	
 	gl_Position = MVP * vec4(position, 1.0f);
-	vs_out.color = color;
+	vs_out.color = vec3(colour , 0.8f - (colour/2)  ,0.0f) ;
 	vs_out.position = gl_Position;
 	vs_out.PVM = MVP;
 
