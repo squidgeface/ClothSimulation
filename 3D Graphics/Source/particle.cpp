@@ -156,10 +156,10 @@ void CParticle::CheckObstacle(CPrefab* _obj)
 		vec3 force = GetObjPosition() - _obj->GetObjPosition();
 		float dist = length(force);
 		force = normalize(force);
-		if (dist < _obj->GetObjSize().x + 3)
+		if (dist < _obj->GetObjSize().x + 2)
 		{
-			SetObjPosition(GetObjPosition() + force * (_obj->GetObjSize().x + 3 - dist));
-			ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 3 - dist));
+			SetObjPosition(GetObjPosition() + force * (_obj->GetObjSize().x + 2 - dist));
+			ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 2 - dist));
 		}
 	//}
 }
@@ -313,7 +313,7 @@ void CParticle::DrawGeo2(vec3 _Right, vec3 _botLeft, vec3 _botRight)
 void CParticle::CollidePyramid(CPrefab *pyramid)
 {
 	//-37.5, -100, 20
-	float size = pyramid->GetObjSize().x / 2.0f;
+	float size = pyramid->GetObjSize().x / 2;
 	vec3 PyramidCenter = pyramid->GetObjPosition() + vec3(0, 0.25f * size * 2, 0);
 	//T1
 	vec3 Top = pyramid->GetObjPosition() + vec3(0, size, 0);
@@ -339,64 +339,75 @@ void CParticle::CollidePyramid(CPrefab *pyramid)
 
 	//t1 forces
 	vec3 forcet1(t1Center - PyramidCenter);
-	forcet1 = normalize(forcet1);
+	//forcet1 = normalize(forcet1);
 
 	float minDistancet1 = distance(Top, t1Center) + distance(t1p1, t1Center) + distance(t1p2, t1Center);
 	float currentDistancet1 = distance(Top, GetObjPosition()) + distance(t1p1, GetObjPosition()) + distance(t1p2, GetObjPosition());
 
-	if (currentDistancet1 - minDistancet1 < 5)
+	if (currentDistancet1 - minDistancet1 < 1)
 	{
 		//ApplyForce(forcet1  * ((size * 2) - distance(GetObjPosition(), PyramidCenter)));
-		ApplyForce(GetObjPosition()- t1p1 * 10.0f);
-		ApplyForce(GetObjPosition() - t1p2 * 10.0f);
-		ApplyForce(GetObjPosition() - Top * 10.0f);
+		ApplyForce(forcet1 * ( (size * 2) - distance(t1p1, GetObjPosition())));
+		ApplyForce(forcet1 * ((size * 2) - distance(t1p2, GetObjPosition())));
+		ApplyForce(forcet1 * ((size * 2) - distance(Top, GetObjPosition())));
+
+		SetObjPosition(GetObjPosition() + forcet1);
 	}
 
 
 	//t2 forces
 	vec3 forcet2(t2Center - PyramidCenter);
-	forcet2 = normalize(forcet2);
+	//forcet2 = normalize(forcet2);
 
 	float minDistancet2 = distance(Top, t2Center) + distance(t2p1, t2Center) + distance(t2p2, t2Center);
 	float currentDistancet2 = distance(Top, GetObjPosition()) + distance(t2p1, GetObjPosition()) + distance(t2p2, GetObjPosition());
 
-	if (currentDistancet2 - minDistancet2 < 5)
+	if (currentDistancet2 - minDistancet2 < 1)
 	{
 		//ApplyForce(forcet2 * ((size * 2) - distance(GetObjPosition(), PyramidCenter)));
-		ApplyForce(GetObjPosition() - t2p1 * 10.0f);
-		ApplyForce(GetObjPosition() - t2p2 * 10.0f);
-		ApplyForce(GetObjPosition() - Top * 10.0f);
+		ApplyForce(forcet2 * ((size * 2) - distance(t2p1, GetObjPosition())));
+		ApplyForce(forcet2 * ((size * 2) - distance(t2p2, GetObjPosition())));
+		ApplyForce(forcet2 * ((size * 2) - distance(Top, GetObjPosition())));
+
+
+		SetObjPosition(GetObjPosition() + forcet2);
 	}
 
 	//t3 forces
 	vec3 forcet3(t3Center - PyramidCenter);
-	forcet3 = normalize(forcet3);
+	//forcet3 = normalize(forcet3);
 
 	float minDistancet3 = distance(Top, t3Center) + distance(t3p1, t3Center) + distance(t3p2, t3Center);
 	float currentDistancet3 = distance(Top, GetObjPosition()) + distance(t3p1, GetObjPosition()) + distance(t3p2, GetObjPosition());
 
-	if (currentDistancet3 - minDistancet3 < 5)
+	if (currentDistancet3 - minDistancet3 < 1)
 	{
 		//ApplyForce(forcet3  * ((size * 2) - distance(GetObjPosition(), PyramidCenter)));
-		ApplyForce(GetObjPosition() - t3p1 * 10.0f);
-		ApplyForce(GetObjPosition() - t3p2 * 10.0f);
-		ApplyForce(GetObjPosition() - Top * 10.0f);
+		ApplyForce(forcet3 * ((size * 2) - distance(t3p1, GetObjPosition())));
+		ApplyForce(forcet3 * ((size * 2) - distance(t3p2, GetObjPosition())));
+		ApplyForce(forcet3 * ((size * 2) - distance(Top, GetObjPosition())));
+
+
+		SetObjPosition(GetObjPosition() + forcet3);
 	}
 
 
 	//t4 forces
 	vec3 forcet4(t4Center - PyramidCenter);
-	forcet4 = normalize(forcet4);
+	//forcet4 = normalize(forcet4);
 
 	float minDistancet4 = distance(Top, t4Center) + distance(t4p1, t4Center) + distance(t4p2, t4Center);
 	float currentDistancet4 = distance(Top, GetObjPosition()) + distance(t4p1, GetObjPosition()) + distance(t4p2, GetObjPosition());
 
-	if (currentDistancet4 - minDistancet4 < 5)
+	if (currentDistancet4 - minDistancet4 < 1)
 	{
 		//ApplyForce(forcet4  * ((size * 2) - distance(GetObjPosition(), PyramidCenter)) );
-		ApplyForce(GetObjPosition() - t4p1 * 10.0f);
-		ApplyForce(GetObjPosition() - t4p2 * 10.0f);
-		ApplyForce(GetObjPosition() - Top * 10.0f);
+		ApplyForce(forcet4 * ((size * 2) - distance(t4p1, GetObjPosition())));
+		ApplyForce(forcet4 * ((size * 2) - distance(t4p2, GetObjPosition())));
+		ApplyForce(forcet4 * ((size * 2) - distance(Top, GetObjPosition())));
+
+
+		SetObjPosition(GetObjPosition() + forcet4);
 	}
 
 }
