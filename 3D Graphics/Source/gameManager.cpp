@@ -105,7 +105,7 @@ void CGameManager::SetUpCloth()
 		}
 	}
 
-	m_pSpheres[45]->Burn();
+	//m_pSpheres[45]->Burn();
 
 	int counter = 0;
 	//Link Particles
@@ -252,10 +252,12 @@ void CGameManager::InitialiseMenu()
 	m_pRRightCam = new CButton();
 	m_pRRightCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 60.0f, -Utils::HalfScreenH + 170, 0.0f));
 	m_pRRightCam->InitialiseTextures("Resources/Textures/rRightCam.png", 1);
-	
+	//Cut button
 	m_pSetCutting = new CButton();
 	m_pSetCutting->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 170, 0.0f));
-	m_pSetCutting->InitialiseTextures("Resources/Textures/rRightCam.png", 1);
+	m_pSetCutting->InitialiseTextures("Resources/Textures/chkBox.png", 1);
+	m_pSetCutting->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
+	m_pSetCutting->SetText("Cut");
 		
 }
 //clear menu
@@ -460,6 +462,15 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 		//if mouse click counter is 0 (one click at a time)
 		if (m_fcounter == 0.0f)
 		{
+			if (MouseState[0] == InputState::INPUT_DOWN)
+			{
+				isClicking = true;
+			}
+			else
+			{
+				isClicking = false;
+			}
+
 			if (KeyState['a'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 2; i <= (m_pAnchorSpheres.size() / 2) + 1; i++)
@@ -535,9 +546,17 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 
 				cout << "Dropping Cloth" << endl;
 			}
-			if (KeyState['f'] == InputState::INPUT_DOWN)
+
+			if (m_pSetCutting->CheckHover(m_pInput) && isClicking && !m_pSetCutting->GetShowing())
 			{
-				m_bRipToggle = !m_bRipToggle;
+				m_pSetCutting->SetButton(true);
+				m_bRipToggle = true;
+				m_fcounter++;
+			}
+			else if (m_pSetCutting->CheckHover(m_pInput) && isClicking && m_pSetCutting->GetShowing())
+			{
+				m_pSetCutting->SetButton(false);
+				m_bRipToggle = false;
 				m_fcounter++;
 			}
 
@@ -558,14 +577,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				shape = 0;
 			}
 
-			if (MouseState[0] == InputState::INPUT_DOWN)
-			{
-				isClicking = true;
-			}
-			else
-			{
-				isClicking = false;
-			}
+			
 
 			if (m_pLeftCam->CheckHover(m_pInput) && isClicking)
 			{
@@ -624,7 +636,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 
 			
 		}
-		else if (KeyState['q'] == InputState::INPUT_UP && KeyState['r'] == InputState::INPUT_UP && KeyState['x'] == InputState::INPUT_UP && KeyState['f'] == InputState::INPUT_UP)
+		else if (KeyState['q'] == InputState::INPUT_UP && KeyState['r'] == InputState::INPUT_UP && KeyState['x'] == InputState::INPUT_UP && KeyState['f'] == InputState::INPUT_UP && MouseState[0] == InputState::INPUT_UP)
 		{
 		//reset counter on mouse up
 			m_fcounter = 0.0f;

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "prefab.h"
+#include "TextLabel.h"
 
 class CInput;
 class CTextLabel;
@@ -16,12 +17,12 @@ class CTextLabel;
 class CButton : public CPrefab
 {
 public:
-	CButton() : CPrefab(), m_bIsBtn(false){};
+	CButton() : CPrefab() { m_pText = new CTextLabel(); };
 
 	bool CheckHover(CInput* _object);
 	void SetButton(bool state);
 	void RenderShapes(GLuint program);
-	void SetText(char* _text);
+	void SetText(const char* _text);
 	bool GetShowing();
 
 private:

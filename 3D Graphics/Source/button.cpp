@@ -52,9 +52,9 @@ bool CButton::GetShowing()
     return m_bIsBtn;
 }
 
-void CButton::SetText(char* _text)
+void CButton::SetText(const char* _text)
 {
-    m_pText->SetLabel(_text,"Resources/Fonts/BRLNSR.ttf", vec2(0.0f, 0.0f), vec3(255.0f, 255.0f, 255.0f), 0.5f);
+    m_pText->SetLabel(_text,"Resources/Fonts/BRLNSR.ttf", vec2(GetObjPosition().x + GetObjSize().x/2 + 5.0f, -(GetObjPosition().y + GetObjSize().y / 4)), vec3(0.0f, 0.0f, 0.0f), 0.5f);
     m_bText = true;
 }
 

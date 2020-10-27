@@ -180,7 +180,7 @@ void CPrefab::RenderShapes(GLuint program, int slot)
 	case MeshType::QUAD:
 	{
 		//regular render
-		m_pTexture->Activate(program, 1);
+		m_pTexture->Activate(program, slot);
 		//Draw the shapes
 		m_pMesh->Draw();
 
