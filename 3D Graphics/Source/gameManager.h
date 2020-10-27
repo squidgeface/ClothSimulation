@@ -119,6 +119,11 @@ protected:
 	int width = 10;
 	int height = 10;
 	int anchors = 10;
+
+	//raven camera stuff
+	float zoom = 100;
+	float CamRotx = 0;
+
 	//enum
 	GameState m_eGameState = GameState::MENU;
 

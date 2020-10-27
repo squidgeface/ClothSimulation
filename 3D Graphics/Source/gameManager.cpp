@@ -438,6 +438,11 @@ void CGameManager::MoveCamera()
 	vec3 rotPoint = vec3(m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().x,m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().y - 100.0f,m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().z);
 	m_pProjCamera->MoveCamera(moveDir, m_pTime);
 	m_pProjCamera->CameraRotate(m_pBall->GetObjPosition(), m_pTime, m_fSpin);
+	//m_pProjCamera->SetPosition(vec3 (sin(CamRotx ) * zoom * 2, -zoom, cos(CamRotx) * zoom * 2), vec3(vec3(-((width / 2) * 15) / 2.0f, -100.0f, 20.0f)));
+//	m_pProjCamera->LookAtObject(m_pProjCamera->GetCamPos());
+
+	//m_pProjCamera->SetCamPosition(sin(camRotX) * zoom, zoom, cos(camRotX) * zoom);
+	//m_pProjCamera.SetCamLookDirection(player.getPosition().x, player.getPosition().y, player.getPosition().z);
 }
 
 //input functions
@@ -597,14 +602,17 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			if (m_pRLeftCam->CheckHover(m_pInput) && isClicking)
 			{
 				m_fSpin = -1.0f;
+				CamRotx -= 0.1f * m_pTime->GetDelta();
 			}
 			else if (m_pRRightCam->CheckHover(m_pInput) && isClicking)
 			{
 				m_fSpin = 1.0f;
+				CamRotx += 0.1f * m_pTime->GetDelta();
 			}
 			else
 			{
 				m_fSpin = 0.0f;
+				//CamRotx = 0;
 			}
 
 			

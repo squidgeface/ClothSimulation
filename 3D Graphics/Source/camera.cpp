@@ -87,9 +87,10 @@ void CCamera::CameraRotate(vec3 _object,CTime* _time, float start)
 
 	if (start != 0)
 	{
-		SetCamera(vec3(sin(m_fTimeElapsed) * radius, _object.y, cos(m_fTimeElapsed) * radius), _object, m_v3CamUpDir);
+		SetCamera(vec3(sin(m_fTimeElapsed) * radius, -100, cos(m_fTimeElapsed) * radius), _object, m_v3CamUpDir);
+		m_m4View = lookAt(m_v3CamPos, m_v3CamLookDir, m_v3CamUpDir);
 	}
-	m_m4View = lookAt(m_v3CamPos, m_v3CamLookDir, m_v3CamUpDir);
+	
 }
 
 void CCamera::MoveCamera(vec3 _move, CTime* _time)
