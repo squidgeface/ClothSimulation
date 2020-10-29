@@ -62,6 +62,7 @@ public:
 
 	void RipCloth();
 	void RipClothClick();
+	void BurnClothClick();
 	void SetClothWidth(int _size);
 
 	void SetClothHeight(int _size);
@@ -95,7 +96,13 @@ protected:
 	CButton* m_pOutCam = 0;
 	CButton* m_pRLeftCam = 0;
 	CButton* m_pRRightCam = 0;
+
 	CButton* m_pSetCutting = 0;
+	CButton* m_pSetRipping = 0;
+	CButton* m_pSetBurning = 0;
+
+	CTextLabel* m_pInstructions = 0;
+	
 
 	//Game management objects
 	CInput* m_pInput = 0;
@@ -106,7 +113,7 @@ protected:
 	//counters and rates
 	float m_fcounter = 0.0f;
 	//bools and switches
-	bool m_bRipToggle = false;
+	bool m_bRipToggle = true, m_bCutToggle = false, m_bBurnToggle = false;
 	bool m_bPaused = false;
 	vec3 m_v3RayDirection = vec3();
 	float previousX = 0;

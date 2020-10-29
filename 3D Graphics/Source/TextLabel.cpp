@@ -105,6 +105,7 @@ void CTextLabel::Render()
 	glBindVertexArray(VAO);
 
 	vec2 textPos = position;
+	int count = 1;
 	for (string::const_iterator character = text.begin(); character != text.end(); character++)
 	{
 		FontChar fontChar = Characters[*character];
@@ -113,22 +114,31 @@ void CTextLabel::Render()
 		GLfloat charWidth = fontChar.Size.x * scale;
 		GLfloat charHeight = fontChar.Size.y * scale;
 
-		//update VBO
-		GLfloat vertices[6][4] = {
-			{xpos, ypos + charHeight, 0.0, 0.0}, { xpos, ypos, 0.0, 1.0 }, {xpos + charWidth, ypos, 1.0, 1.0}, 
-			{xpos, ypos + charHeight, 0.0, 0.0}, {xpos + charWidth, ypos, 1.0, 1.0}, {xpos + charWidth, ypos + charHeight, 1.0, 0.0},
-		};
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+		if (*character == '\n')
+		{
+			textPos.x = position.x - fontChar.Bearing.x * scale;
+			textPos.y = position.y - (charHeight * count) - (fontChar.Size.y - fontChar.Bearing.y) * scale;
+			count++;
+		}
+		else
+		{
+			//update VBO
+			GLfloat vertices[6][4] = {
+				{xpos, ypos + charHeight, 0.0, 0.0}, { xpos, ypos, 0.0, 1.0 }, {xpos + charWidth, ypos, 1.0, 1.0},
+				{xpos, ypos + charHeight, 0.0, 0.0}, {xpos + charWidth, ypos, 1.0, 1.0}, {xpos + charWidth, ypos + charHeight, 1.0, 0.0},
+			};
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
-		//render the glyph
-		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fontChar.TextureID);
-		glUniform1i(glGetUniformLocation(textProgram, "tex"), 0);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+			//render the glyph
 
-		textPos.x += (fontChar.Advance >> 6) * scale; //advance cursors to the next glyph
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, fontChar.TextureID);
+			glUniform1i(glGetUniformLocation(textProgram, "tex"), 0);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			textPos.x += (fontChar.Advance >> 6) * scale; //advance cursors to the next glyph
+		}
 	}
 
 	glUseProgram(0);

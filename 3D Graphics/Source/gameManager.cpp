@@ -258,7 +258,22 @@ void CGameManager::InitialiseMenu()
 	m_pSetCutting->InitialiseTextures("Resources/Textures/chkBox.png", 1);
 	m_pSetCutting->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
 	m_pSetCutting->SetText("Cut");
-		
+	//Rip button
+	m_pSetRipping = new CButton();
+	m_pSetRipping->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 130, 0.0f));
+	m_pSetRipping->InitialiseTextures("Resources/Textures/chkBox.png", 1);
+	m_pSetRipping->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
+	m_pSetRipping->SetText("Rip");
+	m_pSetRipping->SetButton(true);
+	//Burn button
+	m_pSetBurning = new CButton();
+	m_pSetBurning->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 210, 0.0f));
+	m_pSetBurning->InitialiseTextures("Resources/Textures/chkBox.png", 1);
+	m_pSetBurning->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
+	m_pSetBurning->SetText("Ignight");
+	//Instructions
+	m_pInstructions = new CTextLabel();
+	m_pInstructions->SetLabel("Shape Selection: '1' Sphere, '2' Pyramid, '3' Capsule, '~' None \n Ress 'R' to Reset \n Press 'Q' to toggle wind", "Resources/Fonts/BRLNSR.ttf", vec2(-Utils::HalfScreenW + 30.0f, -Utils::HalfScreenH + 80), vec3(0.0f, 0.0f, 0.0f), 0.5f);
 }
 //clear menu
 void CGameManager::Clear()
@@ -333,7 +348,9 @@ void CGameManager::Render()
 		m_pRLeftCam->RenderShapes(m_giStaticProgram);
 		m_pRRightCam->RenderShapes(m_giStaticProgram);
 		m_pSetCutting->RenderShapes(m_giStaticProgram);
-			
+		m_pSetRipping->RenderShapes(m_giStaticProgram);
+		m_pSetBurning->RenderShapes(m_giStaticProgram);
+		m_pInstructions->Render();
 
 	glutSwapBuffers();
 	//glFinish();
@@ -380,8 +397,13 @@ void CGameManager::Update()
 		{
 			RipCloth();
 		}
-		else {
+		else if (m_bCutToggle)
+		{
 			RipClothClick();
+		}
+		else if (m_bBurnToggle)
+		{
+			BurnClothClick();
 		}
 		
 		if (shape == 1)
@@ -415,6 +437,8 @@ void CGameManager::Update()
 		m_pRLeftCam->UpdateShapes();
 		m_pRRightCam->UpdateShapes();
 		m_pSetCutting->UpdateShapes();
+		m_pSetBurning->UpdateShapes();
+		m_pSetRipping->UpdateShapes();
 		
 			
 		if (m_pAnchorSlider->GetMouse() == 2)
@@ -550,13 +574,51 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			if (m_pSetCutting->CheckHover(m_pInput) && isClicking && !m_pSetCutting->GetShowing())
 			{
 				m_pSetCutting->SetButton(true);
-				m_bRipToggle = true;
+				m_pSetRipping->SetButton(false);
+				m_pSetBurning->SetButton(false);
+				m_bRipToggle = false;
+				m_bCutToggle = true;
+				m_bBurnToggle = false;
 				m_fcounter++;
 			}
 			else if (m_pSetCutting->CheckHover(m_pInput) && isClicking && m_pSetCutting->GetShowing())
 			{
 				m_pSetCutting->SetButton(false);
+				m_bCutToggle = false;
+				m_fcounter++;
+			}
+			
+			if (m_pSetRipping->CheckHover(m_pInput) && isClicking && !m_pSetRipping->GetShowing())
+			{
+				m_pSetCutting->SetButton(false);
+				m_pSetRipping->SetButton(true);
+				m_pSetBurning->SetButton(false);
+				m_bRipToggle = true;
+				m_bCutToggle = false;
+				m_bBurnToggle = false;
+				m_fcounter++;
+			}
+			else if (m_pSetRipping->CheckHover(m_pInput) && isClicking && m_pSetRipping->GetShowing())
+			{
+				m_pSetRipping->SetButton(false);
 				m_bRipToggle = false;
+				m_fcounter++;
+			}
+
+			if (m_pSetBurning->CheckHover(m_pInput) && isClicking && !m_pSetBurning->GetShowing())
+			{
+				m_pSetCutting->SetButton(false);
+				m_pSetRipping->SetButton(false);
+				m_pSetBurning->SetButton(true);
+				m_bRipToggle = false;
+				m_bCutToggle = false;
+				m_bBurnToggle = true;
+				m_fcounter++;
+			}
+			else if (m_pSetBurning->CheckHover(m_pInput) && isClicking && m_pSetBurning->GetShowing())
+			{
+				m_pSetBurning->SetButton(false);
+				m_bBurnToggle = false;
 				m_fcounter++;
 			}
 
@@ -663,7 +725,15 @@ void CGameManager::RipCloth()
 	{
 		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
 		{
-			m_pSpheres[i]->ApplyForce(vec3(force.x * 50.0f * m_pSpheres[i]->GetMass(), -force.y * 100.0f * m_pSpheres[i]->GetMass(), 0.0f));
+			if (force.y > 0)
+			{
+				force.y *= 3.0f;
+			}
+			else
+			{
+				force.y *= 2.0f;
+			}
+			m_pSpheres[i]->ApplyForce(vec3(force.x * 50.0f * m_pSpheres[i]->GetMass(), -force.y * m_pSpheres[i]->GetMass(), 0.0f));
 		}
 	}
 	previousX = m_pInput->GetMouseX();
@@ -686,6 +756,27 @@ void CGameManager::RipClothClick()
 	}
 
 }
+
+void CGameManager::BurnClothClick()
+{
+	vec3 mousePos = GetRayFromMouse();
+	
+	float m_imouseX = 2.0f * m_pInput->GetMouseX();// / Utils::ScreenWidth;
+	float m_imouseY = 0.0f - (2.0f * m_pInput->GetMouseY());// / Utils::ScreenHeight);
+
+	for (size_t i = 0; i < m_pSpheres.size(); i++)
+	{
+		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
+		{
+			m_pSpheres[i]->Burn();
+		}
+	}
+
+}
+
+
+
+
 void CGameManager::SetClothWidth(int _size)
 {
 	width = _size;
