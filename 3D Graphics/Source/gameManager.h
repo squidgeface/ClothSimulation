@@ -1,9 +1,9 @@
-// (c) 2020 Alexander Jenkins
+// (c) 2020 Media Design School
 //
 // File Name   : gameManager.h
-// Description : gameManager declaration file
-// Author      : alexander jenkins
-// Mail        : alexander.jen8470@mediadesign.school.nz
+// Description : gameManager declaration file file
+// Author      : alexander jenkins, Raven Clancey-Peetz
+// Mail        : alexander.jenkins@mds.ac.nz, Raven-Clancey-Peetz@mediadesign.school.nz
 //
 
 #pragma once

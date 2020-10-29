@@ -98,20 +98,14 @@ void CGameManager::SetUpCloth()
 			m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
 			//Initialise Geometry
 			m_pSphere->InitialiseGeo(m_pProjCamera, m_pTime, m_pInput, MeshType::GEOMETRY, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
-			/*if (m_pSpheres.size() != 0)
-			{
-				m_pSphere->InitialiseGeo(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), m_pSpheres[count-1]->GetObjPosition());
-			}*/
-		
+			//Push particle to vector
 			m_pSpheres.push_back(m_pSphere);
 			count++;
 		}
 	}
 
-	//m_pSpheres[45]->Burn();
-
-	int counter = 0;
-	//Link Particles
+	count = 0;
+	//Link Particles Up and Left and Diagonal
 	for (size_t y = 0; y < height; y++)
 	{
 		for (size_t x = 0; x < width; x++)
@@ -119,19 +113,19 @@ void CGameManager::SetUpCloth()
 			//if not the first column
 			if (x != 0)
 			{
-				m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - 1]);
-				m_pSpheres[counter - 1]->LinkParticles(m_pSpheres[counter]);
+				m_pSpheres[count]->LinkParticles(m_pSpheres[count - 1]);
+				m_pSpheres[count - 1]->LinkParticles(m_pSpheres[count]);
 				//if not the first row
 				if (y != 0)
 				{
-					m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - width]);
-					m_pSpheres[counter - width]->LinkParticles(m_pSpheres[counter]);
-					m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - (width + 1)]);
+					m_pSpheres[count]->LinkParticles(m_pSpheres[count - width]);
+					m_pSpheres[count - width]->LinkParticles(m_pSpheres[count]);
+					m_pSpheres[count]->LinkParticles(m_pSpheres[count - (width + 1)]);
 				}
 
 				if (y != height - 1)
 				{
-					m_pSpheres[counter]->LinkParticles(m_pSpheres[counter + (width - 1)]);
+					m_pSpheres[count]->LinkParticles(m_pSpheres[count + (width - 1)]);
 				}
 			}
 			else
@@ -139,26 +133,29 @@ void CGameManager::SetUpCloth()
 				//if not the first row
 				if (y != 0)
 				{
-					m_pSpheres[counter]->LinkParticles(m_pSpheres[counter - width]);
-					m_pSpheres[counter - width]->LinkParticles(m_pSpheres[counter]);
+					m_pSpheres[count]->LinkParticles(m_pSpheres[count - width]);
+					m_pSpheres[count - width]->LinkParticles(m_pSpheres[count]);
 				}
 			}
-			counter++;
+			count++;
 		}
 	}
-	//set anchors
+	//Create Anchors
 	for (size_t i = 0; i < anchors; i++)
 	{
+		//Create a particle as an anchor
 		CParticle* m_pSphere = new CParticle();
 		float _x = -((width / 2) * 15) + float(i * 5) + width;
 		m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, 10.0f, 0.0f));
 		m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
 		m_pSphere->SetAsAnchor();
+		//Push to Anchor Vector
 		m_pAnchorSpheres.push_back(m_pSphere);
 	}
-	//Link top row of cloth with anchors with a gap in the center
 
+	//Link top row of cloth with anchors with a gap in the center for even number of anchors
 	int d = anchors % 2;
+	//If even number of anchors
 	if (d != 0)
 	{
 		for (int i = 0; i < (anchors / 2); i++)
@@ -175,6 +172,7 @@ void CGameManager::SetUpCloth()
 		}
 		m_pAnchorSpheres[anchors / 2]->LinkParticles(m_pSpheres[width / 2]);
 	}
+	//If odd number of anchors
 	else
 	{
 		for (int i = 0; i < (anchors / 2); i++)
@@ -197,11 +195,12 @@ void CGameManager::SetUpCloth()
 //Initialise Menu items
 void CGameManager::InitialiseMenu()
 {
+	//Set up the cloth
 	SetUpCloth();
 
 	//create a ball obstacle
 	m_pBall = new CPrefab;
-	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(15.0f, 15.0f, 15.0f), vec3(), vec3(-((width / 2) * 15)/2.0f, -100.0f, 20.0f));
+	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(15.0f, 15.0f, 15.0f), vec3(), vec3(-((width / 2) * 15) + float(width/2 * 5) + width, -100.0f, 20.0f));
 	m_pBall->InitialiseTextures("Resources/Textures/green.bmp", 1);
 	//create a capsule obstacle
 	m_pCapsule = new CPrefab;
@@ -209,24 +208,24 @@ void CGameManager::InitialiseMenu()
 	m_pCapsule->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
 
-	//load floor
+	//load floor object
 	m_pFloor = new CPrefab();
-	m_pFloor->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(500.0f, 1.0f, 500.0f), vec3(), vec3(-((width/ 2) * 15)/2.0f, -200.0f, 0.0f));
+	m_pFloor->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(500.0f, 1.0f, 500.0f), vec3(), vec3(-((width / 2) * 15) + float(width / 2 * 5) + width, -200.0f, 0.0f));
 	m_pFloor->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
-	//create slider for Cloth size
+	//create slider for Cloth Width
 	m_pWidthSlider = new CSlider();
 	m_pWidthSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/widthSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 60, 0.0f), false);
-	//create slider for Cloth size
+	//create slider for Cloth Height
 	m_pHeightSlider = new CSlider();
 	m_pHeightSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/heightSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 110, 0.0f), false);
 	//create slider for Anchors
 	m_pAnchorSlider = new CSlider();
 	m_pAnchorSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/anchorSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 160, 0.0f), true);
-
+	//Set camera looking at where objects spawn
 	m_pProjCamera->SetPosition(vec3(m_pBall->GetObjPosition().x, -100.0f, 200.0f), m_pBall->GetObjPosition());
 
-	//Set Up on scren buttons
+	//Set Up on screen buttons and UI
 	m_pUpCam = new CButton();
 	m_pUpCam->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(Utils::HalfScreenW - 80.0f, -Utils::HalfScreenH + 80, 0.0f));
 	m_pUpCam->InitialiseTextures("Resources/Textures/upCam.png", 1);
@@ -253,59 +252,72 @@ void CGameManager::InitialiseMenu()
 	m_pRRightCam->InitialiseTextures("Resources/Textures/rRightCam.png", 1);
 	//Cut button
 	m_pSetCutting = new CButton();
-	m_pSetCutting->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 200, 0.0f));
+	m_pSetCutting->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 230, 0.0f));
 	m_pSetCutting->InitialiseTextures("Resources/Textures/chkBox.png", 1);
 	m_pSetCutting->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
 	m_pSetCutting->SetText("Cut");
 	//Rip button
 	m_pSetRipping = new CButton();
-	m_pSetRipping->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 160, 0.0f));
+	m_pSetRipping->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 190, 0.0f));
 	m_pSetRipping->InitialiseTextures("Resources/Textures/chkBox.png", 1);
 	m_pSetRipping->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
 	m_pSetRipping->SetText("Rip");
 	m_pSetRipping->SetButton(true);
 	//Burn button
 	m_pSetBurning = new CButton();
-	m_pSetBurning->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 240, 0.0f));
+	m_pSetBurning->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 270, 0.0f));
 	m_pSetBurning->InitialiseTextures("Resources/Textures/chkBox.png", 1);
 	m_pSetBurning->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
 	m_pSetBurning->SetText("Ignight");
 	//Instructions
 	m_pInstructions = new CTextLabel();
-	m_pInstructions->SetLabel(" Press 'R' to Reset \n Press 'Q' to toggle wind \n Shape Selection: '1' Sphere, '2' Capsule, '~' None \n 'W' and 'S' - Move Cloth \n 'A' and 'D' - Stretch/Squash Hooks", "Resources/Fonts/BRLNSR.ttf", vec2(-Utils::HalfScreenW + 30.0f, -Utils::HalfScreenH + 110), vec3(0.0f, 0.0f, 0.0f), 0.5f);
+	m_pInstructions->SetLabel(" Press 'R' to Reset \n Press 'Q' to toggle wind \n Shape Selection: '1' Sphere, '2' Capsule, '~' None \n 'W' and 'S' - Move Cloth \n 'A' and 'D' - Stretch/Squash Hooks \n 'X' Drop Cloth", "Resources/Fonts/BRLNSR.ttf", vec2(-Utils::HalfScreenW + 30.0f, -Utils::HalfScreenH + 140), vec3(0.0f, 0.0f, 0.0f), 0.5f);
 }
-//clear menu
+//Reset cloth
 void CGameManager::Clear()
 {
+	//clear vectors
 	m_pSpheres.clear();
 	m_pAnchorSpheres.clear();
-
+	//Check slider changes
 	SetClothWidth(m_pWidthSlider->GetClothSize());
 	SetClothHeight(m_pHeightSlider->GetClothSize());
 	SetAnchorSize(m_pAnchorSlider->GetAnchorSize());
+	//Set up the cloth
 	SetUpCloth();
+	//Move objects to line up with cloth
+	m_pBall->SetObjPosition(vec3(-((width / 2) * 15) + float(width / 2 * 5) + width, m_pBall->GetObjPosition().y, m_pBall->GetObjPosition().z));
+	m_pCapsule->SetObjPosition(vec3(-((width / 2) * 15) + float(width / 2 * 5) + width, m_pCapsule->GetObjPosition().y, m_pCapsule->GetObjPosition().z));
+	m_pFloor->SetObjPosition(vec3(-((width / 2) * 15) + float(width / 2 * 5) + width, m_pFloor->GetObjPosition().y, m_pFloor->GetObjPosition().z));
+	//Reset to default camera position
+	m_pProjCamera->m_fTimeElapsed = 0.0f;
+	m_pProjCamera->SetPosition(vec3(m_pBall->GetObjPosition().x, -100.0f, 200.0f), m_pBall->GetObjPosition());
 }
 //render function
 void CGameManager::Render()
 {
 	//Clear buffers
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	
+	//Render floor
 	m_pFloor->RenderShapes(m_giPhongProgram);
-
+		
+	//Render Cloth
 		for (size_t i = 0; i < m_pSpheres.size(); i++)
 		{
+			//If the particle is not burned, render it
 			if (m_pSpheres[i]->bisBurned != true)
 			{
 				m_pSpheres[i]->RenderShapes(m_giPhongProgram);
 				m_pSpheres[i]->Draw();
 			}
 		}
+		//Render Anchor points
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 		{
 			m_pAnchorSpheres[i]->RenderShapes(m_giPhongProgram);
 		}
 		int counter = 0;
+
 		//Draw Geometry
 		for (size_t y = 0; y < height; y++)
 		{
@@ -315,13 +327,9 @@ void CGameManager::Render()
 				{
 					if (y != 0)
 					{
-						//topLeft						//topRight									//botLeft										//botRight
 						m_pSpheres[counter]->DrawGeo(m_pSpheres[counter - 1 ]->GetObjPosition(), m_pSpheres[counter - width]->GetObjPosition(), m_pSpheres[counter - width - 1]->GetObjPosition());
-						//m_pSpheres[counter]->DrawGeo2(m_pSpheres[counter + 1]->GetObjPosition(), m_pSpheres[counter + width]->GetObjPosition(), m_pSpheres[counter + width + 1]->GetObjPosition());
 					}
 				}
-				
-				
 				counter++;
 			}
 		}
@@ -353,7 +361,6 @@ void CGameManager::Render()
 		m_pInstructions->Render();
 
 	glutSwapBuffers();
-	//glFinish();
 }
 //update function
 void CGameManager::Update()
@@ -369,7 +376,7 @@ void CGameManager::Update()
 		{
 			m_pSpheres[i]->UpdateShapes();
 			m_pSpheres[i]->Update();
-			//check for obstacle collision
+			//check for obstacle collision when shape is active
 			if (shape == 1)
 			{
 				m_pSpheres[i]->CheckObstacle(m_pBall);
@@ -379,7 +386,6 @@ void CGameManager::Update()
 				m_pSpheres[i]->CheckCapsule(m_pCapsule);
 			}
 		
-
 			//check floor collision
 			m_pSpheres[i]->CheckFloor(m_pFloor);
 		}
@@ -389,7 +395,7 @@ void CGameManager::Update()
 			m_pAnchorSpheres[i]->UpdateShapes();
 			m_pAnchorSpheres[i]->Update();
 		}
-
+	//Set cloth functions when selected
 		if (m_bRipToggle)
 		{
 			RipCloth();
@@ -402,7 +408,7 @@ void CGameManager::Update()
 		{
 			BurnClothClick();
 		}
-		
+	//Updated shapes when active	
 		if (shape == 1)
 		{
 			m_pBall->UpdateShapes();
@@ -411,13 +417,10 @@ void CGameManager::Update()
 		{
 			m_pCapsule->UpdateShapes();
 		}
-		
-	
-
+	//Update Floor
 		m_pFloor->UpdateShapes();
 
-		
-		//Update UI
+	//Update UI elements
 		m_pWidthSlider->Update();
 		m_pHeightSlider->Update();
 		m_pAnchorSlider->Update();
@@ -434,42 +437,36 @@ void CGameManager::Update()
 		m_pSetBurning->UpdateShapes();
 		m_pSetRipping->UpdateShapes();
 		
-			
+	//Reset cloth when sliders are moved	
 		if (m_pAnchorSlider->GetMouse() == 2)
 		{
 			m_pAnchorSlider->ResetMouse();
 			Clear();
 		}
-
 		if (m_pWidthSlider->GetMouse() == 2)
 		{
 			m_pWidthSlider->ResetMouse();
 			Clear();
-		}
-		
+		}	
 		if (m_pHeightSlider->GetMouse() == 2)
 		{
 			m_pHeightSlider->ResetMouse();
 			Clear();
 		}
-
+	//Move the camera function
 		MoveCamera();
 	//update game information
 	glutPostRedisplay();
 }
 
+// MOPve Camera Controls
 void CGameManager::MoveCamera()
 {
-	
-	vec3 moveDir = vec3(m_fHorz * 1.0f, m_fVert * 1.0f, m_fLat * 1.0f);
-	vec3 rotPoint = vec3(m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().x,m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().y - 100.0f,m_pAnchorSpheres[m_pAnchorSpheres.size() / 2]->GetObjPosition().z);
+	//Move direction baed on button presses
+	vec3 moveDir = vec3(m_fHorz, m_fVert, m_fLat);
 	m_pProjCamera->MoveCamera(moveDir, m_pTime);
+	//Rotation based on button presses and object position
 	m_pProjCamera->CameraRotate(m_pBall->GetObjPosition(), m_pTime, m_fSpin);
-	//m_pProjCamera->SetPosition(vec3 (sin(CamRotx ) * zoom * 2, -zoom, cos(CamRotx) * zoom * 2), vec3(vec3(-((width / 2) * 15) / 2.0f, -100.0f, 20.0f)));
-//	m_pProjCamera->LookAtObject(m_pProjCamera->GetCamPos());
-
-	//m_pProjCamera->SetCamPosition(sin(camRotX) * zoom, zoom, cos(camRotX) * zoom);
-	//m_pProjCamera.SetCamLookDirection(player.getPosition().x, player.getPosition().y, player.getPosition().z);
 }
 
 //input functions
@@ -477,9 +474,10 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 {
 								/// *** INPUT *** ///
 
-		//if mouse click counter is 0 (one click at a time)
+		//if counter is 0 (one click/press at a time)
 		if (m_fcounter == 0.0f)
 		{
+			//If mouse is down set isClicking
 			if (MouseState[0] == InputState::INPUT_DOWN)
 			{
 				isClicking = true;
@@ -489,25 +487,29 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				isClicking = false;
 			}
 
+			//Pressing A moves anchors away from each other
 			if (KeyState['a'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 2; i <= (m_pAnchorSpheres.size() / 2) + 1; i++)
 				{
-					float move = 1.0f * float((1.0f / i) * 2.0f);
+					//Half the anchors in one direction and half in another
+					float move = float((1.0f / i) * 2.0f);
 					m_pAnchorSpheres[i - 2]->SetObjPosition(vec3(m_pAnchorSpheres[i - 2]->GetObjPosition().x - move, m_pAnchorSpheres[i - 2]->GetObjPosition().y, m_pAnchorSpheres[i - 2]->GetObjPosition().z));
 					m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->SetObjPosition(vec3(m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->GetObjPosition().x + move, m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->GetObjPosition().y, m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->GetObjPosition().z));
 				}
 			}
+			//Pressing D moves anchors away from each other
 			else if (KeyState['d'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 2; i <= (m_pAnchorSpheres.size() / 2) + 1; i++)
 				{
-					float move = 1.0f * float((1.0f / i) * 2.0f);
+					//Half the anchors in one direction and half in another
+					float move = float((1.0f / i) * 2.0f);
 					m_pAnchorSpheres[i - 2]->SetObjPosition(vec3(m_pAnchorSpheres[i - 2]->GetObjPosition().x + move, m_pAnchorSpheres[i - 2]->GetObjPosition().y, m_pAnchorSpheres[i - 2]->GetObjPosition().z));
 					m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->SetObjPosition(vec3(m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->GetObjPosition().x - move, m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->GetObjPosition().y, m_pAnchorSpheres[m_pAnchorSpheres.size() + 1 - i]->GetObjPosition().z));
 				}
 			}
-
+			//Pressing S moves anchors towards the front
 			if (KeyState['s'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
@@ -515,6 +517,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 					m_pAnchorSpheres[i]->SetObjPosition(vec3(m_pAnchorSpheres[i]->GetObjPosition().x, m_pAnchorSpheres[i]->GetObjPosition().y, m_pAnchorSpheres[i]->GetObjPosition().z - 1.0f));
 				}
 			}
+			//Pressing W moves anchors towards the back
 			else if (KeyState['w'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
@@ -523,7 +526,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				}
 			}
 			
-			//Initialise wind
+			//Initialise wind with Q
 			if (KeyState['q'] == InputState::INPUT_DOWN)
 			{
 				for (size_t i = 0; i < m_pSpheres.size(); i++)
@@ -535,25 +538,24 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				cout << "Setting Wind: " << endl;
 			}
 
-			//Initialise wind
+			//Reset Scene with R
 			if (KeyState['r'] == InputState::INPUT_DOWN)
 			{
-				
 				Clear();
 				m_fcounter++;
 
 				cout << "Resetting Scene" << endl;
 			}
 
-			//Remove anchors
+			//Remove anchors with X
 			if (KeyState['x'] == InputState::INPUT_DOWN)
 			{
-
+				//Unlink all anchors
 				for (int i = 0; i < anchors; i++)
 				{
 					m_pAnchorSpheres[i]->UnLinkParticles();
 				}
-
+				//Unlink top row of cloth
 				for (size_t i = 0; i < width; i++)
 				{
 					m_pSpheres[i]->UnLinkParticles();
@@ -563,10 +565,12 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 
 				cout << "Dropping Cloth" << endl;
 			}
-
+			//Check button collisions
 			if (m_pSetCutting->CheckHover(m_pInput) && isClicking && !m_pSetCutting->GetShowing())
 			{
+				//Sets button to checked
 				m_pSetCutting->SetButton(true);
+				//Sets other buttons to un checked
 				m_pSetRipping->SetButton(false);
 				m_pSetBurning->SetButton(false);
 				m_bRipToggle = false;
@@ -576,6 +580,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			}
 			else if (m_pSetCutting->CheckHover(m_pInput) && isClicking && m_pSetCutting->GetShowing())
 			{
+				//Sets button to unchecked
 				m_pSetCutting->SetButton(false);
 				m_bCutToggle = false;
 				m_fcounter++;
@@ -614,7 +619,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				m_bBurnToggle = false;
 				m_fcounter++;
 			}
-
+			//Sets shapes
 			if (KeyState['1'] == InputState::INPUT_DOWN)
 			{
 				shape = 1;
@@ -630,7 +635,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			}
 
 			
-
+			//Camera control buttons
 			if (m_pLeftCam->CheckHover(m_pInput) && isClicking)
 			{
 				m_fHorz = -1.0f;
@@ -673,44 +678,38 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			if (m_pRLeftCam->CheckHover(m_pInput) && isClicking)
 			{
 				m_fSpin = -1.0f;
-				CamRotx -= 0.1f * m_pTime->GetDelta();
 			}
 			else if (m_pRRightCam->CheckHover(m_pInput) && isClicking)
 			{
 				m_fSpin = 1.0f;
-				CamRotx += 0.1f * m_pTime->GetDelta();
 			}
 			else
 			{
 				m_fSpin = 0.0f;
-				//CamRotx = 0;
 			}
 
 			
 		}
+		//If all keys are up, reset counter
 		else if (KeyState['q'] == InputState::INPUT_UP && KeyState['r'] == InputState::INPUT_UP && KeyState['x'] == InputState::INPUT_UP && KeyState['f'] == InputState::INPUT_UP && MouseState[0] == InputState::INPUT_UP)
 		{
 		//reset counter on mouse up
 			m_fcounter = 0.0f;
 		}
-		
-
-													// **** GAME INPUT **** //
-
-	
-
 }
 
-
+//Rip cloth function
 void CGameManager::RipCloth()
 {
-	vec3 mousePos = GetRayFromMouse();
-	
+	//Get a force based on mouse movement
 	vec2 force = vec2(m_pInput->GetMouseX() - previousX, m_pInput->GetMouseY() - previousY);
+	//for all the points in the cloth
 	for (size_t i = 0; i < m_pSpheres.size(); i++)
 	{
+		//Check if mouse is intersecting the point and clicking
 		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
 		{
+			//changed y force based on direction (tweaking for visual effect)
 			if (force.y > 0)
 			{
 				force.y *= 2.0f;
@@ -719,60 +718,55 @@ void CGameManager::RipCloth()
 			{
 				force.y *= 1.25f;
 			}
+			//Apply force to the point
 			m_pSpheres[i]->ApplyForce(vec3(force.x * 50.0f * m_pSpheres[i]->GetMass(), -force.y * m_pSpheres[i]->GetMass(), 0.0f));
 		}
 	}
+	//update previous mouse position
 	previousX = m_pInput->GetMouseX();
 	previousY = m_pInput->GetMouseY();
 }
-
+//Cut cloth function
 void CGameManager::RipClothClick()
 {
-	vec3 mousePos = GetRayFromMouse();
-	
-	float m_imouseX = 2.0f * m_pInput->GetMouseX();// / Utils::ScreenWidth;
-	float m_imouseY = 0.0f - (2.0f * m_pInput->GetMouseY());// / Utils::ScreenHeight);
-
+	//For all the points in the cloth
 	for (size_t i = 0; i < m_pSpheres.size(); i++)
 	{
+		//Check if mouse is intersecting and mouse click
 		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
 		{
+			//Unlink all other particles from this particle
 			m_pSpheres[i]->UnLinkParticles();
 		}
 	}
 
 }
-
+//Burn cloth functions
 void CGameManager::BurnClothClick()
 {
-	vec3 mousePos = GetRayFromMouse();
-	
-	float m_imouseX = 2.0f * m_pInput->GetMouseX();// / Utils::ScreenWidth;
-	float m_imouseY = 0.0f - (2.0f * m_pInput->GetMouseY());// / Utils::ScreenHeight);
-
+	//For all the points in the cloth
 	for (size_t i = 0; i < m_pSpheres.size(); i++)
 	{
+		//Check if mouse is intersecting and mouse click
 		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
 		{
+			//Set point to burning
 			m_pSpheres[i]->Burn();
 		}
 	}
 
 }
-
-
-
-
+//Set the width of the cloth
 void CGameManager::SetClothWidth(int _size)
 {
 	width = _size;
 }
-
+//Set the height of the cloth
 void CGameManager::SetClothHeight(int _size)
 {
 	height = _size;
 }
-
+//Set anchor size
 void CGameManager::SetAnchorSize(int _size)
 {
 	anchors = _size;
@@ -805,51 +799,7 @@ void CGameManager::MouseMove(int x, int y)
 {
 	m_pInput->MouseMove(x, y);
 }
-
-void CGameManager::RenderLines()
-{
-	int counter = 0;
-	float SCALE = 300.0f;
-	float upBoost = 0.5f;
-	float rightBoost = -0.5f;
-
-	for (size_t y = 0; y < sqrt(m_pSpheres.size()); y++)
-	{
-		for (size_t x = 0; x < sqrt(m_pSpheres.size()); x++)
-		{
-			if (x != 0)
-			{
-				glBegin(GL_LINES);
-				glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-				glVertex3f(m_pSpheres[counter - 1]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter - 1]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - 1]->GetObjPosition().z / SCALE);
-				glEnd();
-
-				if (y != 0)
-				{
-					glBegin(GL_LINES);
-					glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-					glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
-					glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-					glVertex3f(m_pSpheres[counter - (sqrt(m_pSpheres.size())+1)]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter - (sqrt(m_pSpheres.size()) + 1)]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - (sqrt(m_pSpheres.size()) + 1)]->GetObjPosition().z / SCALE);
-					glEnd();
-
-				}
-			}
-			else
-			{
-				if (y != 0)
-				{
-					glBegin(GL_LINES);
-					glVertex3f(m_pSpheres[counter]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter]->GetObjPosition().z / SCALE);
-					glVertex3f(m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().x / SCALE + rightBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().y / SCALE + upBoost, m_pSpheres[counter - sqrt(m_pSpheres.size())]->GetObjPosition().z / SCALE);
-					glEnd();
-				}
-			}
-			counter++;
-		}
-	}
-}
-
+//Get ray from mouse
 vec3 CGameManager::GetRayFromMouse()
 {
 	//normalize mouse position

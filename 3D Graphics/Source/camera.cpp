@@ -83,7 +83,7 @@ vec3 CCamera::GetCamLookDir()
 void CCamera::CameraRotate(vec3 _object,CTime* _time, float start)
 {
 	m_fTimeElapsed += _time->GetDelta() * start;
-	GLfloat radius = distance(m_v3CamPos, _object);
+	GLfloat radius = 200.0f;
 
 	if (start != 0)
 	{
