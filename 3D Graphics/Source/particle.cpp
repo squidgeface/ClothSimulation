@@ -93,6 +93,7 @@ void CParticle::Update()
 					OtherParts[i]->SetObjPosition(OtherParts[i]->GetObjPosition() - force2);
 				}
 		
+				//rip cloth if distance too far
 				if (deltaLength > maxDistance)
 				{
 					OtherParts.erase(OtherParts.begin() + i);
@@ -111,22 +112,28 @@ void CParticle::Update()
 	}
 	else if (geo->GetObjPosition() != vec3())
 	{
+		//calculate geometry shader
 		geo->UpdateShapes();
 		geo->SetObjPosition(GetObjPosition());
 	}
 
+	//check if particle is on fire
 	if (m_bOnFire) {
+		//add random burn amount
 		m_fBurnTime += ((rand() % 10)/ 10.000f) * m_pTime->GetDelta();
 		
+		//updraft from fire
 		ApplyForce(vec3(0.0f, 0.5f * m_fBurnTime, 0.0f));
 	}
 
+	//spread fire
 	if (m_fBurnTime > 3) {
 		for (size_t i = 0; i < OtherParts.size(); i++)
 		{
 			OtherParts[i]->Burn();
 		}
 	}
+	//burned out
 	 if (m_fBurnTime > 8)
 	{
 		UnLinkParticles();
@@ -173,9 +180,7 @@ float CParticle::GetMass()
 //Check for obstacles
 void CParticle::CheckObstacle(CPrefab* _obj)
 {
-	//float dist = distance(_obj->GetObjPosition(), GetObjPosition());
-	//if (dist <= _obj->GetObjSize().x)
-	//{
+	//sphere collision
 		vec3 force = GetObjPosition() - _obj->GetObjPosition();
 		float dist = length(force);
 		force = normalize(force);
@@ -184,14 +189,14 @@ void CParticle::CheckObstacle(CPrefab* _obj)
 			SetObjPosition(GetObjPosition() + force * (_obj->GetObjSize().x + 2 - dist));
 			ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 2 - dist));
 		}
-	//}
+	
 }
 
 void CParticle::CheckCapsule(CPrefab* _obj)
 {
-	//float dist = distance(_obj->GetObjPosition(), GetObjPosition());
-	//if (dist <= _obj->GetObjSize().x)
-	//{
+
+	//capsule collision
+
 	float offset = 1.0f;
 	for (int i = 0; i < 30; i++)
 	{
@@ -204,11 +209,12 @@ void CParticle::CheckCapsule(CPrefab* _obj)
 			ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 5 - dist));
 		}
 	}
-	//}
+	
 }
 //Check for obstacles
 void CParticle::CheckFloor(CPrefab* _obj)
 {
+	//floor collision
 	if (GetObjPosition().y <= _obj->GetObjPosition().y + _obj->GetObjSize().y / 2 
 		&& GetObjPosition().x < _obj->GetObjPosition().x + _obj->GetObjSize().x / 2 
 		&& GetObjPosition().x > _obj->GetObjPosition().x - _obj->GetObjSize().x / 2
@@ -220,11 +226,13 @@ void CParticle::CheckFloor(CPrefab* _obj)
 	}
 }
 
+//break all connections to a particle
 void CParticle::UnLinkParticles()
 {
 	OtherParts.clear();
 }
 
+//draw the connections between particles
 void CParticle::Draw()
 {
 	/*float SCALEx = 275.0 - GetObjPosition().z;
@@ -404,6 +412,7 @@ void CParticle::DrawGeo2(vec3 _Right, vec3 _botLeft, vec3 _botRight)
 	geo->RenderShapes(clothProgram);
 }
 
+//unused pyrmid collision attempts
 void CParticle::CollidePyramid(CPrefab *pyramid)
 {
 	//-37.5, -100, 20
@@ -505,6 +514,8 @@ void CParticle::CollidePyramid(CPrefab *pyramid)
 	}
 
 }
+
+//function for starting fire on cloth
 void CParticle::Burn()
 {
 	m_bOnFire = true;
