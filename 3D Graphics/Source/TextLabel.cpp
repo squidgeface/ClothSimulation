@@ -117,7 +117,7 @@ void CTextLabel::Render()
 		if (*character == '\n')
 		{
 			textPos.x = position.x - fontChar.Bearing.x * scale;
-			textPos.y = position.y - (charHeight * count) - (fontChar.Size.y - fontChar.Bearing.y) * scale;
+			textPos.y = position.y - ((charHeight + 5.0f) * count) - (fontChar.Size.y - fontChar.Bearing.y) * scale;
 			count++;
 		}
 		else

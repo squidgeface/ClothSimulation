@@ -254,26 +254,26 @@ void CGameManager::InitialiseMenu()
 	m_pRRightCam->InitialiseTextures("Resources/Textures/rRightCam.png", 1);
 	//Cut button
 	m_pSetCutting = new CButton();
-	m_pSetCutting->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 170, 0.0f));
+	m_pSetCutting->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 200, 0.0f));
 	m_pSetCutting->InitialiseTextures("Resources/Textures/chkBox.png", 1);
 	m_pSetCutting->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
 	m_pSetCutting->SetText("Cut");
 	//Rip button
 	m_pSetRipping = new CButton();
-	m_pSetRipping->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 130, 0.0f));
+	m_pSetRipping->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 160, 0.0f));
 	m_pSetRipping->InitialiseTextures("Resources/Textures/chkBox.png", 1);
 	m_pSetRipping->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
 	m_pSetRipping->SetText("Rip");
 	m_pSetRipping->SetButton(true);
 	//Burn button
 	m_pSetBurning = new CButton();
-	m_pSetBurning->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 210, 0.0f));
+	m_pSetBurning->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "", 0, vec3(40.0f, 40.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), vec3(-Utils::HalfScreenW + 60.0f, Utils::HalfScreenH - 240, 0.0f));
 	m_pSetBurning->InitialiseTextures("Resources/Textures/chkBox.png", 1);
 	m_pSetBurning->InitialiseTextures("Resources/Textures/chkBoxT.png", 2);
 	m_pSetBurning->SetText("Ignight");
 	//Instructions
 	m_pInstructions = new CTextLabel();
-	m_pInstructions->SetLabel("Shape Selection: '1' Sphere, '2' Pyramid, '3' Capsule, '~' None \n Ress 'R' to Reset \n Press 'Q' to toggle wind", "Resources/Fonts/BRLNSR.ttf", vec2(-Utils::HalfScreenW + 30.0f, -Utils::HalfScreenH + 80), vec3(0.0f, 0.0f, 0.0f), 0.5f);
+	m_pInstructions->SetLabel(" Press 'R' to Reset \n Press 'Q' to toggle wind \n Shape Selection: '1' Sphere, '2' Pyramid, '3' Capsule, '~' None \n 'W' and 'S' - Move Cloth \n 'A' and 'D' - Stretch/Squash Hooks", "Resources/Fonts/BRLNSR.ttf", vec2(-Utils::HalfScreenW + 30.0f, -Utils::HalfScreenH + 110), vec3(0.0f, 0.0f, 0.0f), 0.5f);
 }
 //clear menu
 void CGameManager::Clear()
