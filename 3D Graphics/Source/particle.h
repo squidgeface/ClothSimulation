@@ -35,6 +35,7 @@ public:
     void Burn();
     void SetWind();
     float GetMass();
+    bool bisBurned = false;
 
 
 protected:

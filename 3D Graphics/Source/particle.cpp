@@ -117,9 +117,11 @@ void CParticle::Update()
 
 	if (m_bOnFire) {
 		m_fBurnTime += ((rand() % 10)/ 10.000f) * m_pTime->GetDelta();
+		
+		ApplyForce(vec3(0.0f, 0.5f * m_fBurnTime, 0.0f));
 	}
 
-	if (m_fBurnTime > 5) {
+	if (m_fBurnTime > 3) {
 		for (size_t i = 0; i < OtherParts.size(); i++)
 		{
 			OtherParts[i]->Burn();
@@ -128,6 +130,8 @@ void CParticle::Update()
 	 if (m_fBurnTime > 8)
 	{
 		UnLinkParticles();
+		bisBurned = true;
+		m_bOnFire = false;
 	}
 
 	 glUseProgram(clothProgram);
@@ -268,22 +272,69 @@ void CParticle::DrawGeo(vec3 _botLeft, vec3 _Right, vec3 _Left)
 {
 	glUseProgram(clothProgram);
 	bool bRight = false;
-	bool bLeft = false;
+	bool bTopLeft = false;
 	bool bBotLeft = false;
+	//check if the links coming in are in the list of linked particles
+	for (int i = 0; i < OtherParts.size(); i++) {
 
+		if (OtherParts[i]->GetObjPosition() == _Right)
+		{
+			bRight = true;
+		}
+
+		if (OtherParts[i]->GetObjPosition() == _botLeft)
+		{
+			bBotLeft = true;
+		}
+
+		if (OtherParts[i]->GetObjPosition() == _Left)
+		{
+			bTopLeft = true;
+		}
+
+	}
 	//Alternate method
 	// Left  ----  right
 	//	|			  |
 	//	|			  |
 	//botLeft ----  this
-	//topLeft
-	glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_Left));
-	//Right
-	glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_Right));
-	//botRight
+
+		//botRight
 	glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(GetObjPosition()));
+
+	
+	//topLeft
+	if(bTopLeft)
+	{
+		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_Left));
+	}
+	else {
+		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(GetObjPosition()));
+	}
+	
+
+	//Right
+	if (bRight)
+	{
+		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_Right));
+	}
+	else {
+		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(GetObjPosition()));
+	}
+	
+
+
 	//botLeft
-	glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
+	if (bBotLeft)
+	{
+		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
+	}
+	else
+	{
+		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(GetObjPosition()));
+	}
+	
+
 
 	geo->RenderShapes(clothProgram);
 }

@@ -296,8 +296,11 @@ void CGameManager::Render()
 
 		for (size_t i = 0; i < m_pSpheres.size(); i++)
 		{
-			m_pSpheres[i]->RenderShapes(m_giPhongProgram);
-			m_pSpheres[i]->Draw();
+			if (m_pSpheres[i]->bisBurned != true)
+			{
+				m_pSpheres[i]->RenderShapes(m_giPhongProgram);
+				m_pSpheres[i]->Draw();
+			}
 		}
 		for (size_t i = 0; i < m_pAnchorSpheres.size(); i++)
 		{
@@ -309,12 +312,13 @@ void CGameManager::Render()
 		{
 			for (size_t x = 0; x < width; x++)
 			{
-				if (x != width - 1)
+				if (x != 0)
 				{
-					if (y != height - 1)
+					if (y != 0)
 					{
 						//topLeft						//topRight									//botLeft										//botRight
-						m_pSpheres[counter]->DrawGeo2(m_pSpheres[counter + 1]->GetObjPosition(), m_pSpheres[counter + width]->GetObjPosition(), m_pSpheres[counter + width + 1]->GetObjPosition());
+						m_pSpheres[counter]->DrawGeo(m_pSpheres[counter - 1 ]->GetObjPosition(), m_pSpheres[counter - width]->GetObjPosition(), m_pSpheres[counter - width - 1]->GetObjPosition());
+						//m_pSpheres[counter]->DrawGeo2(m_pSpheres[counter + 1]->GetObjPosition(), m_pSpheres[counter + width]->GetObjPosition(), m_pSpheres[counter + width + 1]->GetObjPosition());
 					}
 				}
 				
