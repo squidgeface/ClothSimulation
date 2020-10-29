@@ -21,11 +21,11 @@ void CParticle::InitialiseGeo(CCamera* camera, CTime* timer, CInput* input, Mesh
 void CParticle::Update()
 {
 	//Check if particle is one of the static points
-	
+
 		//nice gentle breeze
 		float seedx = float(rand() % 80) - 37.0f;
 		float seedz = float(rand() % 80) - 37.0f;
-		
+
 		//Seed with with values
 		Wind = vec3(-seedx, 0.0f, -seedz);
 		//Togle wind on and off qith 'Q'
@@ -36,7 +36,7 @@ void CParticle::Update()
 		//Eulers method
 		//apply forces
 		//ApplyForce(Gravity);
-		////Use those forces to move object 
+		////Use those forces to move object
 		//Accel -= Velocity * Damping / Mass;
 		//Velocity += Accel * m_pTime->GetDelta();
 		////limit velocity to graviy force
@@ -55,18 +55,18 @@ void CParticle::Update()
 		Accel -= Velocity * Damping / Mass;
 		vec3 avg_acceleration = (last_acceleration + Accel) / 2.0f;
 		Velocity += avg_acceleration * m_pTime->GetDelta();
-		
+
 		if (Velocity.y <= Gravity.y)
 		{
 			Velocity.y = Gravity.y;
 		}
 
 
-		
+
 		//other particle links
 		//for all the particles that have been linked
 		for (size_t i = 0; i < OtherParts.size(); i++)
-		{	
+		{
 			//if the particle in the vector is not this one
 			if (OtherParts[i] != this)
 			{
@@ -79,20 +79,21 @@ void CParticle::Update()
 				//calculate forces
 				vec3 force = Delta * (Im1 / (Im1 + Im2)) * Stiffness * difference;
 				vec3 force2 = Delta * (Im2 / (Im1 + Im2)) * Stiffness * difference;
-				
+
 				//if this object is not an anchor object
 				if (!isAnchor)
 				{
 					//set forces for this object
 					SetObjPosition(GetObjPosition() + force);
 				}
-			
+
 				if (!OtherParts[i]->GetAnchor())
 				{
 					//Apply forces to other object
 					OtherParts[i]->SetObjPosition(OtherParts[i]->GetObjPosition() - force2);
 				}
-		
+
+				//rip cloth if distance too far
 				if (deltaLength > maxDistance)
 				{
 					OtherParts.erase(OtherParts.begin() + i);
@@ -102,8 +103,8 @@ void CParticle::Update()
 	//reset acceleration
 		Accel = vec3();
 		//Velocity = vec3();
-		
-	
+
+
 	if (isAnchor)
 	{
 		//set static position
@@ -111,22 +112,27 @@ void CParticle::Update()
 	}
 	else if (geo->GetObjPosition() != vec3())
 	{
+		//calculate geometry shader
 		geo->UpdateShapes();
 		geo->SetObjPosition(GetObjPosition());
 	}
 
+	//check if particle is on fire
 	if (m_bOnFire) {
+		//add random burn amount
 		m_fBurnTime += ((rand() % 10)/ 10.000f) * m_pTime->GetDelta();
-		
+
 		ApplyForce(vec3(0.0f, 0.8f * m_fBurnTime, 0.0f));
 	}
 
+	//spread fire
 	if (m_fBurnTime > 3) {
 		for (size_t i = 0; i < OtherParts.size(); i++)
 		{
 			OtherParts[i]->Burn();
 		}
 	}
+	//burned out
 	 if (m_fBurnTime > 8)
 	{
 		UnLinkParticles();
@@ -173,9 +179,7 @@ float CParticle::GetMass()
 //Check for obstacles
 void CParticle::CheckObstacle(CPrefab* _obj)
 {
-	//float dist = distance(_obj->GetObjPosition(), GetObjPosition());
-	//if (dist <= _obj->GetObjSize().x)
-	//{
+	//sphere collision
 		vec3 force = GetObjPosition() - _obj->GetObjPosition();
 		float dist = length(force);
 		force = normalize(force);
@@ -184,12 +188,14 @@ void CParticle::CheckObstacle(CPrefab* _obj)
 			SetObjPosition(GetObjPosition() + force * (_obj->GetObjSize().x + 2 - dist));
 			ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 2 - dist));
 		}
-	//}
+
 }
 
 void CParticle::CheckCapsule(CPrefab* _obj)
 {
-	
+
+	//capsule collision
+
 	float offset = 1.0f;
 	for (int i = 0; i < 30; i++)
 	{
@@ -202,39 +208,42 @@ void CParticle::CheckCapsule(CPrefab* _obj)
 			ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 5 - dist));
 		}
 	}
-	
+
 }
 //Check for obstacles
 void CParticle::CheckFloor(CPrefab* _obj)
 {
-	if (GetObjPosition().y <= _obj->GetObjPosition().y + _obj->GetObjSize().y / 2 
-		&& GetObjPosition().x < _obj->GetObjPosition().x + _obj->GetObjSize().x / 2 
+	//floor collision
+	if (GetObjPosition().y <= _obj->GetObjPosition().y + _obj->GetObjSize().y / 2
+		&& GetObjPosition().x < _obj->GetObjPosition().x + _obj->GetObjSize().x / 2
 		&& GetObjPosition().x > _obj->GetObjPosition().x - _obj->GetObjSize().x / 2
 		&& GetObjPosition().z < _obj->GetObjPosition().z + _obj->GetObjSize().z / 2
 		&& GetObjPosition().z > _obj->GetObjPosition().z - _obj->GetObjSize().z / 2)
 	{
-		
+
 		SetObjPosition(vec3(GetObjPosition().x, _obj->GetObjPosition().y + _obj->GetObjSize().y/2, GetObjPosition().z));
 	}
 }
 
+//break all connections to a particle
 void CParticle::UnLinkParticles()
 {
 	OtherParts.clear();
 }
 
+//draw the connections between particles
 void CParticle::Draw()
 {
-	
+
 	vec4 point1 = -m_pCamera->GetVPMatrix() * vec4(GetObjPosition(), 1.0f);
 
 	for (size_t i = 0; i < OtherParts.size(); i++)
 	{
 		if (!isAnchor && !OtherParts[i]->GetAnchor())
 		{
-			
+
 			vec4 point2 = -m_pCamera->GetVPMatrix() * vec4(OtherParts[i]->GetObjPosition(), 1.0f);
-			
+
 			glBegin(GL_LINE_STRIP);
 			glColor3f(0.0f, 0.0f, 0.0f);
 			glVertex3f(point1.x / point1.w, point1.y / point1.w, point1.z / point1.w);
@@ -245,7 +254,7 @@ void CParticle::Draw()
 	}
 
 
-	
+
 }
 //unused geometry drawing alternative
 void CParticle::DrawGeo(vec3 _botLeft, vec3 _Right, vec3 _Left)
@@ -313,9 +322,10 @@ void CParticle::DrawGeo(vec3 _botLeft, vec3 _Right, vec3 _Left)
 	geo->RenderShapes(clothProgram);
 }
 
+//unused pyrmid collision attempts
 void CParticle::CollidePyramid(CPrefab *pyramid)
 {
-	
+
 	float size = pyramid->GetObjSize().x / 2;
 	vec3 PyramidCenter = pyramid->GetObjPosition() + vec3(0, 0.25f * size * 2, 0);
 	//T1
@@ -412,9 +422,9 @@ void CParticle::CollidePyramid(CPrefab *pyramid)
 	}
 
 }
+
+//function for starting fire on cloth
 void CParticle::Burn()
 {
 	m_bOnFire = true;
 }
-
-
