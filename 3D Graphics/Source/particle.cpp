@@ -32,7 +32,7 @@ void CParticle::Update()
 		if (isWind)
 		{
 			ApplyForce(Wind * Mass);
-		}/marker 
+		}
 
 
 		//Eulers method
