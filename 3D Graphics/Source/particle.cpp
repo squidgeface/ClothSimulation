@@ -266,7 +266,7 @@ void CParticle::DrawGeo(vec3 _botLeft, vec3 _Right, vec3 _Left)
 	bool bTopLeft = false;
 	bool bBotLeft = false;
 	//check if the links coming in are in the list of linked particles
-	for (int i = 0; i < OtherParts.size(); i++) {
+	for (size_t i = 0; i < OtherParts.size(); i++) {
 
 		if (OtherParts[i]->GetObjPosition() == _Right)
 		{

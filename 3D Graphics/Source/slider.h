@@ -1,10 +1,11 @@
-// (c) 2020 Alexander Jenkins
+// (c) 2020 Media Design School
 //
-// File Name   : button.h
-// Description : button declaration file
-// Author      : alexander jenkins
-// Mail        : alexander.jen8470@mediadesign.school.nz
+// File Name   : slider.h
+// Description : slider declaration file
+// Author      : alexander jenkins, Raven Clancey-Peetz
+// Mail        : alexander.jenkins@mds.ac.nz, Raven-Clancey-Peetz@mediadesign.school.nz
 //
+
 
 #pragma once
 

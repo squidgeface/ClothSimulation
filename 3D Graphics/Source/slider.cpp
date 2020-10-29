@@ -1,9 +1,9 @@
-// (c) 2020 Alexander Jenkins
+// (c) 2020 Media Design School
 //
-// File Name   : button.h
-// Description : button implementation file
-// Author      : alexander jenkins
-// Mail        : alexander.jen8470@mediadesign.school.nz
+// File Name   : slider.cpp
+// Description : slider implementation file
+// Author      : alexander jenkins, Raven Clancey-Peetz
+// Mail        : alexander.jenkins@mds.ac.nz, Raven-Clancey-Peetz@mediadesign.school.nz
 //
 
 #include "slider.h"
@@ -98,7 +98,7 @@ int CSlider::GetAnchorSize()
 //change the cloth size based on slider value
 void CSlider::SetClothSize()
 {
-    int distance = Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x/2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z))/2;
+    int distance = int(Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x/2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z))/2);
     if (distance <= 9)
     {
         distance = 3;
@@ -145,7 +145,7 @@ void CSlider::SetClothSizeNumber(int num)
 //change amount of anchors based on slider value
 void CSlider::SetAnchorSize()
 {
-    int distance = Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x / 2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z)) / 2;
+    int distance = int(Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x / 2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z)) / 2);
     if (distance <= 9)
     {
         distance = 3;

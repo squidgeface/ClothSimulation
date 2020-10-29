@@ -22,13 +22,6 @@ class CButton;
 class CParticle;
 class CSlider;
 
-//enum class
-enum class GameState
-{
-	MENU,
-	GAME,
-	LOSE,
-};
 
 class CGameManager
 {
@@ -49,7 +42,6 @@ public:
 	void SpecialUp(int key, int x, int y);
 	void MouseClick(int button, int state, int x, int y);
 	void MouseMove(int x, int y);
-	void RenderLines();
 	vec3 GetRayFromMouse();
 	bool CheckMouseSphereIntersect(CPrefab* _object);
 	void Render();
@@ -130,8 +122,5 @@ protected:
 	//raven camera stuff
 	float zoom = 100;
 	float CamRotx = 0;
-
-	//enum
-	GameState m_eGameState = GameState::MENU;
 
 };

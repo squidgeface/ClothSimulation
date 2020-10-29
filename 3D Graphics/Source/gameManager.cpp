@@ -32,10 +32,16 @@ CGameManager::~CGameManager()
 	delete m_pProjCamera;
 	delete m_pTime;
 	delete m_pInput;
+	delete m_pBall;
+	delete m_pCapsule;
+	delete m_pFloor;
 	m_pOrthoCamera = 0;
 	m_pProjCamera = 0;
 	m_pTime = 0;
 	m_pInput = 0;
+	m_pBall = 0;
+	m_pBall = 0;
+	m_pFloor = 0;
 }
 
 //Initialise Glut window
@@ -73,7 +79,7 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 	m_pTime->InitiateTime();
 
 	//Seed random
-	srand(time(NULL));
+	srand(int(time(NULL)));
 
 	//Set Up Camera from class
 	m_pOrthoCamera->SetOrtho();
@@ -85,9 +91,9 @@ void CGameManager::SetUpCloth()
 	//counter for cloth
 	int count = 0;
 	//Load shapes
-	for (size_t y = 0; y < height; y++)
+	for (int y = 0; y < height; y++)
 	{
-		for (size_t x = 0; x < width; x++)
+		for (int x = 0; x < width; x++)
 		{
 			//offset each x and y to form a grid shape
 			float _x = -((width / 2) * 15) + float(x * 5) + width; //(sqrt(gridSize)) + (x * 5);
@@ -106,9 +112,9 @@ void CGameManager::SetUpCloth()
 
 	count = 0;
 	//Link Particles Up and Left and Diagonal
-	for (size_t y = 0; y < height; y++)
+	for (int y = 0; y < height; y++)
 	{
-		for (size_t x = 0; x < width; x++)
+		for (int x = 0; x < width; x++)
 		{
 			//if not the first column
 			if (x != 0)
@@ -141,7 +147,7 @@ void CGameManager::SetUpCloth()
 		}
 	}
 	//Create Anchors
-	for (size_t i = 0; i < anchors; i++)
+	for (int i = 0; i < anchors; i++)
 	{
 		//Create a particle as an anchor
 		CParticle* m_pSphere = new CParticle();
@@ -319,9 +325,9 @@ void CGameManager::Render()
 		int counter = 0;
 
 		//Draw Geometry
-		for (size_t y = 0; y < height; y++)
+		for (int y = 0; y < height; y++)
 		{
-			for (size_t x = 0; x < width; x++)
+			for (int x = 0; x < width; x++)
 			{
 				if (x != 0)
 				{
@@ -556,7 +562,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 					m_pAnchorSpheres[i]->UnLinkParticles();
 				}
 				//Unlink top row of cloth
-				for (size_t i = 0; i < width; i++)
+				for (int i = 0; i < width; i++)
 				{
 					m_pSpheres[i]->UnLinkParticles();
 				}
@@ -723,8 +729,8 @@ void CGameManager::RipCloth()
 		}
 	}
 	//update previous mouse position
-	previousX = m_pInput->GetMouseX();
-	previousY = m_pInput->GetMouseY();
+	previousX = float(m_pInput->GetMouseX());
+	previousY = float(m_pInput->GetMouseY());
 }
 //Cut cloth function
 void CGameManager::RipClothClick()
@@ -845,5 +851,8 @@ bool CGameManager::CheckMouseSphereIntersect(CPrefab* _object)
 	{
 		return false;// no intersection
 	}
-
+	else
+	{
+		return false;
+	}
 }
