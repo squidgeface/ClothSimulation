@@ -10,6 +10,7 @@
 #include "input.h"
 #include "TextLabel.h"
 
+//check if mouse is over button
 bool CButton::CheckHover(CInput* _object)
 {
     if (_object->GetMouseX() > (this->GetObjPosition().x - (this->GetObjSize().x / 2)) && _object->GetMouseX() < (this->GetObjPosition().x + (this->GetObjSize().x / 2)) &&
@@ -23,11 +24,13 @@ bool CButton::CheckHover(CInput* _object)
     }
 }
 
+//change state of button
 void CButton::SetButton(bool _state)
 {
     m_bIsBtn = _state;
 }
 
+//render buttons
 void CButton::RenderShapes(GLuint program)
 {
 	if (m_bIsBtn)
@@ -52,6 +55,7 @@ bool CButton::GetShowing()
     return m_bIsBtn;
 }
 
+//set the text of the button
 void CButton::SetText(const char* _text)
 {
     m_pText->SetLabel(_text,"Resources/Fonts/BRLNSR.ttf", vec2(GetObjPosition().x + GetObjSize().x/2 + 5.0f, -(GetObjPosition().y + GetObjSize().y / 4)), vec3(0.0f, 0.0f, 0.0f), 0.5f);

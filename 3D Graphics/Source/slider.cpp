@@ -9,6 +9,7 @@
 #include "slider.h"
 #include "input.h"
 
+//check if mouse is on slider
 bool CSlider::CheckHover()
 {
     if (Input->GetMouseX() > (Background->GetObjPosition().x - (Background->GetObjSize().x / 2)) && Input->GetMouseX() < (Background->GetObjPosition().x + (Background->GetObjSize().x / 2)) &&
@@ -21,7 +22,7 @@ bool CSlider::CheckHover()
         return false;
     }
 }
-
+//create slider
 void CSlider::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType type, const char* path, float frameCount, vec3 _scale, vec3 _rotate, vec3 _translate, bool isAnchor)
 {
     Background->Initialise(camera, timer, input, type, "", frameCount, _scale, _rotate, _translate);
@@ -32,13 +33,14 @@ void CSlider::Initialise(CCamera* camera, CTime* timer, CInput* input, MeshType 
     m_bisAnchor = isAnchor;
 }
 
+//render slider
 void CSlider::Render(GLuint program)
 {
     Arrow->RenderShapes(program);
     Background->RenderShapes(program);
   
 }
-
+//update silder
 void CSlider::Update()
 {
     Background->UpdateShapes();
@@ -55,6 +57,7 @@ void CSlider::Update()
   
 }
 
+//move the slider arrow to mouse position
 void CSlider::Slide()
 {
     if (CheckHover() && Input->GetMouseState()[0] == InputState::INPUT_DOWN)
@@ -92,6 +95,7 @@ int CSlider::GetAnchorSize()
     return anchors;
 }
 
+//change the cloth size based on slider value
 void CSlider::SetClothSize()
 {
     int distance = Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x/2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z))/2;
@@ -127,47 +131,18 @@ void CSlider::SetClothSize()
     {
         distance = 20;
     }
-    /*if (distance <= 9)
-    {
-        distance = 9;
-    }
-    else if (distance > 9 && distance <= 16)
-    {
-        distance = 16;
-    }
-    else if (distance > 16 && distance <= 25)
-    {
-        distance = 25;
-    }
-    else if (distance > 25 && distance <= 36)
-    {
-        distance = 36;
-    }
-    else if (distance > 36 && distance <= 49)
-    {
-        distance = 49;
-    }
-    else if (distance > 49 && distance <= 72)
-    {
-        distance = 72;
-    }
-    else if (distance > 72 && distance <= 81)
-    {
-        distance = 81;
-    }
-    else if (distance > 81)
-    {
-        distance = 100;
-    }*/
+
     size = distance;
 }
 
+//set cloth size
 void CSlider::SetClothSizeNumber(int num)
 {
     
     size = num;
 }
 
+//change amount of anchors based on slider value
 void CSlider::SetAnchorSize()
 {
     int distance = Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x / 2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z)) / 2;
@@ -204,6 +179,7 @@ void CSlider::SetAnchorSize()
         distance = 20;
     }
 
+    //limit number of anchors to size
     if (distance > size)
     {
         distance = size;

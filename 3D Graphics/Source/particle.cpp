@@ -33,6 +33,8 @@ void CParticle::Update()
 		{
 			ApplyForce(Wind * Mass);
 		}
+
+
 		//Eulers method
 		//apply forces
 		//ApplyForce(Gravity);
@@ -102,7 +104,7 @@ void CParticle::Update()
 		}
 	//reset acceleration
 		Accel = vec3();
-		//Velocity = vec3();
+	
 
 
 	if (isAnchor)
@@ -368,14 +370,14 @@ void CParticle::CollidePyramid(CPrefab *pyramid)
 
 	//t2 forces
 	vec3 forcet2(t2Center - PyramidCenter);
-	//forcet2 = normalize(forcet2);
+
 
 	float minDistancet2 = distance(Top, t2Center) + distance(t2p1, t2Center) + distance(t2p2, t2Center);
 	float currentDistancet2 = distance(Top, GetObjPosition()) + distance(t2p1, GetObjPosition()) + distance(t2p2, GetObjPosition());
 
 	if (currentDistancet2 - minDistancet2 < 1)
 	{
-		//ApplyForce(forcet2 * ((size * 2) - distance(GetObjPosition(), PyramidCenter)));
+		
 		ApplyForce(forcet2 * ((size * 2) - distance(t2p1, GetObjPosition())));
 		ApplyForce(forcet2 * ((size * 2) - distance(t2p2, GetObjPosition())));
 		ApplyForce(forcet2 * ((size * 2) - distance(Top, GetObjPosition())));
@@ -386,7 +388,7 @@ void CParticle::CollidePyramid(CPrefab *pyramid)
 
 	//t3 forces
 	vec3 forcet3(t3Center - PyramidCenter);
-	//forcet3 = normalize(forcet3);
+
 
 	float minDistancet3 = distance(Top, t3Center) + distance(t3p1, t3Center) + distance(t3p2, t3Center);
 	float currentDistancet3 = distance(Top, GetObjPosition()) + distance(t3p1, GetObjPosition()) + distance(t3p2, GetObjPosition());
