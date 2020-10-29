@@ -44,8 +44,8 @@ protected:
     vec3 Velocity = vec3();
     vec3 Gravity = vec3(0.0f, Mass* -9.8f, 0.0f);
     vec3 Wind = vec3();
-    float Stiffness = 0.8f;
-    float RestDist = 10.0f;
+    float Stiffness =0.8f;
+    float RestDist = 5.0f;
     vector<CParticle*> OtherParts;
     bool isLinked = false;
     bool isWind = false;

@@ -101,31 +101,31 @@ void CSlider::SetClothSize()
     }
     else if (distance > 9 && distance <= 16)
     {
-        distance = 4;
+        distance = 6;
     }
     else if (distance > 16 && distance <= 25)
     {
-        distance = 5;
+        distance = 9;
     }
     else if (distance > 25 && distance <= 36)
     {
-        distance = 6;
+        distance = 12;
     }
     else if (distance > 36 && distance <= 49)
     {
-        distance = 7;
+        distance = 15;
     }
     else if (distance > 49 && distance <= 72)
     {
-        distance = 8;
+        distance = 17;
     }
     else if (distance > 72 && distance <= 81)
     {
-        distance = 9;
+        distance = 19;
     }
     else if (distance > 81)
     {
-        distance = 10;
+        distance = 20;
     }
     /*if (distance <= 9)
     {
@@ -177,31 +177,31 @@ void CSlider::SetAnchorSize()
     }
     else if (distance > 9 && distance <= 16)
     {
-        distance = 4;
+        distance = 6;
     }
     else if (distance > 16 && distance <= 25)
     {
-        distance = 5;
+        distance = 9;
     }
     else if (distance > 25 && distance <= 36)
     {
-        distance = 6;
+        distance = 12;
     }
     else if (distance > 36 && distance <= 49)
     {
-        distance = 7;
+        distance = 15;
     }
     else if (distance > 49 && distance <= 72)
     {
-        distance = 8;
+        distance = 17;
     }
     else if (distance > 72 && distance <= 81)
     {
-        distance = 9;
+        distance = 19;
     }
     else if (distance > 81)
     {
-        distance = 10;
+        distance = 20;
     }
 
     if (distance > size)

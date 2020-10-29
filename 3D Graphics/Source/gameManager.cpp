@@ -89,7 +89,7 @@ void CGameManager::SetUpCloth()
 		for (size_t x = 0; x < width; x++)
 		{
 			//offset each x and y to form a grid shape
-			float _x = -((width / 2) * 15) + float(x * 10); //(sqrt(gridSize)) + (x * 5);
+			float _x = -((width / 2) * 15) + float(x * 5) + 62; //(sqrt(gridSize)) + (x * 5);
 			float _y =  -20 + (-5.0f * y);
 			CParticle* m_pSphere = new CParticle();
 			m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
@@ -147,7 +147,7 @@ void CGameManager::SetUpCloth()
 	for (size_t i = 0; i < anchors; i++)
 	{
 		CParticle* m_pSphere = new CParticle();
-		float _x = -((width / 2) * 15) + float(i * 10);
+		float _x = -((width / 2) * 15) + float(i * 5) + 62;
 		m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, 10.0f, 0.0f));
 		m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
 		m_pSphere->SetAsAnchor();
