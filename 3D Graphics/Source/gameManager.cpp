@@ -79,9 +79,10 @@ void CGameManager::InitialiseWindow(int argc, char **argv)
 	m_pOrthoCamera->SetOrtho();
 	m_pProjCamera->SetProjection();
 }
-
+//Set up the cloth - used in reset
 void CGameManager::SetUpCloth()
 {
+	//counter for cloth
 	int count = 0;
 	//Load shapes
 	for (size_t y = 0; y < height; y++)
@@ -89,12 +90,14 @@ void CGameManager::SetUpCloth()
 		for (size_t x = 0; x < width; x++)
 		{
 			//offset each x and y to form a grid shape
-			float _x = -((width / 2) * 15) + float(x * 5) + 62; //(sqrt(gridSize)) + (x * 5);
+			float _x = -((width / 2) * 15) + float(x * 5) + width; //(sqrt(gridSize)) + (x * 5);
 			float _y =  -20 + (-5.0f * y);
+			//initialise a new particle
 			CParticle* m_pSphere = new CParticle();
 			m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
 			m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
-			m_pSphere->InitialiseGeo(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
+			//Initialise Geometry
+			m_pSphere->InitialiseGeo(m_pProjCamera, m_pTime, m_pInput, MeshType::GEOMETRY, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, _y, 0.0f));
 			/*if (m_pSpheres.size() != 0)
 			{
 				m_pSphere->InitialiseGeo(m_pProjCamera, m_pTime, m_pInput, MeshType::CUBE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), m_pSpheres[count-1]->GetObjPosition());
@@ -147,7 +150,7 @@ void CGameManager::SetUpCloth()
 	for (size_t i = 0; i < anchors; i++)
 	{
 		CParticle* m_pSphere = new CParticle();
-		float _x = -((width / 2) * 15) + float(i * 5) + 62;
+		float _x = -((width / 2) * 15) + float(i * 5) + width;
 		m_pSphere->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(1.0f, 1.0f, 1.0f), vec3(), vec3(_x, 10.0f, 0.0f));
 		m_pSphere->InitialiseTextures("Resources/Textures/green.bmp", 1);
 		m_pSphere->SetAsAnchor();
@@ -200,13 +203,9 @@ void CGameManager::InitialiseMenu()
 	m_pBall = new CPrefab;
 	m_pBall->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::SPHERE, "", 0, vec3(15.0f, 15.0f, 15.0f), vec3(), vec3(-((width / 2) * 15)/2.0f, -100.0f, 20.0f));
 	m_pBall->InitialiseTextures("Resources/Textures/green.bmp", 1);
-	
-	m_pTri = new CPrefab;
-	m_pTri->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::TRI, "", 0, vec3(100.0f, 100.0f, 100.0f), vec3(), vec3(-((width / 2) * 15)/2.0f, -100.0f, 20.0f));
-	m_pTri->InitialiseTextures("Resources/Textures/green.bmp", 1);
-
+	//create a capsule obstacle
 	m_pCapsule = new CPrefab;
-	m_pCapsule->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CAPSULE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((width / 2) * 15) / 2.0f, -50.0f, 20.0f));
+	m_pCapsule->Initialise(m_pProjCamera, m_pTime, m_pInput, MeshType::CAPSULE, "", 0, vec3(10.0f, 10.0f, 10.0f), vec3(), vec3(-((width / 2) * 15) / 2.0f, -100.0f, 20.0f));
 	m_pCapsule->InitialiseTextures("Resources/Textures/green.bmp", 1);
 
 
@@ -225,7 +224,7 @@ void CGameManager::InitialiseMenu()
 	m_pAnchorSlider = new CSlider();
 	m_pAnchorSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/anchorSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 160, 0.0f), true);
 
-	m_pProjCamera->SetPosition(vec3(0.0f, -100.0f, 200.0f), m_pBall->GetObjPosition());
+	m_pProjCamera->SetPosition(vec3(m_pBall->GetObjPosition().x, -100.0f, 200.0f), m_pBall->GetObjPosition());
 
 	//Set Up on scren buttons
 	m_pUpCam = new CButton();
@@ -273,7 +272,7 @@ void CGameManager::InitialiseMenu()
 	m_pSetBurning->SetText("Ignight");
 	//Instructions
 	m_pInstructions = new CTextLabel();
-	m_pInstructions->SetLabel(" Press 'R' to Reset \n Press 'Q' to toggle wind \n Shape Selection: '1' Sphere, '2' Pyramid, '3' Capsule, '~' None \n 'W' and 'S' - Move Cloth \n 'A' and 'D' - Stretch/Squash Hooks", "Resources/Fonts/BRLNSR.ttf", vec2(-Utils::HalfScreenW + 30.0f, -Utils::HalfScreenH + 110), vec3(0.0f, 0.0f, 0.0f), 0.5f);
+	m_pInstructions->SetLabel(" Press 'R' to Reset \n Press 'Q' to toggle wind \n Shape Selection: '1' Sphere, '2' Capsule, '~' None \n 'W' and 'S' - Move Cloth \n 'A' and 'D' - Stretch/Squash Hooks", "Resources/Fonts/BRLNSR.ttf", vec2(-Utils::HalfScreenW + 30.0f, -Utils::HalfScreenH + 110), vec3(0.0f, 0.0f, 0.0f), 0.5f);
 }
 //clear menu
 void CGameManager::Clear()
@@ -333,12 +332,9 @@ void CGameManager::Render()
 		}
 		else if (shape == 2)
 		{
-			m_pTri->RenderShapes(m_giPhongProgram);
-		}
-		else if (shape == 3)
-		{
 			m_pCapsule->RenderShapes(m_giPhongProgram);
 		}
+
 		//draw UI
 		m_pWidthSlider->Render(m_giStaticProgram);
 		m_pHeightSlider->Render(m_giStaticProgram);
@@ -380,12 +376,9 @@ void CGameManager::Update()
 			}
 			else if (shape == 2)
 			{
-				m_pSpheres[i]->CollidePyramid(m_pTri);
-			}
-			else if (shape == 3)
-			{
 				m_pSpheres[i]->CheckCapsule(m_pCapsule);
 			}
+		
 
 			//check floor collision
 			m_pSpheres[i]->CheckFloor(m_pFloor);
@@ -416,12 +409,9 @@ void CGameManager::Update()
 		}
 		else if (shape == 2)
 		{
-			m_pTri->UpdateShapes();
-		}
-		else if (shape == 3)
-		{
 			m_pCapsule->UpdateShapes();
 		}
+		
 	
 
 		m_pFloor->UpdateShapes();
@@ -562,10 +552,9 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				for (int i = 0; i < anchors; i++)
 				{
 					m_pAnchorSpheres[i]->UnLinkParticles();
-
 				}
 
-				for (size_t i = 0; i < sqrt(m_pSpheres.size()); i++)
+				for (size_t i = 0; i < width; i++)
 				{
 					m_pSpheres[i]->UnLinkParticles();
 				}
@@ -634,10 +623,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			{
 				shape = 2;
 			}
-			if (KeyState['3'] == InputState::INPUT_DOWN)
-			{
-				shape = 3;
-			}
+		
 			if (KeyState['`'] == InputState::INPUT_DOWN)
 			{
 				shape = 0;
@@ -719,11 +705,7 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 void CGameManager::RipCloth()
 {
 	vec3 mousePos = GetRayFromMouse();
-	int diffx = m_pInput->GetMouseX() - previousX; //check the difference between the current x and the last x position
-	int diffy = m_pInput->GetMouseY() - previousY; //check the difference between the current y and the last y position
-	float m_imouseX = 2.0f * m_pInput->GetMouseX();// / Utils::ScreenWidth;
-	float m_imouseY = 0.0f - (2.0f * m_pInput->GetMouseY());// / Utils::ScreenHeight);
-
+	
 	vec2 force = vec2(m_pInput->GetMouseX() - previousX, m_pInput->GetMouseY() - previousY);
 	for (size_t i = 0; i < m_pSpheres.size(); i++)
 	{
@@ -731,11 +713,11 @@ void CGameManager::RipCloth()
 		{
 			if (force.y > 0)
 			{
-				force.y *= 3.0f;
+				force.y *= 2.0f;
 			}
 			else
 			{
-				force.y *= 2.0f;
+				force.y *= 1.25f;
 			}
 			m_pSpheres[i]->ApplyForce(vec3(force.x * 50.0f * m_pSpheres[i]->GetMass(), -force.y * m_pSpheres[i]->GetMass(), 0.0f));
 		}
@@ -891,7 +873,7 @@ vec3 CGameManager::GetRayFromMouse()
 bool CGameManager::CheckMouseSphereIntersect(CPrefab* _object)
 {
 	//radius is object x size
-	float radius = _object->GetObjSize().x * 10;
+	float radius = _object->GetObjSize().x *10;
 
 	//get vector from camera position to objectposition
 	vec3 v = _object->GetObjPosition() - m_pProjCamera->GetCamPos();

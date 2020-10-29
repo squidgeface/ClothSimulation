@@ -118,7 +118,7 @@ void CParticle::Update()
 	if (m_bOnFire) {
 		m_fBurnTime += ((rand() % 10)/ 10.000f) * m_pTime->GetDelta();
 		
-		ApplyForce(vec3(0.0f, 0.5f * m_fBurnTime, 0.0f));
+		ApplyForce(vec3(0.0f, 0.8f * m_fBurnTime, 0.0f));
 	}
 
 	if (m_fBurnTime > 3) {
@@ -189,9 +189,7 @@ void CParticle::CheckObstacle(CPrefab* _obj)
 
 void CParticle::CheckCapsule(CPrefab* _obj)
 {
-	//float dist = distance(_obj->GetObjPosition(), GetObjPosition());
-	//if (dist <= _obj->GetObjSize().x)
-	//{
+	
 	float offset = 1.0f;
 	for (int i = 0; i < 30; i++)
 	{
@@ -204,7 +202,7 @@ void CParticle::CheckCapsule(CPrefab* _obj)
 			ApplyForce(force * 100.0f * (_obj->GetObjSize().x + 5 - dist));
 		}
 	}
-	//}
+	
 }
 //Check for obstacles
 void CParticle::CheckFloor(CPrefab* _obj)
@@ -227,32 +225,14 @@ void CParticle::UnLinkParticles()
 
 void CParticle::Draw()
 {
-	/*float SCALEx = 275.0 - GetObjPosition().z;
-	float SCALEy = 170.0 - GetObjPosition().z;
 	
-	float booster = 400.0f;
-	float upBoost = 0.6f + GetObjPosition().z/ booster;*/
-	
-	/*float SCALEx = 1;
-	float SCALEy = 1;
-	
-	float booster = 0;
-	float upBoost = 0;*/
 	vec4 point1 = -m_pCamera->GetVPMatrix() * vec4(GetObjPosition(), 1.0f);
 
 	for (size_t i = 0; i < OtherParts.size(); i++)
 	{
 		if (!isAnchor && !OtherParts[i]->GetAnchor())
 		{
-			/*float SCALE2x = 275.0 - OtherParts[i]->GetObjPosition().z;
-			float SCALE2y = 170.0 - OtherParts[i]->GetObjPosition().z;
-			float upBoost2 = 0.6f + OtherParts[i]->GetObjPosition().z / booster;*/
-			/*glBegin(GL_LINE_STRIP);
-			glColor3f(0.0f, 0.0f, 0.0f);
-			glVertex2f(GetObjPosition().x / (SCALEx), (GetObjPosition().y / (SCALEy)) + upBoost);
-			glVertex2f(OtherParts[i]->GetObjPosition().x / (SCALE2x), (OtherParts[i]->GetObjPosition().y / (SCALE2y)) + upBoost2);
-			glEnd();*/
-
+			
 			vec4 point2 = -m_pCamera->GetVPMatrix() * vec4(OtherParts[i]->GetObjPosition(), 1.0f);
 			
 			glBegin(GL_LINE_STRIP);
@@ -300,113 +280,42 @@ void CParticle::DrawGeo(vec3 _botLeft, vec3 _Right, vec3 _Left)
 	//botLeft ----  this
 
 		//botRight
-	glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(GetObjPosition()));
+	glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(_Left));
 
-	
 	//topLeft
-	if(bTopLeft)
+	if (bTopLeft)
 	{
-		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_Left));
-	}
-	else {
 		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(GetObjPosition()));
 	}
-	
+	else {
+		glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(_Left));
+	}
 
 	//Right
 	if (bRight)
 	{
-		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_Right));
+		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_botLeft));
 	}
 	else {
-		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(GetObjPosition()));
+		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_Left));
 	}
-	
-
 
 	//botLeft
 	if (bBotLeft)
 	{
-		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
+		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_Right));
 	}
 	else
 	{
-		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(GetObjPosition()));
+		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_Left));
 	}
-	
-
-
-	geo->RenderShapes(clothProgram);
-}
-//geometry drawing
-void CParticle::DrawGeo2(vec3 _Right, vec3 _botLeft, vec3 _botRight)
-{
-	glUseProgram(clothProgram);
-	bool bRight = false;
-	bool bBotRight = false;
-	bool bBotLeft = false;
-	//check if the links coming in are in the list of linked particles
-	for (int i = 0; i < OtherParts.size(); i++) {
-
-		if (OtherParts[i]->GetObjPosition() == _Right)
-		{
-			bRight = true;
-		}
-
-		if (OtherParts[i]->GetObjPosition() == _botLeft)
-		{
-			bBotLeft = true;
-		}
-
-		if (OtherParts[i]->GetObjPosition() == _botRight)
-		{
-			bBotRight = true;
-		}
-
-	}
-
-	//Justin's method
-	// this   ----  right
-	//	|			  |
-	//	|			  |
-	//botLeft ---- botRight
-	//topLeft
-	glUniform3fv(glGetUniformLocation(clothProgram, "Left"), 1, glm::value_ptr(GetObjPosition()));
-	
-	
-	if (bRight)
-	{
-		//Right
-		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(_Right));
-	}
-	else
-	{
-		glUniform3fv(glGetUniformLocation(clothProgram, "Right"), 1, glm::value_ptr(GetObjPosition()));
-	}
-
-	//botRight
-	
-		glUniform3fv(glGetUniformLocation(clothProgram, "botRight"), 1, glm::value_ptr(_botRight));
-	
-	
-
-	if (bBotLeft)
-	{
-		//botLeft
-		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(_botLeft));
-	}
-	else
-	{
-		glUniform3fv(glGetUniformLocation(clothProgram, "botLeft"), 1, glm::value_ptr(GetObjPosition()));
-	}
-
 
 	geo->RenderShapes(clothProgram);
 }
 
 void CParticle::CollidePyramid(CPrefab *pyramid)
 {
-	//-37.5, -100, 20
+	
 	float size = pyramid->GetObjSize().x / 2;
 	vec3 PyramidCenter = pyramid->GetObjPosition() + vec3(0, 0.25f * size * 2, 0);
 	//T1
@@ -428,8 +337,6 @@ void CParticle::CollidePyramid(CPrefab *pyramid)
 	vec3 t4p1 = pyramid->GetObjPosition() + vec3(-size, 0, size);
 	vec3 t4p2 = pyramid->GetObjPosition() + vec3(-size, 0, -size);
 	vec3 t4Center((Top + t4p1 + t4p2) / 3.0f);
-
-	
 
 	//t1 forces
 	vec3 forcet1(t1Center - PyramidCenter);

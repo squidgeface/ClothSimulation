@@ -40,25 +40,15 @@ void main()
      
     //move start position from top left to bottom right
 
-     gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(botLeft.x - Left.x, botLeft.y - Left.y, botLeft.z - Left.z, 0.0f) * 1.2; EmitVertex();    // Top Left
+    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(botLeft.x - Left.x, botLeft.y - Left.y, botLeft.z - Left.z, 0.0f) ; EmitVertex();    // Top Left
 
-    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(0.0f, 0.0f, 0.0f, 0.0f)* 1.2; EmitVertex();    // Bottom Left
+    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(0.0f, 0.0f, 0.0f, 0.0f); EmitVertex();    // Bottom Left
 
-    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(botRight.x - Left.x, botRight.y - Left.y, botRight.z - Left.z, 0.0f)* 1.2; EmitVertex();    // Bottom Right
+    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(botRight.x - Left.x, botRight.y - Left.y, botRight.z - Left.z, 0.0f); EmitVertex();    // Bottom Right
 
-    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(Right.x - Left.x, Right.y - Left.y, Right.z - Left.z, 0.0f)* 1.2; EmitVertex();    // Top Right
+    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(Right.x - Left.x, Right.y - Left.y, Right.z - Left.z, 0.0f); EmitVertex();    // Top Right
 
-    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(botLeft.x - Left.x, botLeft.y - Left.y, botLeft.z - Left.z, 0.0f)* 1.2 ; EmitVertex();    // Top Left
-
-
-
-      
-
-  
-
-
-   
- 
+    gl_Position = gs_in[0].position + gs_in[0].PVM * vec4(botLeft.x - Left.x, botLeft.y - Left.y, botLeft.z - Left.z, 0.0f) ; EmitVertex();    // Top Left
 
   
 

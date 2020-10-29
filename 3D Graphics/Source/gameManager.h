@@ -82,7 +82,6 @@ protected:
 	vector<CParticle*> m_Cloth;
 	vector<CParticle*> m_pAnchorSpheres;
 	CPrefab* m_pBall = 0;
-	CPrefab* m_pTri = 0;
 	CPrefab* m_pCapsule = 0;
 	CPrefab* m_pFloor = 0;
 	CSlider* m_pWidthSlider = 0;
@@ -124,9 +123,9 @@ protected:
 	float m_fSpin = 0;
 	bool isClicking = false;
 	int shape = 0;
-	int width = 10;
-	int height = 10;
-	int anchors = 10;
+	int width = 20;
+	int height = 20;
+	int anchors = 20;
 
 	//raven camera stuff
 	float zoom = 100;
