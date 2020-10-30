@@ -424,7 +424,18 @@ void CGameManager::Update()
 		}
 		if (m_bWindToggle)
 		{
+			for (size_t i = 0; i < m_pSpheres.size(); i++)
+			{
+				m_pSpheres[i]->SetBreakable(false);
+			}
 			ApplyWind();
+		}
+		else
+		{
+			for (size_t i = 0; i < m_pSpheres.size(); i++)
+			{
+				m_pSpheres[i]->SetBreakable(true);
+			}
 		}
 	//Updated shapes when active	
 		if (shape == 1)
