@@ -283,7 +283,7 @@ void CGameManager::InitialiseMenu()
 	m_pSetBurning->SetText("Ignight");
 	//Instructions
 	m_pInstructions = new CTextLabel();
-	m_pInstructions->SetLabel(" Press 'R' to Reset \n Press 'Q' to toggle wind \n Shape Selection: '1' Sphere, '2' Capsule, '~' None \n 'W' and 'S' - Move Cloth \n 'A' and 'D' - Stretch/Squash Hooks \n 'X' Drop Cloth", "Resources/Fonts/BRLNSR.ttf", vec2(-Utils::HalfScreenW + 30.0f, -Utils::HalfScreenH + 140), vec3(0.0f, 0.0f, 0.0f), 0.5f);
+	m_pInstructions->SetLabel(" Press 'R' to Reset \n Press 'Q' to toggle wind (Unrippable) \n Shape Selection: '1' Sphere, '2' Capsule, '~' None \n 'W' and 'S' - Move Cloth \n 'A' and 'D' - Stretch/Squash Hooks \n 'X' Drop Cloth", "Resources/Fonts/BRLNSR.ttf", vec2(-Utils::HalfScreenW + 30.0f, -Utils::HalfScreenH + 140), vec3(0.0f, 0.0f, 0.0f), 0.5f);
 }
 //Reset cloth
 void CGameManager::Clear()
@@ -808,8 +808,8 @@ void CGameManager::ApplyWind()
 {
 
 	//nice gentle breeze
-	m_fWindStrength = (rand() % m_pWindStSlider->GetClothSize()/4) - m_pWindStSlider->GetClothSize()/10;
-	m_fWindSize = m_pWindSiSlider->GetClothSize() / 2;
+	m_fWindStrength = float((rand() % m_pWindStSlider->GetClothSize()/4) - m_pWindStSlider->GetClothSize()/10);
+	m_fWindSize = float(m_pWindSiSlider->GetClothSize() / 2);
 	//Seed with with values
 	vec3 Wind = vec3(0.0f, 0.0f, -40.0f);
 	//For all the points in the cloth
