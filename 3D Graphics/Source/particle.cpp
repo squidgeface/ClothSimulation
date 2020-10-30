@@ -20,21 +20,6 @@ void CParticle::InitialiseGeo(CCamera* camera, CTime* timer, CInput* input, Mesh
 //Particle update
 void CParticle::Update()
 {
-	//Check if particle is one of the static points
-
-		//nice gentle breeze
-		float seedx = float(rand() % 80) - 37.0f;
-		float seedz = float(rand() % 80) - 37.0f;
-
-		//Seed with with values
-		Wind = vec3(-seedx, 0.0f, -seedz);
-		//Togle wind on and off qith 'Q'
-		if (isWind)
-		{
-			ApplyForce(Wind * Mass);
-		}
-
-
 		//Eulers method
 		//apply forces
 		//ApplyForce(Gravity);

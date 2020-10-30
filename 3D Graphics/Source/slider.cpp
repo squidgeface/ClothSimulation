@@ -186,3 +186,14 @@ void CSlider::SetAnchorSize()
     }
     anchors = distance;
 }
+
+//change the wind value based on slider value
+void CSlider::SetWindStrength()
+{
+    int distance = int(Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x / 2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z)) / 20);
+    if (distance <= 1)
+    {
+        distance = 1;
+    }
+    size = distance;
+}

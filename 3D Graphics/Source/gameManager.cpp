@@ -228,6 +228,12 @@ void CGameManager::InitialiseMenu()
 	//create slider for Anchors
 	m_pAnchorSlider = new CSlider();
 	m_pAnchorSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/anchorSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 160, 0.0f), true);
+	//create slider for Wind Strength
+	m_pWindStSlider = new CSlider();
+	m_pWindStSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/wStrengthSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 210, 0.0f), true);
+	//create slider for Wind Size
+	m_pWindSiSlider = new CSlider();
+	m_pWindSiSlider->Initialise(m_pOrthoCamera, m_pTime, m_pInput, MeshType::QUAD, "Resources/Textures/wSizeSlider.png", 0, vec3(200.0f, 40.0f, 1.0f), vec3(0.0f,0.0f,0.0f), vec3(-Utils::HalfScreenW + 110, -Utils::HalfScreenH + 260, 0.0f), true);
 	//Set camera looking at where objects spawn
 	m_pProjCamera->SetPosition(vec3(m_pBall->GetObjPosition().x, -100.0f, 200.0f), m_pBall->GetObjPosition());
 
@@ -289,6 +295,7 @@ void CGameManager::Clear()
 	SetClothWidth(m_pWidthSlider->GetClothSize());
 	SetClothHeight(m_pHeightSlider->GetClothSize());
 	SetAnchorSize(m_pAnchorSlider->GetAnchorSize());
+	m_fWindStrength = m_pWindStSlider->GetClothSize()/2;
 	//Set up the cloth
 	SetUpCloth();
 	//Move objects to line up with cloth
@@ -353,6 +360,8 @@ void CGameManager::Render()
 		m_pWidthSlider->Render(m_giStaticProgram);
 		m_pHeightSlider->Render(m_giStaticProgram);
 		m_pAnchorSlider->Render(m_giStaticProgram);
+		m_pWindStSlider->Render(m_giStaticProgram);
+		m_pWindSiSlider->Render(m_giStaticProgram);
 		m_pUpCam->RenderShapes(m_giStaticProgram);
 		m_pDownCam->RenderShapes(m_giStaticProgram);
 		m_pLeftCam->RenderShapes(m_giStaticProgram);
@@ -414,6 +423,10 @@ void CGameManager::Update()
 		{
 			BurnClothClick();
 		}
+		if (m_bWindToggle)
+		{
+			ApplyWind();
+		}
 	//Updated shapes when active	
 		if (shape == 1)
 		{
@@ -430,6 +443,11 @@ void CGameManager::Update()
 		m_pWidthSlider->Update();
 		m_pHeightSlider->Update();
 		m_pAnchorSlider->Update();
+		m_pWindStSlider->Update();
+		m_pWindSiSlider->Update();
+		m_fWindSize = m_pWindSiSlider->GetClothSize() * 2;
+		m_pWindStSlider->SetWindStrength();
+		m_pWindSiSlider->SetWindStrength();
 		m_pAnchorSlider->SetClothSizeNumber(m_pWidthSlider->GetClothSize());
 		m_pUpCam->UpdateShapes();
 		m_pDownCam->UpdateShapes();
@@ -535,12 +553,18 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 			//Initialise wind with Q
 			if (KeyState['q'] == InputState::INPUT_DOWN)
 			{
-				for (size_t i = 0; i < m_pSpheres.size(); i++)
-				{
-					m_pSpheres[i]->SetWind();
-					
-					m_fcounter++;
-				}
+				//disable other features
+				m_pSetCutting->SetButton(false);
+				m_pSetRipping->SetButton(false);
+				m_pSetBurning->SetButton(false);
+				m_bRipToggle = false;
+				m_bCutToggle = false;
+				m_bBurnToggle = false;
+				//toggle wind
+				m_bWindToggle = !m_bWindToggle;
+				m_fWindSize = m_pWindSiSlider->GetClothSize() * 2;
+				m_fcounter++;
+				
 				cout << "Setting Wind: " << endl;
 			}
 
@@ -582,6 +606,9 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				m_bRipToggle = false;
 				m_bCutToggle = true;
 				m_bBurnToggle = false;
+				//disable wind
+				m_bWindToggle = false;
+				m_fWindSize = 1.0f;
 				m_fcounter++;
 			}
 			else if (m_pSetCutting->CheckHover(m_pInput) && isClicking && m_pSetCutting->GetShowing())
@@ -600,6 +627,9 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				m_bRipToggle = true;
 				m_bCutToggle = false;
 				m_bBurnToggle = false;
+				//disable wind
+				m_bWindToggle = false;
+				m_fWindSize = 1.0f;
 				m_fcounter++;
 			}
 			else if (m_pSetRipping->CheckHover(m_pInput) && isClicking && m_pSetRipping->GetShowing())
@@ -617,6 +647,9 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				m_bRipToggle = false;
 				m_bCutToggle = false;
 				m_bBurnToggle = true;
+				//disable wind
+				m_bWindToggle = false;
+				m_fWindSize = 1.0f;
 				m_fcounter++;
 			}
 			else if (m_pSetBurning->CheckHover(m_pInput) && isClicking && m_pSetBurning->GetShowing())
@@ -762,6 +795,29 @@ void CGameManager::BurnClothClick()
 	}
 
 }
+//Apply Wind force to points
+void CGameManager::ApplyWind()
+{
+
+	//nice gentle breeze
+	m_fWindStrength = (rand() % m_pWindStSlider->GetClothSize()) - m_pWindStSlider->GetClothSize()/10;
+
+	//Seed with with values
+	vec3 Wind = vec3(0.0f, 0.0f, -40.0f);
+	//For all the points in the cloth
+	for (size_t i = 0; i < m_pSpheres.size(); i++)
+	{
+		//Check if mouse is intersecting and mouse click
+		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
+		{
+			//Set point to burning
+			m_pSpheres[i]->ApplyForce(Wind * m_pSpheres[i]->GetMass() * m_fWindStrength);
+		}
+	}
+	
+	
+	
+}
 //Set the width of the cloth
 void CGameManager::SetClothWidth(int _size)
 {
@@ -829,7 +885,7 @@ vec3 CGameManager::GetRayFromMouse()
 bool CGameManager::CheckMouseSphereIntersect(CPrefab* _object)
 {
 	//radius is object x size
-	float radius = _object->GetObjSize().x *10;
+	float radius = _object->GetObjSize().x *10 * m_fWindSize;
 
 	//get vector from camera position to objectposition
 	vec3 v = _object->GetObjPosition() - m_pProjCamera->GetCamPos();

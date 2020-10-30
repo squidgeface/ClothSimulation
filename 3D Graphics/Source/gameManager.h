@@ -44,6 +44,7 @@ public:
 	void MouseMove(int x, int y);
 	vec3 GetRayFromMouse();
 	bool CheckMouseSphereIntersect(CPrefab* _object);
+	void ApplyWind();
 	void Render();
 	void Update();
 
@@ -79,6 +80,8 @@ protected:
 	CSlider* m_pWidthSlider = 0;
 	CSlider* m_pHeightSlider = 0;
 	CSlider* m_pAnchorSlider = 0;
+	CSlider* m_pWindStSlider = 0;
+	CSlider* m_pWindSiSlider = 0;
 	CButton* m_pUpCam = 0;
 	CButton* m_pDownCam = 0;
 	CButton* m_pLeftCam = 0;
@@ -104,7 +107,7 @@ protected:
 	//counters and rates
 	float m_fcounter = 0.0f;
 	//bools and switches
-	bool m_bRipToggle = true, m_bCutToggle = false, m_bBurnToggle = false;
+	bool m_bRipToggle = true, m_bCutToggle = false, m_bBurnToggle = false, m_bWindToggle = false;
 	bool m_bPaused = false;
 	vec3 m_v3RayDirection = vec3();
 	float previousX = 0;
@@ -118,9 +121,8 @@ protected:
 	int width = 20;
 	int height = 20;
 	int anchors = 20;
+	float m_fWindStrength = 1.0f;
+	float m_fWindSize = 1.0f;
 
-	//raven camera stuff
-	float zoom = 100;
-	float CamRotx = 0;
 
 };

@@ -35,6 +35,8 @@ public:
 	void SetClothSize();
 	void SetClothSizeNumber(int num);
 	void SetAnchorSize();
+
+	void SetWindStrength();
 		
 
 private:
