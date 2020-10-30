@@ -32,6 +32,7 @@ public:
     void DrawGeo(vec3 _right, vec3 _botLeft, vec3 _botRight);
     void DrawGeo2(vec3 _botLeft, vec3 _Right, vec3 _Left);
 	void CollidePyramid(CPrefab *pyramid);
+    void SetBreakable(bool breakable);
     void Burn();
     void SetWind();
     float GetMass();
@@ -54,6 +55,8 @@ protected:
     float maxDistance = Mass * 80.0f;
     CPrefab* geo = 0;
     GLuint clothProgram = 0;
+
+    bool m_bBreakable = false;
 
     bool m_bOnFire = false;
     float m_fBurnTime = 0;

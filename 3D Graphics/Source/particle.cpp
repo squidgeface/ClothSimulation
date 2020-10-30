@@ -81,7 +81,7 @@ void CParticle::Update()
 				}
 
 				//rip cloth if distance too far
-				if (deltaLength > maxDistance)
+				if (deltaLength > maxDistance && m_bBreakable)
 				{
 					OtherParts.erase(OtherParts.begin() + i);
 				}
@@ -408,6 +408,11 @@ void CParticle::CollidePyramid(CPrefab *pyramid)
 		SetObjPosition(GetObjPosition() + forcet4);
 	}
 
+}
+
+void CParticle::SetBreakable(bool breakable)
+{
+	m_bBreakable = breakable;
 }
 
 //function for starting fire on cloth
