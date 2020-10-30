@@ -295,7 +295,6 @@ void CGameManager::Clear()
 	SetClothWidth(m_pWidthSlider->GetClothSize());
 	SetClothHeight(m_pHeightSlider->GetClothSize());
 	SetAnchorSize(m_pAnchorSlider->GetAnchorSize());
-	m_fWindStrength = m_pWindStSlider->GetClothSize()/2;
 	//Set up the cloth
 	SetUpCloth();
 	//Move objects to line up with cloth
@@ -445,7 +444,6 @@ void CGameManager::Update()
 		m_pAnchorSlider->Update();
 		m_pWindStSlider->Update();
 		m_pWindSiSlider->Update();
-		m_fWindSize = m_pWindSiSlider->GetClothSize() * 2;
 		m_pWindStSlider->SetWindStrength();
 		m_pWindSiSlider->SetWindStrength();
 		m_pAnchorSlider->SetClothSizeNumber(m_pWidthSlider->GetClothSize());
@@ -562,7 +560,6 @@ void CGameManager::ProcessInput(InputState* KeyState, InputState* MouseState)
 				m_bBurnToggle = false;
 				//toggle wind
 				m_bWindToggle = !m_bWindToggle;
-				m_fWindSize = m_pWindSiSlider->GetClothSize() * 2;
 				m_fcounter++;
 				
 				cout << "Setting Wind: " << endl;
@@ -800,8 +797,8 @@ void CGameManager::ApplyWind()
 {
 
 	//nice gentle breeze
-	m_fWindStrength = (rand() % m_pWindStSlider->GetClothSize()) - m_pWindStSlider->GetClothSize()/10;
-
+	m_fWindStrength = (rand() % m_pWindStSlider->GetClothSize()/4) - m_pWindStSlider->GetClothSize()/10;
+	m_fWindSize = m_pWindSiSlider->GetClothSize() / 2;
 	//Seed with with values
 	vec3 Wind = vec3(0.0f, 0.0f, -40.0f);
 	//For all the points in the cloth
