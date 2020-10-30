@@ -811,7 +811,10 @@ void CGameManager::ApplyWind()
 	m_fWindStrength = (rand() % m_pWindStSlider->GetClothSize()/4) - m_pWindStSlider->GetClothSize()/10;
 	m_fWindSize = m_pWindSiSlider->GetClothSize() / 2;
 	//Seed with with values
-	vec3 Wind = vec3(0.0f, 0.0f, -40.0f);
+	float randWind = (rand() % 50) - 20;
+	float randOffSet = (rand() % 10) - 5;
+	float randOffSet2 = (rand() % 10) - 5;
+	vec3 Wind = vec3(randOffSet, randOffSet2, randWind);
 	//For all the points in the cloth
 	for (size_t i = 0; i < m_pSpheres.size(); i++)
 	{
