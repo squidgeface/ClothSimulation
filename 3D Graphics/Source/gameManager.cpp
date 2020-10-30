@@ -808,13 +808,13 @@ void CGameManager::ApplyWind()
 {
 
 	//nice gentle breeze
-	m_fWindStrength = float((rand() % m_pWindStSlider->GetClothSize()/4) - m_pWindStSlider->GetClothSize()/10);
+	m_fWindStrength = float((rand() % m_pWindStSlider->GetClothSize()/2) - m_pWindStSlider->GetClothSize()/5);
 	m_fWindSize = float(m_pWindSiSlider->GetClothSize() / 2);
 	//Seed with with values
-	float randWind = (rand() % 50) - 20;
-	float randOffSet = (rand() % 10) - 5;
-	float randOffSet2 = (rand() % 10) - 5;
-	vec3 Wind = vec3(randOffSet, randOffSet2, randWind);
+	float randWind = (rand() % 50) - 10;
+	float randOffSet = (rand() % 20) - 10;
+	float randOffSet2 = (rand() % 20) - 10;
+	vec3 Wind = vec3(0.0f, 0.0f, -10.0f);
 	//For all the points in the cloth
 	for (size_t i = 0; i < m_pSpheres.size(); i++)
 	{
@@ -822,7 +822,8 @@ void CGameManager::ApplyWind()
 		if (CheckMouseSphereIntersect(m_pSpheres[i]) && isClicking)
 		{
 			//Set point to burning
-			m_pSpheres[i]->ApplyForce(Wind * m_pSpheres[i]->GetMass() * m_fWindStrength);
+			float sinyThing = (cosf(m_pSpheres[i]->GetObjPosition().z) + 2);
+			m_pSpheres[i]->ApplyForce(Wind * m_pSpheres[i]->GetMass() * m_fWindStrength * sinyThing);
 		}
 	}
 	

@@ -191,9 +191,9 @@ void CSlider::SetAnchorSize()
 void CSlider::SetWindStrength()
 {
     int distance = int(Distance(vec3(Background->GetObjPosition().x - Background->GetObjSize().x / 2, Background->GetObjPosition().y, Background->GetObjPosition().z), vec3(Arrow->GetObjPosition().x, Background->GetObjPosition().y, Background->GetObjPosition().z)) / 10);
-    if (distance <= 5)
+    if (distance <= 3)
     {
-        distance = 5;
+        distance = 3;
     }
     size = distance;
 }

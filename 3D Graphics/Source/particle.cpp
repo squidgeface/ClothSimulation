@@ -409,7 +409,7 @@ void CParticle::CollidePyramid(CPrefab *pyramid)
 	}
 
 }
-
+//Set breakable bool
 void CParticle::SetBreakable(bool breakable)
 {
 	m_bBreakable = breakable;

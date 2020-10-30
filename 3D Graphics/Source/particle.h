@@ -30,7 +30,6 @@ public:
     void UnLinkParticles();
     void Draw();
     void DrawGeo(vec3 _right, vec3 _botLeft, vec3 _botRight);
-    void DrawGeo2(vec3 _botLeft, vec3 _Right, vec3 _Left);
 	void CollidePyramid(CPrefab *pyramid);
     void SetBreakable(bool breakable);
     void Burn();
